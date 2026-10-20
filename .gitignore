@@ -1,6 +1,13 @@
+# Python environment & cache
 venv/
-.env
+.venv/
 __pycache__/
+*.pyc
 .DS_Store
+
+# Secrets & configuration
+.env
+
+# Large raw patient datasets
 data/raw/*
 !data/raw/.gitkeep
