@@ -59,3 +59,21 @@ def parse_clinical_notes_text(file_path: str) -> str:
             return f.read().strip()
     except Exception as e:
         return f"Error reading text file: {str(e)}"
+def parse_patient_csv(file_path: str, max_rows: int = 5) -> str:
+    """Reads tabular patient clinical data or metadata from CSV files."""
+    if not os.path.exists(file_path):
+        return f"Error: File not found at {file_path}"
+    try:
+        import pandas as pd
+        df = pd.read_csv(file_path)
+        summary = f"CSV Dimensions: {df.shape[0]} rows x {df.shape[1]} columns\n"
+        summary += f"Columns: {list(df.columns)}\n\n"
+        
+        # Pick key patient/series columns if present for clean display
+        key_cols = [c for c in ['Subject ID', 'Modality', 'Series Description', 'Number of Images', 'File Size'] if c in df.columns]
+        display_df = df[key_cols] if key_cols else df
+        
+        summary += "Sample Data:\n" + display_df.head(max_rows).to_string(index=False)
+        return summary
+    except Exception as e:
+        return f"Error reading CSV file: {str(e)}"
