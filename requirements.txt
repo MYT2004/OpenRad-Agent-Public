@@ -1,0 +1,9 @@
+streamlit
+openai
+langchain
+pydicom
+pypdf
+pdfplumber
+python-dotenv
+transformers
+torch
