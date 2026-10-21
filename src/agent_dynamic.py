@@ -1,5 +1,7 @@
 """Bounded Gemini function calling. Patient files remain local; no clinical release."""
 from __future__ import annotations
+
+from src.operations import audited_operation
 import json
 import math
 import os
@@ -169,6 +171,7 @@ def _generate(key, model, contents):
 
 
 
+@audited_operation
 def run_dynamic_agent(query: str, api_key=None, model=None, *, case_directory=None, gamma_paths=None, gamma_spacing=None) -> DynamicAgentResult:
     """Six rounds / twelve calls maximum. Only opaque handles and summaries reach Gemini.
 

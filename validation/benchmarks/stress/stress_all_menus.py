@@ -44,7 +44,7 @@ from openrad.tools.gamma_tool import evaluate_gamma_index
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp
 from openrad.tools.topas_tool import generate_topas_deck
 from openrad.validation.physics_rules import PhysicsValidationEngine, PhysicsValidationError, DVHCurveError
-from validation.paths import new_run_directory
+from validation.paths import new_run_directory, reserve_evidence, write_evidence
 
 
 def banner(title: str):
@@ -477,7 +477,8 @@ def stress_test_menu_3_dvh_analyzer(results_list):
                         "Mapped ROIs": list(structs.keys()),
                         "Cord Status": "Found and evaluated" if cord_found else "Not evaluated",
                         "Cord Max Dose": f"{cord_max:.2f} Gy" if cord_max is not None else "Not evaluated",
-                        "Protocol Threshold Verification": f"{cord_max:.2f} Gy evaluated against reference constraint (< 45.0 Gy)" if cord_max is not None else "Not evaluated",
+                        "Protocol Threshold Verification": "Not evaluated: no case-specific reviewed prescription/fractionation protocol supplied.",
+                        "Scope": "Selected-ROI research calculation; this does not clear whole-case intake blockers.",
                     }
                 ))
         else:
@@ -883,8 +884,21 @@ def main():
     parser.add_argument("--output-dir", type=str, default=None, help="Custom directory to store run evidence")
     parser.add_argument("--force-overwrite", action="store_true", help="Allow overwriting existing evidence files in specified output directory")
     parser.add_argument("--publish-evidence", action="store_true", help="Explicitly update the canonical reviewed snapshot under validation/evidence/")
+    parser.add_argument('--require-complete', action='store_true',
+                        help='Qualification mode: skipped/absent scenarios fail the gate and prevent publication')
     args = parser.parse_args()
+    evidence_dir = Path(args.output_dir) if args.output_dir else new_run_directory('stress-eval')
+    evidence_file = evidence_dir / 'comprehensive_stress_assessment.json'
+    try:
+        with reserve_evidence(evidence_file, overwrite=args.force_overwrite):
+            _run_assessment(args, evidence_dir, evidence_file)
+    except ValueError as exc:
+        print(str(exc))
+        raise SystemExit(1)
 
+
+def _run_assessment(args, evidence_dir, evidence_file):
+    import subprocess
     print("=" * 80)
     print("  OPENRAD AGENT: SYSTEM-WIDE MULTI-MENU STRESS TEST SUITE")
     print("=" * 80)
@@ -927,18 +941,6 @@ def main():
     except Exception:
         rev = "unversioned"
 
-    if args.output_dir:
-        evidence_dir = Path(args.output_dir)
-        evidence_dir.mkdir(parents=True, exist_ok=True)
-    else:
-        evidence_dir = new_run_directory("stress-eval")
-        evidence_dir.mkdir(parents=True, exist_ok=False)
-
-    evidence_file = evidence_dir / "comprehensive_stress_assessment.json"
-    if evidence_file.exists() and not args.force_overwrite and args.output_dir:
-        print(f"❌ Error: Evidence file already exists at {evidence_file}. Use --force-overwrite to replace.")
-        sys.exit(1)
-
     evidence_payload = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "source_revision": rev,
@@ -951,14 +953,23 @@ def main():
         "execution_seconds": total_time,
         "results": results,
     }
-    evidence_file.write_text(json.dumps(evidence_payload, indent=2))
+    evidence_payload['qualification_gate_passed'] = not failed_tests and not skipped_tests
+    evidence_payload['strict_completeness_required'] = args.require_complete
+    write_evidence(evidence_file, evidence_payload)
     print(f"\nWritten formal run verification evidence to: {evidence_file}")
 
     # Synchronize canonical reviewed snapshot ONLY when explicitly authorized via --publish-evidence
+    if args.publish_evidence and not evidence_payload['qualification_gate_passed']:
+        print('Publication refused: failed or skipped scenarios require review; evidence retained locally.')
+        raise SystemExit(2)
+    if args.require_complete and not evidence_payload['qualification_gate_passed']:
+        print('Qualification refused: required complete execution was not achieved; evidence retained locally.')
+        raise SystemExit(2)
     if args.publish_evidence:
         canonical_file = Path("validation/evidence/stress/comprehensive_stress_assessment.json")
         canonical_file.parent.mkdir(parents=True, exist_ok=True)
-        canonical_file.write_text(json.dumps(evidence_payload, indent=2))
+        with reserve_evidence(canonical_file, overwrite=True):
+            write_evidence(canonical_file, evidence_payload)
         print(f"Updated canonical reviewed evidence snapshot at: {canonical_file}")
     else:
         print("Preserving historical canonical snapshot (use --publish-evidence to update).")

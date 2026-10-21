@@ -1,6 +1,7 @@
 """Storage Manager for OpenRad Agent sessions, execution trajectories, and artifacts."""
 
 import re
+from pathlib import Path
 import json
 import os
 import time
@@ -12,6 +13,7 @@ try:
 except ImportError:
     fcntl = None
 import shutil
+from datetime import datetime
 from uuid import uuid4
 
 
@@ -38,18 +40,18 @@ class StorageManager:
         os.makedirs(session_dir, exist_ok=True)
         os.makedirs(artifacts_dir, exist_ok=True)
 
+        self._require_locking()
         meta_file = os.path.join(session_dir, "metadata.json")
-        if not os.path.exists(meta_file):
-            with open(meta_file, "w", encoding="utf-8") as f:
-                json.dump(
-                    {
-                        "session_id": session_id,
-                        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                        "version": "1.0.0",
-                    },
-                    f,
-                    indent=2,
-                )
+        with open(os.path.join(session_dir, '.metadata.lock'), 'a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            try:
+                if not os.path.exists(meta_file):
+                    self._atomic_json(meta_file, {
+                        'session_id': session_id,
+                        'created_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                        'version': '1.0.0'})
+            finally:
+                fcntl.flock(lock, fcntl.LOCK_UN)
 
         return session_dir
 
@@ -59,109 +61,112 @@ class StorageManager:
     def get_session_dir(self, session_id: str) -> str:
         if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", session_id):
             raise ValueError("Invalid session ID.")
-        return os.path.join(self.base_dir, session_id)
+        from src.readonly import assert_output_path
+        target = assert_output_path(Path(self.base_dir) / session_id)
+        if target.parent != Path(self.base_dir):
+            raise ValueError('Session path escapes its storage boundary.')
+        return str(target)
 
     def get_artifacts_dir(self, session_id: str) -> str:
-        return os.path.join(self.get_session_dir(session_id), "artifacts")
+        from src.readonly import assert_output_path
+        directory = Path(self.get_session_dir(session_id))
+        target = assert_output_path(directory / 'artifacts')
+        if target.parent != directory:
+            raise ValueError('Artifact directory escapes its session boundary.')
+        return str(target)
 
-    def save_trajectory(
-        self,
-        session_id: str,
-        prompt: str,
-        response: str,
-        extra: Optional[Dict[str, Any]] = None,
-    ) -> str:
+    @staticmethod
+    def _validate_event(event):
+        if not isinstance(event, dict) or not all(isinstance(event.get(k), str)
+                for k in ('timestamp', 'user_prompt', 'agent_response')):
+            raise ValueError('Trajectory requires string timestamp, prompt and response.')
+        datetime.strptime(event['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        version = event.get('schema_version', 1)  # Legacy valid events remain readable.
+        if type(version) is not int or version != 1:
+            raise ValueError('Unsupported trajectory schema version.')
+        json.dumps(event, allow_nan=False)
+
+    @staticmethod
+    def _require_locking():
         if fcntl is None:
-            raise RuntimeError("POSIX file locking (fcntl) is required for safe concurrent storage operations.")
+            raise RuntimeError('POSIX file locking (fcntl) is required for safe storage.')
 
-        session_dir = self.get_session_dir(session_id)
-        os.makedirs(session_dir, exist_ok=True)
-        traj_file = os.path.join(session_dir, "trajectory.json")
-        lock_file = os.path.join(session_dir, ".trajectory.lock")
-
-        # Serialized atomic append via file locking
-        with open(lock_file, "a", encoding="utf-8") as lock_f:
-            fcntl.flock(lock_f, fcntl.LOCK_EX)
+    @staticmethod
+    def _atomic_json(path, value):
+        path = os.fspath(path)
+        temporary = path + '.' + uuid4().hex + '.tmp'
+        try:
+            with open(temporary, 'x', encoding='utf-8') as handle:
+                json.dump(value, handle, indent=2, allow_nan=False)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, path)
+            # Persist the directory entry as well as the file on the local POSIX store.
+            fd = os.open(os.path.dirname(path), os.O_RDONLY | getattr(os, 'O_DIRECTORY', 0))
             try:
-                history = []
-                if os.path.exists(traj_file):
-                    try:
-                        with open(traj_file, "r", encoding="utf-8") as f:
-                            content = f.read()
-                        if not content.strip():
-                            raise ValueError("Trajectory file exists but is empty or whitespace-only")
-                        parsed = json.loads(content)
-                        if not isinstance(parsed, list):
-                            raise ValueError("Trajectory content must be a JSON list")
-                        for idx, ev in enumerate(parsed):
-                            if not isinstance(ev, dict) or not all(k in ev for k in ("timestamp", "user_prompt", "agent_response")):
-                                raise ValueError(f"Trajectory entry at index {idx} is invalid or missing required schema fields")
-                        history = parsed
-                    except Exception as exc:
-                        corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
-                        try:
-                            shutil.copy2(traj_file, corrupt_backup)
-                        except Exception:
-                            pass
-                        raise CorruptedSessionError(
-                            f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
-                        ) from exc
-
-                entry = {
-                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                    "user_prompt": prompt,
-                    "agent_response": response,
-                }
-                if extra:
-                    entry.update(extra)
-                history.append(entry)
-
-                # Atomic replacement in session dir ensures zero torn writes
-                tmp_file = os.path.join(session_dir, f".trajectory.{uuid4().hex}.tmp")
-                with open(tmp_file, "w", encoding="utf-8") as f:
-                    json.dump(history, f, indent=2)
-                    f.flush()
-                    os.fsync(f.fileno())
-                os.replace(tmp_file, traj_file)
+                os.fsync(fd)
             finally:
-                fcntl.flock(lock_f, fcntl.LOCK_UN)
+                os.close(fd)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
 
-        return traj_file
+    def _read_history(self, path):
+        if not os.path.exists(path):
+            return []
+        try:
+            with open(path, encoding='utf-8') as handle:
+                history = json.load(handle)
+            if not isinstance(history, list):
+                raise ValueError('Trajectory must be a list.')
+            for event in history:
+                self._validate_event(event)
+            return history
+        except (ValueError, TypeError, OverflowError, OSError):
+            backup = path + '.corrupt.' + uuid4().hex
+            try:
+                shutil.copy2(path, backup)
+                preserved = True
+            except OSError:
+                preserved = False
+            raise CorruptedSessionError(
+                'Corrupted session trajectory; original was not replaced; '
+                + ('a diagnostic copy was preserved.' if preserved else 'diagnostic copy unavailable.')
+            ) from None
+
+    def save_trajectory(self, session_id: str, prompt: str, response: str,
+                        extra: Optional[Dict[str, Any]] = None) -> str:
+        self._require_locking()
+        reserved = {'timestamp', 'user_prompt', 'agent_response', 'schema_version'}
+        if extra is not None and (not isinstance(extra, dict) or reserved.intersection(extra)):
+            raise ValueError('Extra metadata cannot override reserved trajectory fields.')
+        entry = dict(timestamp=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                     user_prompt=prompt, agent_response=response, schema_version=1)
+        entry.update(extra or {})
+        self._validate_event(entry)  # Refuse malformed new events before touching history.
+        directory = self.get_session_dir(session_id)
+        os.makedirs(directory, exist_ok=True)
+        trajectory = os.path.join(directory, 'trajectory.json')
+        with open(os.path.join(directory, '.trajectory.lock'), 'a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            try:
+                history = self._read_history(trajectory)
+                self._atomic_json(trajectory, history + [entry])
+            finally:
+                fcntl.flock(lock, fcntl.LOCK_UN)
+        return trajectory
 
     def load_trajectory(self, session_id: str) -> List[Dict[str, Any]]:
-        session_dir = self.get_session_dir(session_id)
-        traj_file = os.path.join(session_dir, "trajectory.json")
-        if not os.path.exists(traj_file):
+        self._require_locking()
+        directory = self.get_session_dir(session_id)
+        if not os.path.exists(directory):
             return []
-        if fcntl is None:
-            raise RuntimeError("POSIX file locking (fcntl) is required for safe concurrent storage operations.")
-
-        lock_file = os.path.join(session_dir, ".trajectory.lock")
-        with open(lock_file, "a", encoding="utf-8") as lock_f:
-            fcntl.flock(lock_f, fcntl.LOCK_SH)
+        with open(os.path.join(directory, '.trajectory.lock'), 'a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_SH)
             try:
-                with open(traj_file, "r", encoding="utf-8") as f:
-                    content = f.read()
-                if not content.strip():
-                    raise ValueError("Trajectory file exists but is empty or whitespace-only")
-                parsed = json.loads(content)
-                if not isinstance(parsed, list):
-                    raise ValueError("Trajectory content must be a JSON list")
-                for idx, ev in enumerate(parsed):
-                    if not isinstance(ev, dict) or not all(k in ev for k in ("timestamp", "user_prompt", "agent_response")):
-                        raise ValueError(f"Trajectory entry at index {idx} is invalid or missing required schema fields")
-                return parsed
-            except Exception as exc:
-                corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
-                try:
-                    shutil.copy2(traj_file, corrupt_backup)
-                except Exception:
-                    pass
-                raise CorruptedSessionError(
-                    f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
-                ) from exc
+                return self._read_history(os.path.join(directory, 'trajectory.json'))
             finally:
-                fcntl.flock(lock_f, fcntl.LOCK_UN)
+                fcntl.flock(lock, fcntl.LOCK_UN)
 
     def list_artifacts(self, session_id: str) -> List[str]:
         artifacts_dir = self.get_artifacts_dir(session_id)

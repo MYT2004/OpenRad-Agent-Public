@@ -1,6 +1,6 @@
 # OpenRad-Agent — OSI Hackathon 2026
 
-[![Tests: 291 Passed](https://img.shields.io/badge/pytest-291%20passed%20(100%25)-brightgreen.svg)](validation/)
+[![Physics regression](https://github.com/MYT2004/OpenRad-Agent/actions/workflows/physics-regression.yml/badge.svg)](https://github.com/MYT2004/OpenRad-Agent/actions/workflows/physics-regression.yml)
 [![Physics Guardrails: Enforced](https://img.shields.io/badge/physics--guardrails-strictly%20enforced-blue.svg)](openrad/validation/physics_rules.py)
 [![Standards: TG--263%20%7C%20TG--218](https://img.shields.io/badge/standards-TG--263%20%7C%20TG--218-purple.svg)](openrad/validation/nomenclature.py)
 [![Scope: Research Only](https://img.shields.io/badge/scope-research%20use%20only-orange.svg)](validation/audits/medical_physics.md)
@@ -70,7 +70,7 @@ flowchart TD
 OpenRad Agent bridges safety-critical deterministic computing with modern tool-augmented language model reasoning:
 
 ### Mode 1: Deterministic Assessment Router (Clinical Safety Pathway)
-* **Design Philosophy:** Zero silent failures, zero hallucinations, fail-closed triage.
+* **Design aim:** Fail-closed research triage with explicit errors and unsupported states; no error-free or clinical-release guarantee.
 * **Deterministic Execution:** Direct, typed module execution (`src/case_verification.py`, `src/tools.py`, `src/evaluation.py`, `src/decision.py`).
 * **Three-Way Triage Decisions:** Hard rules determine `APPROVED` (per-case research candidate), `FLAGGED_FOR_REVIEW`, or `REJECTED`.
 * **Cryptographic Provenance:** Ed25519 signature verification and SHA-256 hash chaining provide signed decisions and tamper-evident audit records.
@@ -87,11 +87,11 @@ OpenRad Agent bridges safety-critical deterministic computing with modern tool-a
 
 ## 3. Verified Validation Milestones
 
-### 291 Automated Tests Passing
-The platform passes 291 automated unit, integration, and physics regression tests across all core capabilities:
+### Automated regression and boundary validation
+Current revision-specific test counts and supported-runtime results are recorded in CI and the [rectification evidence](validation/evidence/rectification/README.md). The suite covers:
 * **DICOM Intake & Spatial Geometry:** Slice spacing regularity, UID chain linkage, orthogonal direction cosines, and metadata de-identification.
 * **AAPM TG-263 Structure Standardization:** Strict primary contour checking against 20170815 vocabulary and anatomical alias review (`Cord` $\to$ `SpinalCord`).
-* **ICRU-83 Dosimetric Metrics:** High-resolution cumulative DVH binning ($0.1\text{ Gy}$ bin width): $D_{95}$ (minimum dose received by at least 95% of structure volume), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.
+* **ICRU-83 Dosimetric Metrics:** Adaptive cumulative DVH binning (minimum $0.01\text{ Gy}$ step, enlarged when needed to stay within 10,001 bins): $D_{95}$ (minimum dose received by at least 95% of structure volume), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.
 * **AAPM TG-218 3D Gamma Index:** Global 3% / 2 mm (with 10% low-dose threshold) and tight-margin 2% / 2 mm QA evaluation.
 * **TOPAS Parameter Validation:** Kinetic beam energies constrained to $0.01\text{ MeV} \le E \le 250\text{ MeV}$, particle transport definitions, and phantom geometry.
 * **Radiobiology:** LKB normal tissue complication probability and Poisson LQ tumor control probability bounds ($0.0 \le P \le 1.0$).
@@ -208,3 +208,7 @@ Gemini uses the official HTTPS generateContent API via Python's standard library
 Execution is bounded to six rounds and twelve tool calls. Intake must be ready before DVH; ambiguous courses, missing ROIs, unknown arguments and provider failures remain explicit. Parallel function calls receive batched responses. Model prose cannot approve a case or substitute measurements. Offline mode performs local intake only. TOPAS output is a generated template, not a verified transport simulation. Strict 2%/2mm bands are research policy, not a universal TG-218 prescription.
 
 Latest stress evidence: [full-corpus and copilot assessment](validation/evidence/stress/2026-10-21/README.md). Includes explicit provider failures, unresolved source findings and scope limitations.
+
+## Safe research operation
+
+See [hardening and operating instructions](docs/HARDENING.md) for input budgets, deterministic REST/provider distinctions, strict benchmark completeness, numerical threshold policy and deployment release gates. Only a single trusted operator research profile is implemented. Production and clinical readiness remain false.

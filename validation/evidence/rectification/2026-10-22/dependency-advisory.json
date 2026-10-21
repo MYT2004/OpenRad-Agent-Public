@@ -1,0 +1,28 @@
+{
+  "scanner": "pip-audit2.10.1",
+  "reported": [
+    {
+      "package": "pydicom",
+      "version": "2.4.5",
+      "advisories": [
+        "PYSEC-2026-2266"
+      ]
+    }
+  ],
+  "disposition": "Narrow verified security-backport/feed discrepancy; not a blanket advisory suppression",
+  "exception_applies_only_to": {
+    "package": "pydicom",
+    "version": "2.4.5",
+    "advisory": "PYSEC-2026-2266 / CVE-2026-32711 / GHSA-v856-2rf8-9f28"
+  },
+  "maintainer_patched_versions": [
+    "2.4.5",
+    "3.0.2"
+  ],
+  "evidence": [
+    "https://github.com/pydicom/pydicom/security/advisories/GHSA-v856-2rf8-9f28",
+    "https://github.com/pydicom/pydicom/releases/tag/v2.4.5"
+  ],
+  "regression": "test_pydicom_security_backport_refuses_traversal: public FileSet loading refuses a generated traversal record; outside bytes unchanged",
+  "limitation": "Advisory metadata can change. Recheck on dependency changes; no vulnerability-free guarantee."
+}

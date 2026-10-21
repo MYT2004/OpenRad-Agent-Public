@@ -6,6 +6,8 @@ import numpy as np
 import pydicom
 import pymedphys
 from src.hooks import post_tool_call, validate_tool_output
+from src.operations import audited_operation
+from src.resources import InputBudgetError
 from src.privacy import scrub_analysis_copies
 from src.storage import current_session
 from src.demo import has_synthetic_teaching_marker
@@ -127,6 +129,7 @@ def resolve_save_path(target: str | Path, patient_id: str | None = None, filenam
     return out_path
 
 
+@audited_operation
 @post_tool_call
 def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str], *,
                            rtplan_path=None, reviewed_name_map=None) -> dict:
@@ -140,6 +143,11 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
     if not rois or any(not isinstance(name, str) or not name for name in rois):
         raise ValueError('At least one nonempty ROI name is required.')
     try:
+        from src.resources import preflight_dicom_dose, check_input_file
+        preflight_dicom_dose(rtdose_path)
+        check_input_file(rtstruct_path)
+        if rtplan_path:
+            check_input_file(rtplan_path)
         dose = pydicom.dcmread(rtdose_path)
         struct = pydicom.dcmread(rtstruct_path)
         plan = pydicom.dcmread(rtplan_path, stop_before_pixels=True) if rtplan_path else None
@@ -180,10 +188,12 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
             raise ValueError('Requested ROI names resolve to duplicates.')
         result = analyze_dvh_datasets(struct, dose, labels, ds_plan=plan,
                                       require_plan_linkage=False, parsed_dose=grid)
-    except PhysicsValidationError:
+    except (PhysicsValidationError, InputBudgetError):
         raise
     except (ValueError, OSError, AttributeError, KeyError, TypeError) as exc:
         raise ValueError('DICOM input could not be read or validated; inspect locally without logging patient metadata.') from None
+    # Reject faulty outputs before generating a report or publishing any artifact.
+    validate_tool_output(result)
     if not result['course_linkage_verified']:
         result['limitations'].append('RTPLAN not supplied; dose/structure course linkage is unverified.')
     manager, session_id = current_session()
@@ -209,6 +219,7 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
     return result
 
 
+@audited_operation
 @post_tool_call
 def generate_topas_file(particle: str, energy_mev: float, histories: int, output_path: str) -> dict:
     """Write a validated water-phantom TOPAS template without overwriting files."""

@@ -1,0 +1,141 @@
+{
+  "dataset": "eclipse-8.1.20-phantom-prostate",
+  "clinical_release": false,
+  "source_identity_plan_rx_match": true,
+  "structures": [
+    {
+      "structure": "Bladder",
+      "openrad": {
+        "volume_cc": 117.453,
+        "mean_dose_Gy": 45.87,
+        "D95_Gy": 43.61,
+        "D50_Gy": 46.29,
+        "D2_Gy": 46.78
+      },
+      "tps_export": {
+        "volume_cc": 116.8,
+        "mean_dose_Gy": 45.908,
+        "D95_Gy": 43.661402298850575,
+        "D50_Gy": 46.29608523189585,
+        "D2_Gy": 46.78135068236553
+      },
+      "dicompyler_core_default": {
+        "volume_cc": 117.453125,
+        "mean_dose_Gy": 45.8719136623653,
+        "D95_Gy": 43.59,
+        "D50_Gy": 46.29,
+        "D2_Gy": 46.78
+      },
+      "openrad_minus_tps": {
+        "volume_cc": 0.6530000000000058,
+        "mean_dose_Gy": -0.03800000000000381,
+        "D95_Gy": -0.05140229885057579,
+        "D50_Gy": -0.0060852318958524165,
+        "D2_Gy": -0.0013506823655262679
+      },
+      "openrad_minus_dicompyler": {
+        "volume_cc": -0.00012499999999704414,
+        "mean_dose_Gy": -0.001913662365303992,
+        "D95_Gy": 0.01999999999999602,
+        "D50_Gy": 0.0,
+        "D2_Gy": 0.0
+      },
+      "curve_difference_percentage_points": {
+        "max_absolute": 0.8753999999999991,
+        "mean_absolute_over_export_dose_bins": 0.10809340576171857
+      }
+    },
+    {
+      "structure": "PTV",
+      "openrad": {
+        "volume_cc": 49.094,
+        "mean_dose_Gy": 45.88,
+        "D95_Gy": 45.35,
+        "D50_Gy": 45.95,
+        "D2_Gy": 46.22
+      },
+      "tps_export": {
+        "volume_cc": 48.6,
+        "mean_dose_Gy": 45.861999999999995,
+        "D95_Gy": 45.36046780018056,
+        "D50_Gy": 45.94721243358129,
+        "D2_Gy": 46.22209156974868
+      },
+      "dicompyler_core_default": {
+        "volume_cc": 49.09375,
+        "mean_dose_Gy": 45.88122851686825,
+        "D95_Gy": 45.35,
+        "D50_Gy": 45.95,
+        "D2_Gy": 46.22
+      },
+      "openrad_minus_tps": {
+        "volume_cc": 0.4939999999999998,
+        "mean_dose_Gy": 0.018000000000007788,
+        "D95_Gy": -0.010467800180556708,
+        "D50_Gy": 0.0027875664187106963,
+        "D2_Gy": -0.0020915697486785234
+      },
+      "openrad_minus_dicompyler": {
+        "volume_cc": 0.0002500000000011937,
+        "mean_dose_Gy": -0.0012285168682453218,
+        "D95_Gy": 0.0,
+        "D50_Gy": 0.0,
+        "D2_Gy": 0.0
+      },
+      "curve_difference_percentage_points": {
+        "max_absolute": 0.4727000000006356,
+        "mean_absolute_over_export_dose_bins": 0.00554170068359632
+      }
+    },
+    {
+      "structure": "Rectum",
+      "openrad": {
+        "volume_cc": 30.516,
+        "mean_dose_Gy": 39.05,
+        "D95_Gy": 27.69,
+        "D50_Gy": 42.1,
+        "D2_Gy": 45.67
+      },
+      "tps_export": {
+        "volume_cc": 30.3,
+        "mean_dose_Gy": 39.146,
+        "D95_Gy": 28.0614670781893,
+        "D50_Gy": 41.88582619240098,
+        "D2_Gy": 45.670877884296154
+      },
+      "dicompyler_core_default": {
+        "volume_cc": 30.515625,
+        "mean_dose_Gy": 39.04626472094214,
+        "D95_Gy": 27.69,
+        "D50_Gy": 42.1,
+        "D2_Gy": 45.67
+      },
+      "openrad_minus_tps": {
+        "volume_cc": 0.21599999999999753,
+        "mean_dose_Gy": -0.09600000000000364,
+        "D95_Gy": -0.3714670781892977,
+        "D50_Gy": 0.2141738075990247,
+        "D2_Gy": -0.0008778842961518762
+      },
+      "openrad_minus_dicompyler": {
+        "volume_cc": 0.00037499999999823785,
+        "mean_dose_Gy": 0.003735279057856644,
+        "D95_Gy": 0.0,
+        "D50_Gy": 0.0,
+        "D2_Gy": 0.0
+      },
+      "curve_difference_percentage_points": {
+        "max_absolute": 2.4146999999999963,
+        "mean_absolute_over_export_dose_bins": 0.49160978105468844
+      }
+    }
+  ],
+  "plot": "public-phantom-dvh.png",
+  "limitations": [
+    "TPS export is a numerical comparator, not independently measured dose truth.",
+    "TPS summary means are rounded relative-dose values; inverse cumulative D metrics use linear interpolation.",
+    "OpenRad uses axial voxel-center sampling, inferred uniform contour slabs and linear z-dose interpolation; curve threshold spacing is exported explicitly (normally 0.01 Gy).",
+    "dicompyler-core uses its default rasterization and dose-bin settings. Differences are observations, not validated clinical error margins.",
+    "No SlicerRT runtime execution or population-level model qualification was performed."
+  ]
+}

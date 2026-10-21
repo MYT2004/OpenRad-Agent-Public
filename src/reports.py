@@ -163,6 +163,10 @@ def markdown(report):
 
 def attach_report(result, kind):
     from src.storage import current_session
+    # Validate producer outputs before report publication, including direct callers.
+    if kind == 'dvh':
+        from src.hooks import validate_tool_output
+        validate_tool_output(result)
     manager, session_id = current_session()
     report = build_report(result, kind)
     filename = f'report_{uuid4().hex}.md'

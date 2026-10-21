@@ -1,0 +1,1549 @@
+{
+  "scope": "128? actual bounded raw-derived comparisons; numerical controls, not independent clinical/model references",
+  "source": "pinned public Eclipse RTDOSE central 3x4x4 patch",
+  "patch_shape": [
+    3,
+    4,
+    4
+  ],
+  "comparisons": 96,
+  "all_agree": true,
+  "checks": [
+    {
+      "case": "identity",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "identity",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.0,
+      "reported_mean": 0.0,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.49719218084573136,
+      "reported_mean": 0.497,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.49719218084573136,
+      "reported_mean": 0.497,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.49719218084573136,
+      "reported_mean": 0.497,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.3314614538971543,
+      "reported_mean": 0.331,
+      "passed": true
+    },
+    {
+      "case": "scale_1pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.49719218084573136,
+      "reported_mean": 0.497,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 1.491576542537193,
+      "reported_mean": 1.492,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 1.491576542537193,
+      "reported_mean": 1.492,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 1.491576542537193,
+      "reported_mean": 1.492,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.9943843616914622,
+      "reported_mean": 0.994,
+      "passed": true
+    },
+    {
+      "case": "scale_3pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 1.491576542537193,
+      "reported_mean": 1.492,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 3.4803452659201173,
+      "reported_mean": 3.48,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 3.4803452659201177,
+      "reported_mean": 3.48,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 3.4803452659201173,
+      "reported_mean": 3.48,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 2.3202301772800786,
+      "reported_mean": 2.32,
+      "passed": true
+    },
+    {
+      "case": "scale_7pct",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 0.0,
+      "reported_rate": 0.0,
+      "oracle_mean": 3.4803452659201177,
+      "reported_mean": 3.48,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.07010430689171694,
+      "reported_mean": 0.07,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.07010430689171694,
+      "reported_mean": 0.07,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.07010430689171694,
+      "reported_mean": 0.07,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.04673620459447797,
+      "reported_mean": 0.047,
+      "passed": true
+    },
+    {
+      "case": "axis_roll",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.07010430689171694,
+      "reported_mean": 0.07,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.08963513955525769,
+      "reported_mean": 0.09,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.08963513955525766,
+      "reported_mean": 0.09,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.08963513955525769,
+      "reported_mean": 0.09,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.05975675970350513,
+      "reported_mean": 0.06,
+      "passed": true
+    },
+    {
+      "case": "axis_flip",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.08963513955525766,
+      "reported_mean": 0.09,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_hotspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 1.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        0,
+        1,
+        2
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 3,
+      "expected_rate": 100.0,
+      "reported_rate": 100.0,
+      "oracle_mean": 0.01736776670574242,
+      "reported_mean": 0.017,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 3,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.0260461042021744,
+      "reported_mean": 0.026,
+      "passed": true
+    },
+    {
+      "case": "one_coldspot",
+      "common_dose_scale": 2.0,
+      "axis_permutation": [
+        2,
+        1,
+        0
+      ],
+      "dose_percent": 2,
+      "distance_mm": 2,
+      "expected_rate": 97.91666666666666,
+      "reported_rate": 97.91666666666667,
+      "oracle_mean": 0.026051650058613627,
+      "reported_mean": 0.026,
+      "passed": true
+    }
+  ]
+}

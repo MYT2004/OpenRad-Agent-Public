@@ -9,3 +9,5 @@ All generated runs go under ignored `validation/runs/`. Reviewed public summarie
 - `python -m pytest validation/tests -q`: Offline physics, API, UI, governance and provider fault-injection regressions, including concurrent session isolation.
 
 Live model responses are nondeterministic; a passing synthetic demonstration is not a clinical validation or a guarantee of provider uptime. Full-corpus folders contain unsupported modalities, legacy encodings and non-DICOM assets. Local intake intentionally blocks malformed contours and unresolved coordinate associations rather than altering sources.
+
+For qualification, use `python -m validation.benchmarks.stress.stress_all_menus --require-complete --output-dir /separate/new-run`. It reserves output before tool work, refuses concurrent ownership, atomically commits evidence and fails skipped/failed scenarios. Exploratory runs may be PARTIAL; they do not pass qualification. Publication refuses incomplete/failed evidence and still requires human privacy/scientific review. See [operating instructions](../../../docs/HARDENING.md).
