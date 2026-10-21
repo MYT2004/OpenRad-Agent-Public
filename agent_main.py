@@ -22,11 +22,28 @@ def main(argv=None):
     topas.add_argument('--histories',type=int,required=True); topas.add_argument('--output')
     evaluate = sub.add_parser('evaluate')
     evaluate.add_argument('--manifest', required=True, help='JSON EvaluationRequest with read-only NPY paths')
+    verify = sub.add_parser('verify-case')
+    verify.add_argument('--root', required=True)
+    verify.add_argument('--case-id', required=True, help='Pseudonym, never patient name or original ID')
+    verify.add_argument('--headers-only', action='store_true', help='Skip pixel decoding; result requires review')
+    demo = sub.add_parser('demo-case', help='Create explicitly synthetic teaching inputs without overwriting existing data')
+    demo.add_argument('--output', required=True)
+    demo.add_argument('--defect', choices=['none','missing_slice','wrong_frame','negative_dose_scaling'],default='none')
     args = parser.parse_args(argv)
     try:
+        if args.command == 'demo-case':
+            from src.demo import create_synthetic_case
+            print(json.dumps(create_synthetic_case(args.output,args.defect),allow_nan=False))
+            return 0
+        if args.command == 'verify-case':
+            from src.case_verification import ensure_case_output_separation
+            ensure_case_output_separation(args.root,args.storage_dir)
         manager = StorageManager(args.storage_dir)
         with session_scope(manager,args.session_id) as session_id:
-            if args.command == 'evaluate':
+            if args.command == 'verify-case':
+                from src.case_verification import CaseVerificationRequest, verify_patient_case
+                result = verify_patient_case(CaseVerificationRequest(root=args.root, case_id=args.case_id, check_pixels=not args.headers_only))
+            elif args.command == 'evaluate':
                 from src.decision import EvaluationRequest
                 from src.evaluation import evaluate_model
                 request = EvaluationRequest.model_validate_json(Path(args.manifest).read_text())
@@ -39,6 +56,8 @@ def main(argv=None):
                 result = generate_topas_file(args.particle,args.energy_mev,args.histories,output)
                 result['session_id'] = session_id
             print(json.dumps(result, allow_nan=False))
+            if args.command == 'verify-case':
+                return {'READY_FOR_RESEARCH_ANALYSIS': 0, 'FLAGGED_FOR_REVIEW': 3, 'BLOCKED': 2}[result['status']]
             if args.command == 'evaluate':
                 return {'APPROVED': 0, 'FLAGGED_FOR_REVIEW': 3, 'REJECTED': 2}[result['status']]
             return 0 if args.command != 'dvh' or all(r.get('found') for r in result['structures'].values()) else 2

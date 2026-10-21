@@ -34,7 +34,7 @@ pythonpath = ["."]
 openrad = ["data/*.json"]
 
 [project.optional-dependencies]
-app = ["streamlit>=1.30", "pandas>=2.0", "pypdf>=3.0"]
+app = ["streamlit>=1.50", "pandas>=2.0", "pypdf>=3.0"]
 api = ["fastapi>=0.100", "uvicorn>=0.23"]
 test = ["pytest>=7.0", "httpx>=0.24"]
 

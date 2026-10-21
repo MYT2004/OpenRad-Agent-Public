@@ -44,6 +44,6 @@ python -m examples.dvh_analysis_demo /authorized/read-only/dataset --roi Brainst
 python -m scripts.verify_local_datasets /authorized/read-only/dataset --reference
 ```
 
-The local test suite has 181 passing tests. GitHub CI additionally exercises Python 3.11, Docker image construction and live FastAPI `/health`. The local environment lacks Docker and TOPAS. Unit/API/UI tests are useful evidence but cannot demonstrate every possible input or replace independent clinical commissioning and usability assessment by practicing medical physicists.
+At the workflow-reporting milestone (`ae41c50`), the local suite passed 181 tests. Subsequent patient-intake verification and current evidence are documented in [the patient-file verification guide](PATIENT_FILE_VERIFICATION.md). GitHub CI additionally exercises Python 3.11, Docker image construction and live FastAPI `/health`. The local environment lacks Docker and TOPAS. Unit/API/UI tests are useful evidence but cannot demonstrate every possible input or replace independent clinical commissioning and usability assessment by practicing medical physicists.
 
 Use OS/container read-only mounts for raw data, IAM/authentication for deployment, durable audit storage with external anchoring and an independently managed reviewer registry. Those deployment controls, calibrated OOD detection, anatomical validation, clinical uncertainty budgets and physical measurements remain prerequisites for consequential use.

@@ -19,6 +19,7 @@ from src.storage import StorageManager, session_scope
 from src.tools import parse_and_evaluate_dvh, generate_topas_file
 from src.config import skills_paths
 from src.reports import attach_report
+from src.case_verification import CaseVerificationRequest, verify_patient_case, ensure_case_output_separation
 from src.decision import EvaluationRequest
 from src.evaluation import evaluate_model
 from src.governance import signed_review, verify_records
@@ -227,6 +228,16 @@ def get_artifact(session_id: str, filename: str):
     if target.parent != directory or not target.is_file():
         raise HTTPException(status_code=404, detail='Artifact not found.')
     return FileResponse(target)
+
+
+@app.post('/api/v1/cases/verify')
+def verify_case(payload: CaseVerificationRequest):
+    try:
+        ensure_case_output_separation(payload.root,storage_mgr.base_dir)
+        with session_scope(storage_mgr):
+            return verify_patient_case(payload)
+    except (ValueError, OSError):
+        raise HTTPException(status_code=400, detail='Case verification could not be committed; check the case directory, resource limits and output configuration.')
 
 
 @app.post('/api/v1/evaluations')

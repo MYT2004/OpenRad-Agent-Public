@@ -20,7 +20,7 @@ st.title("OpenRad Agent")
 st.warning("Research prototype. Clinical accuracy and uncertainty margins require independent commissioning. File contents are data, never instructions.")
 if 'agent' not in st.session_state:
     st.session_state.agent = OpenRadAgent()
-mode = st.sidebar.selectbox('Select Workflow', ['Interactive Agent Query', 'DICOM-RT & DVH Analyzer', 'Gamma Index QA (AAPM TG-218)', 'TOPAS Monte Carlo Deck Generator', 'Radiobiology (TCP / NTCP)', 'Stateful Python REPL Sandbox', 'Model Evaluation & Triage'])
+mode = st.sidebar.selectbox('Select Workflow', ['Patient-file Verification', 'DICOM-RT & DVH Analyzer', 'Gamma Index QA (AAPM TG-218)', 'TOPAS Monte Carlo Deck Generator', 'Radiobiology (TCP / NTCP)', 'Model Evaluation & Triage', 'Interactive Agent Query', 'Stateful Python REPL Sandbox'], key='workflow_mode')
 try:
     configured = json.loads(os.getenv('OPENRAD_DATA_ROOTS') or '[]')
     if not isinstance(configured, list) or not all(isinstance(p, str) for p in configured):
@@ -71,7 +71,7 @@ def dvh_inputs(prefix):
                 'Nomenclature Status': r['nomenclature']['status'],
             }
             for r in selected['rois']
-        ], use_container_width=True)
+        ], width='stretch')
     options=[r['name'] for r in selected['rois']]
     defaults=[n for n in options if n.casefold()=='brainstem']
     names=st.multiselect('Exact source ROI names', options, default=defaults, key=prefix+'_names')
@@ -97,7 +97,7 @@ def present_result(result, kind, key):
     from src.reports import build_report, markdown, metrics_csv
     report = result.get('human_report') or build_report(result, kind)
     st.markdown(report['summary'])
-    st.dataframe(report['metrics'], use_container_width=True)
+    st.dataframe(report['metrics'], width='stretch')
     st.markdown('**Follow-up actions**')
     for index, action in enumerate(report['follow_up_actions'], 1):
         st.write(f'{index}. {action}')
@@ -110,20 +110,82 @@ def present_result(result, kind, key):
                        file_name=f'openrad_{kind}_results.json', mime='application/json', key=key+'_json')
 
 
-if mode=='Interactive Agent Query':
+def prepare_synthetic_demo_case():
+    from src.demo import create_synthetic_case
+    from src.storage import StorageManager, session_scope
+    try:
+        manager=StorageManager(os.getenv('STORAGE_DIR','./storage/sessions'))
+        with session_scope(manager) as session_id:
+            demo=create_synthetic_case(Path(manager.get_session_dir(session_id))/'synthetic-inputs')
+        st.session_state.case_directory_input=demo['root']
+        st.session_state.case_pseudonym_input=demo['case_id']
+        st.session_state.synthetic_demo_root=demo['root']
+    except (ValueError,OSError):
+        st.session_state.case_demo_error='Synthetic inputs could not be created. Check separate runtime storage.'
+
+
+def prepare_verified_case_dvh(root):
+    try:
+        st.session_state.scans=[discover_dataset(root)]
+        st.session_state.workflow_mode='DICOM-RT & DVH Analyzer'
+    except (ValueError,OSError):
+        st.session_state.case_handoff_error='Case discovery failed. Re-verify the case directory before continuing.'
+
+
+if mode=='Patient-file Verification':
+    from src.case_verification import CaseVerificationRequest, verify_patient_case, ensure_case_output_separation
+    from src.storage import StorageManager, session_scope
+    st.subheader('Patient-file intake verification')
+    st.write('Select an authorized case directory. The verifier reads source files, checks supported DICOM identity/linkage, image-stack geometry and pixel integrity, and prioritizes follow-up actions.')
+    st.button('Create an explicitly synthetic demo case',on_click=prepare_synthetic_demo_case)
+    if st.session_state.get('case_demo_error'):st.error(st.session_state.pop('case_demo_error'))
+    st.session_state.setdefault('case_directory_input',configured[0] if configured else '')
+    st.session_state.setdefault('case_pseudonym_input','research-case-001')
+    root=st.text_input('Case directory',key='case_directory_input')
+    case_id=st.text_input('Case pseudonym (no patient names or original identifiers)',key='case_pseudonym_input')
+    if root==st.session_state.get('synthetic_demo_root'):
+        st.info('SYNTHETIC TEACHING CASE — artificial anatomy and dose, never a patient or a clinically validated plan.')
+    check_pixels=st.checkbox('Decode image and dose pixels', value=True)
+    st.caption('No registration, source repair, clinical plan approval or full DICOM conformance certification is performed. Unknown document contents are not executed.')
+    context_key=json.dumps([root,case_id,check_pixels])
+    if st.button('Verify patient files', disabled=not root):
+        try:
+            request=CaseVerificationRequest(root=root,case_id=case_id,check_pixels=check_pixels)
+            ensure_case_output_separation(root,os.getenv('STORAGE_DIR','./storage/sessions'))
+            with st.spinner('Reading source files and checking case integrity…'):
+                with session_scope(StorageManager(os.getenv('STORAGE_DIR','./storage/sessions'))):
+                    result=verify_patient_case(request)
+            st.session_state.case_verification=(context_key,result)
+        except (ValueError,OSError):
+            st.session_state.pop('case_verification',None)
+            st.error('Verification could not be committed. Check the case directory, resource limits and separate output storage.')
+    saved=st.session_state.get('case_verification')
+    if saved and saved[0]==context_key:
+        result=saved[1]
+        st.metric('Intake state',result['status'])
+        present_result(result,'case_verification','case_verification')
+        if result['dose_cases']:
+            st.button('Continue to DVH and structure review', disabled=result['status']=='BLOCKED',
+                      on_click=prepare_verified_case_dvh,args=(root,))
+        if st.session_state.get('case_handoff_error'):
+            st.error(st.session_state.pop('case_handoff_error'))
+        with st.expander('Technical findings, content hashes and scope'):
+            st.json({key:value for key,value in result.items() if key!='human_report'})
+
+elif mode=='Interactive Agent Query':
     st.subheader('Medical Physics Workflow Assistant')
     with st.expander('ℹ️ User Guide & Agent Instructions', expanded=True):
         st.markdown(r"""
-        **How to interact with the Autonomous Agent:**
+        **How to use the deterministic workflow assistant:**
         1. **Task Execution**: Enter a natural language medical physics task in the box below.
-        2. **Physics Guardrails**: Every tool invocation is governed by fail-closed clinical rules (absorbed dose $\ge 0$ Gy, beam energy $0.01 - 250$ MeV, orthogonal frame).
-        3. **Deterministic Workflows**: Natural language instructions are resolved into typed deterministic tools (`analyze_dvh`, `evaluate_gamma_index`, `generate_topas_deck`, `verify_model_output`).
+        2. **Supported numerical checks**: Tools check applicable input bounds (absorbed dose $\ge 0$ Gy, beam energy $0.01 - 250$ MeV, orthogonal frame).
+        3. **Workflow selection**: Use the dedicated sidebar workflows for file verification, gamma and model assessment. This assistant routes explicit supported DVH/TOPAS requests; external LLM orchestration is not implemented.
         
         **Example Prompts:**
         - `Calculate DVH metrics for Brainstem and SpinalCord` (with dataset selected)
         - `Generate 150 MeV proton TOPAS deck in water phantom`
-        - `Evaluate 3%/3mm gamma index between reference and evaluated dose`
-        - `Verify clinical dose model safety and generate follow up actions report`
+        - For independent dose comparison, select **Gamma Index QA** and supply both distributions.
+        - For dose-model assessment and follow-up actions, select **Model Evaluation & Triage**.
         """)
     query=st.text_input('Task', value='Calculate DVH metrics')
     args=dvh_inputs('agent') if any(w in query.lower() for w in ('dvh','dose volume','rtstruct','rtdose')) else None
@@ -151,7 +213,7 @@ if mode=='Interactive Agent Query':
                                     'Notes': '; '.join(s.get('issues', [])) or 'Primary-name syntax checked; anatomy unverified'
                                 }
                                 for s in structs
-                            ], use_container_width=True)
+                            ], width='stretch')
                 with st.expander('Technical Tool Record', expanded=False):
                     st.json({k: v for k, v in out.items() if k not in ('clinical_release', 'limitations', 'nomenclature')})
 
@@ -178,7 +240,7 @@ elif mode=='DICOM-RT & DVH Analyzer':
         result = st.session_state.last_dvh
         present_result(result, 'dvh', 'dvh')
         with st.expander('TG-263 naming details'):
-            st.dataframe(result.get('nomenclature', {}).get('structures', []), use_container_width=True)
+            st.dataframe(result.get('nomenclature', {}).get('structures', []), width='stretch')
         fig, ax = plt.subplots(figsize=(8,5))
         for name, entry in result['structures'].items():
             if entry.get('found'):

@@ -21,6 +21,10 @@ flowchart TD
     ErrorFeedback --> AgentCore
 ```
 
+## Patient-file verification
+
+Choose **Patient-file Verification** in the UI or run `python agent_main.py verify-case --root /authorized/case --case-id research-case-001`. The workflow checks supported DICOM identity/linkage, CT stack geometry, referenced-image completeness, pixels, basic contours and naming. It produces a prioritized report with follow-up actions, source hashes and research references. `POST /api/v1/cases/verify` exposes the same contract. Raw files remain unchanged; unknown documents are data, never instructions. See [checks, limitations, evidence and supporting datasets](docs/PATIENT_FILE_VERIFICATION.md).
+
 ## Physicist-facing assessments
 
 DVH, gamma, radiobiology, TOPAS and model-assessment views provide readable summaries, measurements with units, criteria, limitations and follow-up actions. Download Markdown reports, CSV metrics and technical JSON; TOPAS also exports its parameter file. Reports show unperformed checks explicitly and preserve incomplete/blocked outcomes. See the [workflow audit and verification boundaries](docs/PHYSICIST_WORKFLOW_AUDIT.md).

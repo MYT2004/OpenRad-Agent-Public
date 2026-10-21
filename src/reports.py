@@ -18,7 +18,36 @@ def build_report(result, kind):
     rows, actions, limitations = [], [], list(result.get('limitations', []))
     def row(measure, value, interpretation=''):
         rows.append({'Measure': measure, 'Result': str(value), 'Interpretation': interpretation})
-    if kind == 'dvh':
+    if kind == 'case_verification':
+        title = 'Patient-file intake verification'
+        status=result['status']
+        summaries={'BLOCKED':'File inconsistencies or unsupported associations block use of this case in the controlled analysis workflow.',
+                   'FLAGGED_FOR_REVIEW':'Intake checks found unresolved evidence or review requirements. Resolve the prioritized findings before relying on this case.',
+                   'READY_FOR_RESEARCH_ANALYSIS':'The implemented intake checks found no blocking or review findings. This is readiness for research analysis, not treatment approval.'}
+        summary=f"Case {result['case_id']}: {summaries[status]}"
+        row('Intake status',status)
+        row('Generated at (UTC)',result['generated_at_utc'])
+        row('Verification profile',result['profile'])
+        row('Verification fingerprint',result['verification_hash'][:16]+'…','Full SHA-256 digest is available in the technical JSON and audit record.')
+        row('Source files hashed',result['files_hashed'],'Source paths and patient identifiers are withheld from exported reports.')
+        row('Image/dose objects decoded',result['pixel_objects_decoded'],'Pixel checks can be disabled only with an explicit review outcome.')
+        row('DICOM objects by modality',str(result['counts']))
+        row('Dose courses inspected',len(result['dose_cases']))
+        for entry in result['ct_series']:
+            row(entry['series_id'],f"{entry['slices']} slices; {entry['status']}",
+                'Position-derived spacing: '+number(entry['regular_spacing_mm'],'mm')+'. Uniform spacing cannot prove complete acquisition coverage.')
+        for item in result['findings_summary']:
+            import json
+            details = item['message']
+            if item.get('example_observations'):
+                details += ' Observed examples: ' + json.dumps(item['example_observations'], ensure_ascii=False)
+            row(f"{item['severity']}: {item['code'].replace('_',' ')} ({item['count']})",details,item['follow_up_action'])
+        actions=list(dict.fromkeys(item['follow_up_action'] for item in result['findings'] if item['severity']!='INFO'))
+        if not actions:
+            actions=['Confirm this pseudonymous case against the authorized source-system inventory and intended treatment course.',
+                     'Proceed to the DVH/dose-assessment workflow with reviewed structures and an approved clinical protocol.']
+        limitations.append('Checks are informed by DICOM geometry/reference definitions and data-transfer QA literature; this report does not establish standards conformity.')
+    elif kind == 'dvh':
         title = 'Dose-volume assessment'
         found = sum(bool(v.get('found')) for v in result['structures'].values())
         total = len(result['structures'])
@@ -108,7 +137,7 @@ def build_report(result, kind):
                             'Caller-supplied evidence files are hashed, not scientifically certified.'])
     else:
         raise ValueError('Unknown report type')
-    return dict(title=title, summary=summary, metrics=rows, follow_up_actions=actions,
+    return dict(title=title, summary=summary, metrics=rows, follow_up_actions=actions, references=result.get('references', []),
                 limitations=list(dict.fromkeys([RESEARCH_SCOPE] + limitations)))
 
 
@@ -120,6 +149,8 @@ def markdown(report):
     lines.extend('| ' + ' | '.join(cell(row[key]) for key in ('Measure','Result','Interpretation')) + ' |' for row in report['metrics'])
     lines.extend(['', '## Follow-up actions', ''] + [f'{i}. {item}' for i,item in enumerate(report['follow_up_actions'],1)])
     lines.extend(['', '## Scope and limitations', ''] + [f'- {item}' for item in report['limitations']])
+    if report.get('references'):
+        lines.extend(['', '## References supporting check design', ''] + [f"- [{item['title']}]({item['url']})" for item in report['references']])
     return '\n'.join(lines) + '\n'
 
 
