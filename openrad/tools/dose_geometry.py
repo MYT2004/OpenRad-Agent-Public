@@ -9,6 +9,8 @@ def validate_axial_dose(ds):
         raise DICOMGeometryError("RTDOSE requires explicit dose units, scaling and spatial geometry.")
     if ds.Modality != "RTDOSE" or ds.DoseUnits != "GY" or ds.DoseType != "PHYSICAL":
         raise DICOMGeometryError("Only physical RTDOSE in Gy is supported.")
+    if str(getattr(ds, 'SpatialTransformOfDose', 'NONE')) != 'NONE':
+        raise DICOMGeometryError('Spatially transformed dose requires a separately verified registration workflow.')
     scaling = float(ds.DoseGridScaling)
     if not np.isfinite(scaling) or scaling <= 0:
         raise DICOMGeometryError("DoseGridScaling must be finite and positive.")

@@ -1,0 +1,355 @@
+{
+  "scope": "Selected-ROI export engineering controls, not independent clinical model qualification",
+  "raw_files_edited": false,
+  "cases": [
+    {
+      "case": "case-001",
+      "supported_baseline": true,
+      "controls": [
+        {
+          "control": "plan_frame",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_plan_reference",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_struct_reference",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "point_count",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_roi_association",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "orphan_roi_association",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "issuer_mismatch",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_structure_modality",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_structure_sop_class",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "file_meta_identity",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "transformed_dose",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "source_pixel_planes",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "explicit_slab",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "explicit_offset",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "negative_scaling",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "zero_scaling",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "relative_dose",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "frame_mismatch",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_plan_link",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "nonorthogonal_orientation",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_dose_planes",
+          "expected_refusal": true,
+          "refused": true
+        }
+      ],
+      "all_expected": true,
+      "selected_source_files_unchanged": true
+    },
+    {
+      "case": "case-002",
+      "supported_baseline": false,
+      "all_expected": false,
+      "reason": "No unambiguous linked course with a supported canonical ROI; qualification incomplete."
+    },
+    {
+      "case": "case-003",
+      "supported_baseline": true,
+      "controls": [
+        {
+          "control": "plan_frame",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_plan_reference",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_struct_reference",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "point_count",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_roi_association",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "orphan_roi_association",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "issuer_mismatch",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_structure_modality",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_structure_sop_class",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "file_meta_identity",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "transformed_dose",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "source_pixel_planes",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "explicit_slab",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "explicit_offset",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "negative_scaling",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "zero_scaling",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "relative_dose",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "frame_mismatch",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_plan_link",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "nonorthogonal_orientation",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_dose_planes",
+          "expected_refusal": true,
+          "refused": true
+        }
+      ],
+      "all_expected": true,
+      "selected_source_files_unchanged": true
+    },
+    {
+      "case": "case-004",
+      "supported_baseline": true,
+      "controls": [
+        {
+          "control": "plan_frame",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_plan_reference",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_struct_reference",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "point_count",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_roi_association",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "orphan_roi_association",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "issuer_mismatch",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_structure_modality",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_structure_sop_class",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "file_meta_identity",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "transformed_dose",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "source_pixel_planes",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "explicit_slab",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "explicit_offset",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "negative_scaling",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "zero_scaling",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "relative_dose",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "frame_mismatch",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "wrong_plan_link",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "nonorthogonal_orientation",
+          "expected_refusal": true,
+          "refused": true
+        },
+        {
+          "control": "duplicate_dose_planes",
+          "expected_refusal": true,
+          "refused": true
+        }
+      ],
+      "all_expected": true,
+      "selected_source_files_unchanged": true
+    }
+  ],
+  "all_expected": false,
+  "qualification_complete": false,
+  "all_executed_controls_expected": true,
+  "executed_controls": 63
+}

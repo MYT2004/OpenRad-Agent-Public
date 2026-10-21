@@ -16,3 +16,5 @@ The [22 October 2026 assessment](2026-10-22/assessment.json) binds the tested so
 The suite first reproduced 26 failing boundary regressions before the fixes; all tested cases pass after rectification. A cold Python 3.13 frontend test initially hit its implicit 3 second budget; its explicit 15 second startup budget now matches the other UI tests while preserving assertions. Deprecation warnings remain recorded; passing tests are not a zero-defect, clinical-usability or standards-conformity certificate.
 
 Only aggregate local-cohort counts and public phantom numerical outputs are published. Raw DICOM, private patient inventories, diagnostic paths/logs and credentials stay ignored/local. Full clinical qualification, shared authenticated durable deployment and current live Gemini/transport-runtime qualification remain unestablished. See the dispositions before relying on any result.
+
+Follow-up: [post-merge patient export audit](../post-merge/README.md) records the additional source-boundary checks and current cohort coverage limits.

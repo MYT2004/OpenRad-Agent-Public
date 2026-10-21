@@ -53,6 +53,7 @@ def build_report(result, kind):
         total = len(result['structures'])
         summary = f'{found} of {total} requested structures evaluated. ' + ('All requested curves are available.' if found == total else 'Assessment is incomplete; review blocked structures before interpreting the plan.')
         row('Dose–plan–structure linkage', 'Verified' if result.get('course_linkage_verified') else 'Unverified', 'UID association is not independent anatomical verification.')
+        row('Dose summation scope', result.get('dose_summation_type','UNKNOWN'), 'PLAN, FRACTION and BEAM describe different dose scopes. No course-dose or fractionation inference is made.')
         row('Maximum grid dose', number(result.get('max_dose_Gy'), 'Gy'), 'Maximum sampled grid value; no prescription or OAR limit inferred.')
         for name, item in result['structures'].items():
             if not item.get('found'):
