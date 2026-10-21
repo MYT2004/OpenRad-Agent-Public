@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-10-21T14:03:53Z",
+  "timestamp": "2026-10-21T15:21:34Z",
   "total_scenarios": 23,
   "passed": 23,
   "failed": 0,
-  "execution_seconds": 12.13,
+  "execution_seconds": 23.47,
   "results": [
     {
       "menu": "Patient-file Verification",
@@ -14,7 +14,16 @@
         "Status": "BLOCKED",
         "Total Findings": 223,
         "Prioritized Actions": 4,
-        "Human Summary": "Case HNSCC-01-0199__Clinical_Cohort_: File inconsistencies or unsupported associations block use of this case in the con...",
+        "Finding Codes": [
+          "roi_name_review",
+          "contour_integrity",
+          "contour_type_scope",
+          "burned_in_annotation",
+          "completeness_scope"
+        ],
+        "SHA-256 Fingerprint": "5d949569cd8473c2...",
+        "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
+        "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
       }
     },
@@ -27,7 +36,16 @@
         "Status": "BLOCKED",
         "Total Findings": 285,
         "Prioritized Actions": 6,
-        "Human Summary": "Case HNSCC-01-0019__Clinical_Cohort_: File inconsistencies or unsupported associations block use of this case in the con...",
+        "Finding Codes": [
+          "roi_name_review",
+          "completeness_scope",
+          "contour_integrity",
+          "roi_contours_absent",
+          "contour_type_scope"
+        ],
+        "SHA-256 Fingerprint": "a408808784388caf...",
+        "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
+        "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
       }
     },
@@ -40,7 +58,16 @@
         "Status": "BLOCKED",
         "Total Findings": 1186,
         "Prioritized Actions": 11,
-        "Human Summary": "Case HNSCC-01-0176__Clinical_Cohort_: File inconsistencies or unsupported associations block use of this case in the con...",
+        "Finding Codes": [
+          "duplicate_planes",
+          "roi_name_review",
+          "localizer_excluded",
+          "completeness_scope",
+          "frame_linkage"
+        ],
+        "SHA-256 Fingerprint": "91cc04acd0726073...",
+        "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
+        "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
       }
     },
@@ -53,7 +80,16 @@
         "Status": "FLAGGED_FOR_REVIEW",
         "Total Findings": 111,
         "Prioritized Actions": 5,
-        "Human Summary": "Case Eclipse_Prostate_Phantom__SlicerRT_: Intake checks found unresolved evidence or review requirements. Resolve the pr...",
+        "Finding Codes": [
+          "roi_name_review",
+          "plan_frame_absent",
+          "roi_contours_absent",
+          "burned_in_annotation",
+          "unsupported_modality"
+        ],
+        "SHA-256 Fingerprint": "f69aadb854744133...",
+        "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
+        "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
       }
     },
@@ -66,7 +102,16 @@
         "Status": "BLOCKED",
         "Total Findings": 34,
         "Prioritized Actions": 5,
-        "Human Summary": "Case Irregular_Spacing_Edge_Case__SlicerRT_: File inconsistencies or unsupported associations block use of this case in ...",
+        "Finding Codes": [
+          "uninspected_files",
+          "missing_rt_course",
+          "no_dicom",
+          "dicom_read",
+          "missing_ct"
+        ],
+        "SHA-256 Fingerprint": "63a401af3bc70ecd...",
+        "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
+        "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
       }
     },
@@ -79,7 +124,16 @@
         "Status": "FLAGGED_FOR_REVIEW",
         "Total Findings": 26,
         "Prioritized Actions": 6,
-        "Human Summary": "Case Tilted_Plane_Geometry_Edge_Case__SlicerRT_: Intake checks found unresolved evidence or review requirements. Resolve...",
+        "Finding Codes": [
+          "uninspected_files",
+          "roi_name_review",
+          "missing_rt_course",
+          "roi_contours_absent",
+          "contour_orientation_scope"
+        ],
+        "SHA-256 Fingerprint": "4b95cd9745f58ba0...",
+        "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
+        "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
       }
     },
@@ -143,6 +197,7 @@
         "Bladder Mean Dose": "45.870 Gy",
         "PTV D95%": "45.350 Gy",
         "Rectum Mean Dose": "39.050 Gy",
+        "Curve Monotonicity (dV/dD <= 0)": "VERIFIED (Physically strictly non-increasing)",
         "TG-263 Standardization": "0 standard, 16 review required",
         "Readability & Usefulness": "VERIFIED (Full cumulative curves + CSV/JSON/MD export ready)"
       }

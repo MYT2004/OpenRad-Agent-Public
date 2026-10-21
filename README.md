@@ -87,8 +87,8 @@ OpenRad Agent bridges safety-critical deterministic computing with modern tool-a
 
 ## 3. Verified Validation Milestones
 
-### 283 Automated Tests Passing
-The platform passes 283 automated unit, integration, and physics regression tests across all core capabilities:
+### 285 Automated Tests Passing
+The platform passes 285 automated unit, integration, and physics regression tests across all core capabilities:
 * **DICOM Intake & Spatial Geometry:** Slice spacing regularity, UID chain linkage, orthogonal direction cosines, and metadata de-identification.
 * **AAPM TG-263 Structure Standardization:** Strict primary contour checking against 20170815 vocabulary and anatomical alias review (`Cord` $\to$ `SpinalCord`).
 * **ICRU-83 Dosimetric Metrics:** Sub-millimeter DVH sampling: $D_{95}$ (95% target dose), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.
@@ -133,7 +133,7 @@ src/
   hooks.py                   Enforced post-tool-call physics guardrails
 openrad/                     Core medical physics and AAPM TG-263 nomenclature engine
 frontend/app.py              Streamlit interactive clinical QA & copilot dashboard
-validation/                  283 automated tests, benchmarks, physics audits, and evidence
+validation/                  285 automated tests, benchmarks, physics audits, and evidence
 skills/radiation_physics/    Medical physics mathematical formulations and workflow rules
 ```
 

@@ -112,3 +112,28 @@ def test_builtin_roi_aliases():
     assert BUILTIN_ROI_ALIASES['rt parotid'] == 'Parotid_R'
     assert BUILTIN_ROI_ALIASES['lt parotid'] == 'Parotid_L'
 
+
+def test_resolve_save_path_3_args_blocks_raw_writes():
+    from src.tools import resolve_save_path
+    with pytest.raises(PermissionError):
+        resolve_save_path('data/raw/test_patient/file.dcm', 'test_patient', 'test.dcm')
+    with pytest.raises(PermissionError):
+        resolve_save_path('safe_dir', 'test_patient', 'data/raw/target.dcm')
+
+
+def test_ensure_case_output_separation_enforces_permission_error(tmp_path):
+    from src.case_verification import ensure_case_output_separation
+    case_dir = tmp_path / "case"
+    case_dir.mkdir()
+    inside_dir = case_dir / "output"
+    inside_dir.mkdir()
+
+    # Rule 1: output inside case directory must raise PermissionError
+    with pytest.raises(PermissionError):
+        ensure_case_output_separation(case_dir, inside_dir)
+
+    # Rule 1: output targeting data/raw must raise PermissionError
+    with pytest.raises(PermissionError):
+        ensure_case_output_separation(case_dir, "data/raw/forbidden_out")
+
+

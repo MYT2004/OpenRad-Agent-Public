@@ -84,11 +84,20 @@ def _geometry(ds):
     return orient,position,spacing
 
 
+class CaseOutputSeparationError(PermissionError, ValueError):
+    """Raised when output path violates case separation or raw data immutability."""
+    pass
+
+
 def ensure_case_output_separation(root, output_dir):
-    source=Path(root).expanduser().resolve()
-    output=Path(output_dir).expanduser().resolve()
-    if source==output or source in output.parents:
-        raise ValueError('Session output must be outside the input case directory')
+    source = Path(root).expanduser().resolve()
+    output = Path(output_dir).expanduser().resolve()
+    norm_output = str(output).replace('\\', '/')
+    raw_patterns = ['/data/raw/', '/data/raw', 'data/raw/']
+    if any(pat in norm_output for pat in raw_patterns) or norm_output.endswith('/data/raw'):
+        raise CaseOutputSeparationError("Write operations into 'data/raw/' are strictly prohibited for data safety and immutability.")
+    if source == output or source in output.parents:
+        raise CaseOutputSeparationError('Session output must be outside the input case directory')
 
 
 def verify_patient_case(request: CaseVerificationRequest):
