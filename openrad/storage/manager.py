@@ -1,14 +1,17 @@
-# storage/manager.py
-import os
+"""Storage Manager for OpenRad Agent sessions, execution trajectories, and artifacts."""
+
 import json
+import os
 import time
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 
 class StorageManager:
+    """Manages session directories, execution trajectory logs, and visual/code artifacts
+
+    for the OpenRad Agent runtime.
     """
-    Manages session directories, execution trajectory logs, and visual/code artifacts
-    for the OpenRad Antigravity Agent runtime.
-    """
+
     def __init__(self, base_dir: str = "./storage/sessions"):
         self.base_dir = os.path.abspath(base_dir)
         os.makedirs(self.base_dir, exist_ok=True)
@@ -16,18 +19,22 @@ class StorageManager:
     def initialize_session(self, session_id: str) -> str:
         session_dir = self.get_session_dir(session_id)
         artifacts_dir = self.get_artifacts_dir(session_id)
-        
+
         os.makedirs(session_dir, exist_ok=True)
         os.makedirs(artifacts_dir, exist_ok=True)
 
         meta_file = os.path.join(session_dir, "metadata.json")
         if not os.path.exists(meta_file):
-            with open(meta_file, "w") as f:
-                json.dump({
-                    "session_id": session_id,
-                    "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                    "version": "1.0.0"
-                }, f, indent=2)
+            with open(meta_file, "w", encoding="utf-8") as f:
+                json.dump(
+                    {
+                        "session_id": session_id,
+                        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "version": "1.0.0",
+                    },
+                    f,
+                    indent=2,
+                )
 
         return session_dir
 
@@ -47,18 +54,20 @@ class StorageManager:
         history = []
         if os.path.exists(traj_file):
             try:
-                with open(traj_file, "r") as f:
+                with open(traj_file, "r", encoding="utf-8") as f:
                     history = json.load(f)
             except Exception:
                 history = []
 
-        history.append({
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "user_prompt": prompt,
-            "agent_response": response
-        })
+        history.append(
+            {
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "user_prompt": prompt,
+                "agent_response": response,
+            }
+        )
 
-        with open(traj_file, "w") as f:
+        with open(traj_file, "w", encoding="utf-8") as f:
             json.dump(history, f, indent=2)
 
         return traj_file
@@ -79,6 +88,6 @@ class StorageManager:
     def get_metadata(self, session_id: str) -> Dict[str, Any]:
         meta_file = os.path.join(self.get_session_dir(session_id), "metadata.json")
         if os.path.exists(meta_file):
-            with open(meta_file, "r") as f:
+            with open(meta_file, "r", encoding="utf-8") as f:
                 return json.load(f)
         return {}

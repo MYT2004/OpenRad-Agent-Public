@@ -7,14 +7,49 @@ description: >-
   model LKB NTCP or Poisson TCP radiobiology, or execute code in the stateful physics REPL.
 ---
 
-# OpenRad Radiotherapy & Medical Physics Skill
+# OpenRad Radiotherapy & Radiation Physics Playbook
 
-This skill extends Antigravity with specialized radiation oncology and medical physics capabilities using the `openrad` library.
+This skill defines domain-specific physical rules, mathematical formulas, unit guardrails, and executable procedures for radiation transport and medical physics calculations using the `openrad` framework.
 
-## Quick Reference Workflows
+---
+
+## 1. Fundamental Physical Constants & Guardrails
+
+| Domain Parameter | Standard Units / Range | Guardrail Enforcement Rule | Action on Violation |
+| :--- | :--- | :--- | :--- |
+| **Absorbed Dose** | Gray ($\text{Gy}$) | $D(\vec{r}) \ge 0\text{ Gy}$. Negative dose values are physically invalid. | Reject output; auto-prompt agent to re-check array calibration or background subtraction. |
+| **Beam Energy** | $0.01\text{ MeV} \le E \le 250\text{ MeV}$ | Enforce clinical bounds for photons ($\text{MV}$), electrons ($\text{MeV}$), and protons ($\text{MeV}$). | Abort Monte Carlo execution; inform agent of unphysical energy parameter. |
+| **Gamma Index** | $3\% / 3\text{ mm}$, $10\%$ cutoff | $0\% \le \text{Passing Rate} \le 100\%$. Voxels where $\gamma(\vec{r}) \le 1.0$ pass. | Check array alignment, origin shifts, and spatial registration dimensions. |
+| **DICOM Geometry** | Millimeters ($\text{mm}$) | $\Delta x, \Delta y, \Delta z > 0$ and slice orientation vectors are orthogonal. | Flag DICOM header discrepancy. |
+| **Radiobiology** | Probability $[0.0, 1.0]$ | $0.0 \le \text{NTCP}, \text{TCP} \le 1.0$, $TD_{50} > 0$, $m > 0$, $n > 0$. | Reject parameter set; flag biologically invalid exponent or normalizer. |
+
+---
+
+## 2. Mathematical Definitions & Clinical Criteria
+
+### Dose-Volume Metrics (ICRU 83)
+* **$D_{95\%}$**: Minimum absorbed dose delivered to at least 95% of the target volume (surrogate for minimum target dose).
+* **$D_{50\%}$**: Median absorbed dose delivered to the volume.
+* **$D_{2\%}$**: Near-maximum absorbed dose delivered to 2% of the volume.
+* **$V_{50\text{Gy}}$**: Volume receiving at least 50 Gy (or $V_{50\%}$ percentage of prescribed dose).
+* **Equivalent Uniform Dose (gEUD)**:
+  $$\text{gEUD} = \left( \sum_{i} v_i D_i^{1/n} \right)^n$$
+  where $v_i$ is the fractional voxel volume, $D_i$ is voxel dose, and $n$ is the organ-specific volume effect parameter.
+
+### Lyman-Kutcher-Burman (LKB) NTCP Model
+$$t = \frac{\text{gEUD} - TD_{50}}{m \cdot TD_{50}}$$
+$$\text{NTCP} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^t e^{-u^2/2} du = \frac{1}{2} \left[ 1 + \text{erf}\left( \frac{t}{\sqrt{2}} \right) \right]$$
+
+### Gamma Index Criteria (AAPM TG-218)
+$$\Gamma(\vec{r}_e, \vec{r}_r) = \sqrt{ \left(\frac{\|\vec{r}_e - \vec{r}_r\|}{\delta r}\right)^2 + \left(\frac{D_e(\vec{r}_e) - D_r(\vec{r}_r)}{\delta D}\right)^2 }$$
+$$\gamma(\vec{r}_e) = \min_{\vec{r}_r} \Gamma(\vec{r}_e, \vec{r}_r)$$
+Passing rate is the percentage of evaluated voxels (above low-dose threshold $10\% \times D_{\max}$) satisfying $\gamma \le 1.0$.
+
+---
+
+## 3. Quick Reference Python Workflows
 
 ### 1. DVH Analysis (ICRU 83 Plan Quality)
-To analyze structure doses from DICOM RTSTRUCT and RTDOSE:
 ```python
 from openrad.tools.dicom_tool import analyze_dvh
 
@@ -23,26 +58,22 @@ results = analyze_dvh(
     dicom_rtdose_path="data/raw/HNSCC-01-0199/10-26-2002-NA-RT SIMULATION-18560/1.000000-NA-67954/1-1.dcm",
     roi_names=["Cord", "Brainstem", "PTV 69.96 Gy"]
 )
-# Returns D95, D50, D2, V50, mean_dose_Gy, volume_cc, and dvh_curve points
 ```
 
 ### 2. Gamma Index QA (AAPM TG-218)
-To compare reference TPS dose against measured or Monte Carlo dose:
 ```python
 from openrad.tools.gamma_tool import evaluate_gamma_index
 
 qa_results = evaluate_gamma_index(
-    reference_dose_path=ref_dose_path_or_array,
-    evaluated_dose_path=eval_dose_path_or_array,
+    reference_dose_path=ref_dose_path,
+    evaluated_dose_path=eval_dose_path,
     dose_tolerance_percent=3.0,
     distance_tolerance_mm=3.0,
     dose_threshold_percent=10.0
 )
-# Returns passing_rate (%), average_gamma, max_gamma
 ```
 
 ### 3. TOPAS Monte Carlo Input Deck Generation
-To generate syntactically valid TOPAS (Geant4-based) simulation files:
 ```python
 from openrad.tools.topas_tool import generate_topas_deck
 
@@ -56,7 +87,6 @@ deck = generate_topas_deck(
 ```
 
 ### 4. Radiobiological Modeling (LKB NTCP & Poisson TCP)
-To calculate complication or tumor control probabilities from DVH curve points:
 ```python
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp
 
@@ -75,20 +105,11 @@ tcp_res = calculate_tcp_ntcp(
 )
 ```
 
-### 5. Stateful REPL & Visualization
-Execute dynamic scripts while preserving variables and capturing matplotlib plots:
+### 5. Stateful REPL & Plot Interception
 ```python
 from openrad.sandbox.repl import StatefulPythonREPL
 
 repl = StatefulPythonREPL(artifact_dir="artifacts")
 result = repl.execute("plt.plot([0, 10], [0, 50]); plt.title('Dose Profile')")
-# result.artifacts will contain the saved plot path
+# result.artifacts contains saved figure paths
 ```
-
-## Physics Guardrails Verification
-Always ensure outputs respect:
-- $D(\vec{r}) \ge 0\text{ Gy}$
-- $0.01\text{ MeV} \le E \le 250\text{ MeV}$
-- $0\% \le \text{Gamma Pass Rate} \le 100\%$
-- $0.0 \le \text{Probability} \le 1.0$
-- Orthogonal DICOM orientation cosines
