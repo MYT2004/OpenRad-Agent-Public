@@ -176,9 +176,11 @@ if mode == '🤖 Dynamic Agent Copilot':
 
     query_input = st.text_area("Clinical Directive / Medical Physics Query", value=default_text, height=90, key='copilot_query_text')
 
-    col_api, col_run = st.columns([3, 1])
+    col_api, col_model, col_run = st.columns([2.5, 1.5, 1])
     with col_api:
         gemini_api_key = st.text_input("Gemini API Key (Optional — leaves empty for offline grounded mode)", type="password", value=os.getenv("GEMINI_API_KEY", ""), key='copilot_gemini_key')
+    with col_model:
+        selected_model = st.selectbox("Model", ["gemini-3.1-pro-preview", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"], index=0, key='copilot_gemini_model')
     with col_run:
         st.write("")
         st.write("")
@@ -186,7 +188,7 @@ if mode == '🤖 Dynamic Agent Copilot':
 
     if run_copilot:
         with st.spinner("Executing dynamic reasoning loop, grounding deterministic tools, and verifying physical bounds..."):
-            res = run_dynamic_agent(query_input.strip(), api_key=gemini_api_key or None)
+            res = run_dynamic_agent(query_input.strip(), api_key=gemini_api_key or None, model=selected_model)
             st.session_state.copilot_result = res
 
     if 'copilot_result' in st.session_state:

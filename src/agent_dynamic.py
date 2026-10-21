@@ -402,7 +402,7 @@ def _offline_mock_execution(query: str) -> DynamicAgentResult:
     )
 
 
-def run_dynamic_agent(query: str, api_key: Optional[str] = None) -> DynamicAgentResult:
+def run_dynamic_agent(query: str, api_key: Optional[str] = None, model: Optional[str] = None) -> DynamicAgentResult:
     """Execute dynamic tool-augmented copilot query.
 
     Attempts Google GenAI (Gemini) Function Calling if an API key is available.
@@ -411,6 +411,7 @@ def run_dynamic_agent(query: str, api_key: Optional[str] = None) -> DynamicAgent
     Args:
         query: Clinical question, task instruction, or evaluation request.
         api_key: Optional Gemini API key (defaults to GEMINI_API_KEY env var).
+        model: Optional Gemini model name (defaults to GEMINI_MODEL or gemini-3.1-pro-preview).
     """
     key = api_key or os.getenv("GEMINI_API_KEY")
     if not key:
@@ -432,16 +433,37 @@ def run_dynamic_agent(query: str, api_key: Optional[str] = None) -> DynamicAgent
         artifacts: list[str] = []
         step_num = 1
 
-        # Use gemini-2.5-pro or gemini-2.0-flash
-        model_name = "gemini-2.5-pro"
         config = types.GenerateContentConfig(
             tools=tools,
             temperature=0.1,
             system_instruction=SYSTEM_PROMPT,
         )
 
-        chat = client.chats.create(model=model_name, config=config)
-        response = chat.send_message(query)
+        requested_model = model or os.getenv("GEMINI_MODEL") or "gemini-3.1-pro-preview"
+        candidates = [requested_model]
+        for fallback in ["gemini-3.1-pro-preview", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+            if fallback not in candidates:
+                candidates.append(fallback)
+
+        chat = None
+        response = None
+        last_error = None
+        for cand in candidates:
+            try:
+                chat = client.chats.create(model=cand, config=config)
+                response = chat.send_message(query)
+                break
+            except Exception as e:
+                last_error = e
+                err_str = str(e).lower()
+                if "404" in err_str or "not_found" in err_str or "not available" in err_str or "unknown model" in err_str:
+                    continue
+                raise
+
+        if response is None:
+            if last_error:
+                raise last_error
+            raise RuntimeError("No candidate Gemini model succeeded.")
 
         # Loop while model requests function calls
         max_turns = 6
