@@ -133,7 +133,7 @@ src/
   hooks.py                   Enforced post-tool-call physics guardrails
 openrad/                     Core medical physics and AAPM TG-263 nomenclature engine
 frontend/app.py              Streamlit interactive clinical QA & copilot dashboard
-validation/                  241 automated tests, benchmarks, physics audits, and evidence
+validation/                  283 automated tests, benchmarks, physics audits, and evidence
 skills/radiation_physics/    Medical physics mathematical formulations and workflow rules
 ```
 
