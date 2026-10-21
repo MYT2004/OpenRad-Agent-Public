@@ -91,8 +91,8 @@ OpenRad Agent bridges safety-critical deterministic computing with modern tool-a
 The platform passes 283 automated unit, integration, and physics regression tests across all core capabilities:
 * **DICOM Intake & Spatial Geometry:** Slice spacing regularity, UID chain linkage, orthogonal direction cosines, and metadata de-identification.
 * **AAPM TG-263 Structure Standardization:** Strict primary contour checking against 20170815 vocabulary and anatomical alias review (`Cord` $\to$ `SpinalCord`).
-* **ICRU-83 Dosimetric Metrics:** Sub-millimeter DVH sampling ($D_{95\%}$, $D_{50\%}$, $D_{2\%}$, $V_{50\text{Gy}}$, $\bar{D}$, $D_{\text{max}}$).
-* **AAPM TG-218 3D Gamma Index:** Global $3\%/2\text{ mm}$ (with $10\%$ low-dose threshold) and tight-margin $2\%/2\text{ mm}$ QA evaluation.
+* **ICRU-83 Dosimetric Metrics:** Sub-millimeter DVH sampling: $D_{95}$ (95% target dose), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.
+* **AAPM TG-218 3D Gamma Index:** Global 3% / 2 mm (with 10% low-dose threshold) and tight-margin 2% / 2 mm QA evaluation.
 * **TOPAS Parameter Validation:** Kinetic beam energies constrained to $0.01\text{ MeV} \le E \le 250\text{ MeV}$, particle transport definitions, and phantom geometry.
 * **Radiobiology:** LKB normal tissue complication probability and Poisson LQ tumor control probability bounds ($0.0 \le P \le 1.0$).
 
@@ -101,15 +101,15 @@ Evaluated on public SlicerRt reference datasets against Eclipse TPS (Varian) and
 
 | Structure | Metric | Eclipse TPS Reference | OpenRad (Ground Truth) | dicompyler-core | $\Delta$ (OpenRad vs Eclipse) | $\Delta$ (OpenRad vs dicompyler) | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Bladder** | Volume | $112.50\text{ cc}$ | $113.153\text{ cc}$ | $113.153\text{ cc}$ | $+0.653\text{ cc}$ ($+0.58\%$) | $< 0.0001\text{ cc}$ | **PASSED** |
-| | Mean Dose | $34.120\text{ Gy}$ | $34.082\text{ Gy}$ | $34.082\text{ Gy}$ | $-0.038\text{ Gy}$ ($-0.11\%$) | $< 0.001\text{ Gy}$ | **PASSED** |
-| | $D_{95\%}$ | $20.450\text{ Gy}$ | $20.399\text{ Gy}$ | $20.401\text{ Gy}$ | $-0.051\text{ Gy}$ ($-0.25\%$) | $-0.002\text{ Gy}$ | **PASSED** |
-| **PTV** | Volume | $82.40\text{ cc}$ | $82.894\text{ cc}$ | $82.894\text{ cc}$ | $+0.494\text{ cc}$ ($+0.60\%$) | $< 0.0001\text{ cc}$ | **PASSED** |
-| | Mean Dose | $50.110\text{ Gy}$ | $50.128\text{ Gy}$ | $50.128\text{ Gy}$ | $+0.018\text{ Gy}$ ($+0.04\%$) | $< 0.001\text{ Gy}$ | **PASSED** |
-| | $D_{95\%}$ | $48.220\text{ Gy}$ | $48.209\text{ Gy}$ | $48.209\text{ Gy}$ | $-0.011\text{ Gy}$ ($-0.02\%$) | $< 0.001\text{ Gy}$ | **PASSED** |
-| **Rectum** | Volume | $65.10\text{ cc}$ | $65.316\text{ cc}$ | $65.316\text{ cc}$ | $+0.216\text{ cc}$ ($+0.33\%$) | $< 0.0001\text{ cc}$ | **PASSED** |
-| | Mean Dose | $28.450\text{ Gy}$ | $28.354\text{ Gy}$ | $28.354\text{ Gy}$ | $-0.096\text{ Gy}$ ($-0.34\%$) | $< 0.001\text{ Gy}$ | **PASSED** |
-| | $D_{95\%}$ | $12.800\text{ Gy}$ | $12.428\text{ Gy}$ | $12.431\text{ Gy}$ | $-0.372\text{ Gy}$ ($-2.90\%$) | $-0.003\text{ Gy}$ | **PASSED** |
+| **Bladder** | Volume | 112.50 cc | 113.153 cc | 113.153 cc | +0.653 cc (+0.58%) | < 0.0001 cc | **PASSED** |
+| | Mean Dose | 34.120 Gy | 34.082 Gy | 34.082 Gy | -0.038 Gy (-0.11%) | < 0.001 Gy | **PASSED** |
+| | D95% ($D_{95}$) | 20.450 Gy | 20.399 Gy | 20.401 Gy | -0.051 Gy (-0.25%) | -0.002 Gy | **PASSED** |
+| **PTV** | Volume | 82.40 cc | 82.894 cc | 82.894 cc | +0.494 cc (+0.60%) | < 0.0001 cc | **PASSED** |
+| | Mean Dose | 50.110 Gy | 50.128 Gy | 50.128 Gy | +0.018 Gy (+0.04%) | < 0.001 Gy | **PASSED** |
+| | D95% ($D_{95}$) | 48.220 Gy | 48.209 Gy | 48.209 Gy | -0.011 Gy (-0.02%) | < 0.001 Gy | **PASSED** |
+| **Rectum** | Volume | 65.10 cc | 65.316 cc | 65.316 cc | +0.216 cc (+0.33%) | < 0.0001 cc | **PASSED** |
+| | Mean Dose | 28.450 Gy | 28.354 Gy | 28.354 Gy | -0.096 Gy (-0.34%) | < 0.001 Gy | **PASSED** |
+| | D95% ($D_{95}$) | 12.800 Gy | 12.428 Gy | 12.431 Gy | -0.372 Gy (-2.90%) | -0.003 Gy | **PASSED** |
 
 > **Key Finding:** OpenRad exhibits sub-microliter ($< 0.0004\text{ cc}$) and sub-milligray ($< 0.004\text{ Gy}$) mathematical agreement with `dicompyler-core`. Small differences relative to Eclipse TPS ($< 0.65\text{ cc}$ volume, $< 0.38\text{ Gy}$ dose) represent standard commercial voxelization and sub-slice interpolation variations.
 
@@ -161,7 +161,7 @@ Open `http://localhost:8501` to access:
 1. **🤖 Dynamic Agent Copilot:** Interactive Gemini function calling with tool-action log expander.
 2. **Patient-file Verification:** DICOM header and voxel integrity checking.
 3. **DICOM-RT & DVH Analyzer:** TG-263 contour review cards and ICRU-83 dose-volume curves.
-4. **Gamma Index QA:** AAPM TG-218 independent dose comparison ($3\%/2\text{ mm}$).
+4. **Gamma Index QA:** AAPM TG-218 independent dose comparison (3% / 2 mm).
 5. **TOPAS Deck Generator:** Validated water phantom and slab Monte Carlo decks.
 6. **Model Evaluation & Triage:** Multi-criteria automated dose prediction assessment.
 

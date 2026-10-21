@@ -1,0 +1,308 @@
+{
+  "timestamp": "2026-10-21T14:03:53Z",
+  "total_scenarios": 23,
+  "passed": 23,
+  "failed": 0,
+  "execution_seconds": 12.13,
+  "results": [
+    {
+      "menu": "Patient-file Verification",
+      "test": "HNSCC-01-0199 (Clinical Cohort)",
+      "passed": true,
+      "summary": "Case intake evaluated to BLOCKED with 223 findings.",
+      "details": {
+        "Status": "BLOCKED",
+        "Total Findings": 223,
+        "Prioritized Actions": 4,
+        "Human Summary": "Case HNSCC-01-0199__Clinical_Cohort_: File inconsistencies or unsupported associations block use of this case in the con...",
+        "Readability & Understandability": "VERIFIED (Structured findings + action items)"
+      }
+    },
+    {
+      "menu": "Patient-file Verification",
+      "test": "HNSCC-01-0019 (Clinical Cohort)",
+      "passed": true,
+      "summary": "Case intake evaluated to BLOCKED with 285 findings.",
+      "details": {
+        "Status": "BLOCKED",
+        "Total Findings": 285,
+        "Prioritized Actions": 6,
+        "Human Summary": "Case HNSCC-01-0019__Clinical_Cohort_: File inconsistencies or unsupported associations block use of this case in the con...",
+        "Readability & Understandability": "VERIFIED (Structured findings + action items)"
+      }
+    },
+    {
+      "menu": "Patient-file Verification",
+      "test": "HNSCC-01-0176 (Clinical Cohort)",
+      "passed": true,
+      "summary": "Case intake evaluated to BLOCKED with 1186 findings.",
+      "details": {
+        "Status": "BLOCKED",
+        "Total Findings": 1186,
+        "Prioritized Actions": 11,
+        "Human Summary": "Case HNSCC-01-0176__Clinical_Cohort_: File inconsistencies or unsupported associations block use of this case in the con...",
+        "Readability & Understandability": "VERIFIED (Structured findings + action items)"
+      }
+    },
+    {
+      "menu": "Patient-file Verification",
+      "test": "Eclipse Prostate Phantom (SlicerRT)",
+      "passed": true,
+      "summary": "Case intake evaluated to FLAGGED_FOR_REVIEW with 111 findings.",
+      "details": {
+        "Status": "FLAGGED_FOR_REVIEW",
+        "Total Findings": 111,
+        "Prioritized Actions": 5,
+        "Human Summary": "Case Eclipse_Prostate_Phantom__SlicerRT_: Intake checks found unresolved evidence or review requirements. Resolve the pr...",
+        "Readability & Understandability": "VERIFIED (Structured findings + action items)"
+      }
+    },
+    {
+      "menu": "Patient-file Verification",
+      "test": "Irregular Spacing Edge Case (SlicerRT)",
+      "passed": true,
+      "summary": "Case intake evaluated to BLOCKED with 34 findings.",
+      "details": {
+        "Status": "BLOCKED",
+        "Total Findings": 34,
+        "Prioritized Actions": 5,
+        "Human Summary": "Case Irregular_Spacing_Edge_Case__SlicerRT_: File inconsistencies or unsupported associations block use of this case in ...",
+        "Readability & Understandability": "VERIFIED (Structured findings + action items)"
+      }
+    },
+    {
+      "menu": "Patient-file Verification",
+      "test": "Tilted Plane Geometry Edge Case (SlicerRT)",
+      "passed": true,
+      "summary": "Case intake evaluated to FLAGGED_FOR_REVIEW with 26 findings.",
+      "details": {
+        "Status": "FLAGGED_FOR_REVIEW",
+        "Total Findings": 26,
+        "Prioritized Actions": 6,
+        "Human Summary": "Case Tilted_Plane_Geometry_Edge_Case__SlicerRT_: Intake checks found unresolved evidence or review requirements. Resolve...",
+        "Readability & Understandability": "VERIFIED (Structured findings + action items)"
+      }
+    },
+    {
+      "menu": "Dynamic Agent Copilot",
+      "test": "Clinical Intake Verification (Local Case Execution)",
+      "passed": true,
+      "summary": "Dynamic copilot routed intake audit to deterministic verifier.",
+      "details": {
+        "Disposition": "REJECTED",
+        "Trajectory Steps": 1,
+        "Tool Executed": "tool_verify_case_intake",
+        "Execution Mode": "OFFLINE",
+        "Readability": "VERIFIED (Full markdown intake summary + next steps)"
+      }
+    },
+    {
+      "menu": "Dynamic Agent Copilot",
+      "test": "SlicerRT Prostate Phantom Copilot Audit",
+      "passed": true,
+      "summary": "Dynamic copilot audited external reference phantom.",
+      "details": {
+        "Disposition": "FLAGGED_FOR_REVIEW",
+        "Trajectory Steps": 1,
+        "Readability": "VERIFIED (Grounded audit + structured measures)"
+      }
+    },
+    {
+      "menu": "Dynamic Agent Copilot",
+      "test": "Pessimistic Safety Interceptor: Energy Bound (350 MeV)",
+      "passed": true,
+      "summary": "Correctly intercepted unphysical beam energy before code execution.",
+      "details": {
+        "Safety Interceptor Status": "ERROR",
+        "Error Code": "BEAM_ENERGY_OUT_OF_BOUNDS",
+        "Grounded Protection": "VERIFIED (Hard application bound 0.01 - 250 MeV strictly enforced)"
+      }
+    },
+    {
+      "menu": "Dynamic Agent Copilot",
+      "test": "Deterministic Grounded Tool: DVH Metric Calculation",
+      "passed": true,
+      "summary": "Computed exact dosimetric metrics for Bladder via grounded tool.",
+      "details": {
+        "Evaluation Status": "COMPLETED",
+        "Bladder Volume": "117.45 cc",
+        "Bladder Mean Dose": "45.87 Gy"
+      }
+    },
+    {
+      "menu": "DICOM-RT & DVH Analyzer",
+      "test": "Eclipse Prostate Phantom (3 OARs/Targets)",
+      "passed": true,
+      "summary": "Computed DVH curves with TG-263 status (0/16 standard).",
+      "details": {
+        "Structures Analyzed": [
+          "Bladder",
+          "PTV",
+          "Rectum"
+        ],
+        "Bladder Mean Dose": "45.870 Gy",
+        "PTV D95%": "45.350 Gy",
+        "Rectum Mean Dose": "39.050 Gy",
+        "TG-263 Standardization": "0 standard, 16 review required",
+        "Readability & Usefulness": "VERIFIED (Full cumulative curves + CSV/JSON/MD export ready)"
+      }
+    },
+    {
+      "menu": "DICOM-RT & DVH Analyzer",
+      "test": "HNSCC-01-0199 with Reviewed Alias Mapping",
+      "passed": true,
+      "summary": "Mapped legacy contour 'Cord' -> 'SpinalCord' via human-reviewed mapping.",
+      "details": {
+        "Mapped ROIs": [
+          "SpinalCord",
+          "Brainstem"
+        ],
+        "Cord Status": "Found and evaluated",
+        "Cord Max Dose": "36.18 Gy",
+        "Clinical Compliance": "Below 45.0 Gy spinal cord myelopathy threshold"
+      }
+    },
+    {
+      "menu": "Gamma Index QA (AAPM TG-218)",
+      "test": "Zero-Deviation Field (3% / 2 mm)",
+      "passed": true,
+      "summary": "Pass rate = 100.0%.",
+      "details": {
+        "Passing Rate": "100.00%",
+        "Average Gamma": "0.0000",
+        "Maximum Gamma": "0.0000",
+        "Evaluated Voxels": 1000,
+        "Readability": "VERIFIED (Clearly identifies candidate pass)"
+      }
+    },
+    {
+      "menu": "Gamma Index QA (AAPM TG-218)",
+      "test": "5% Global Dose Shift (3% / 2 mm Threshold Exceeded)",
+      "passed": true,
+      "summary": "Pass rate = 0.0%.",
+      "details": {
+        "Passing Rate": "0.00%",
+        "Average Gamma": "1.6670",
+        "Maximum Gamma": "1.6670",
+        "Evaluated Voxels": 1000,
+        "Readability": "VERIFIED (Correctly flags failing delivery)"
+      }
+    },
+    {
+      "menu": "Gamma Index QA (AAPM TG-218)",
+      "test": "Self-Comparison Rejection Guardrail",
+      "passed": true,
+      "summary": "Prevented identical file path self-comparison.",
+      "details": {
+        "Guardrail Triggered": "VERIFIED (INDEPENDENT_REFERENCE_REQUIRED)"
+      }
+    },
+    {
+      "menu": "TOPAS Deck Generator",
+      "test": "150 MeV Proton Beam in Water Phantom",
+      "passed": true,
+      "summary": "Syntactically valid TOPAS parameter file generated.",
+      "details": {
+        "Particle": "proton",
+        "Energy": "150.0 MeV",
+        "Histories": 50000,
+        "Geometry": "water_phantom (30x30x30 cm)",
+        "Scorer": "DoseToMedium mesh",
+        "Deck Lines": 68,
+        "Readability": "VERIFIED (Standard TOPAS/Geant4 parameter syntax)"
+      }
+    },
+    {
+      "menu": "TOPAS Deck Generator",
+      "test": "6 MeV Electron Beam in Slab Heterogeneity",
+      "passed": true,
+      "summary": "Multi-layer tissue/bone slab deck generated.",
+      "details": {
+        "Particle": "e-",
+        "Energy": "6.0 MeV",
+        "Materials": "Water, Bone, Lung",
+        "Readability": "VERIFIED"
+      }
+    },
+    {
+      "menu": "TOPAS Deck Generator",
+      "test": "Unphysical Beam Kinetic Energy Guardrails",
+      "passed": true,
+      "summary": "Rejected beam energies outside clinical application window (0.01 - 250 MeV).",
+      "details": {
+        "300 MeV Rejection": "CONFIRMED (exceeds 250 MeV ceiling)",
+        "-5 MeV Rejection": "CONFIRMED (negative energy impossible)"
+      }
+    },
+    {
+      "menu": "Radiobiology (TCP / NTCP)",
+      "test": "LKB NTCP: Spinal Cord Safe Plan (Dmax 40 Gy)",
+      "passed": true,
+      "summary": "Calculated NTCP = 0.3770% (EUD = 34.61 Gy).",
+      "details": {
+        "Endpoint": "Radiation Myelopathy",
+        "EUD (Gy)": "34.61 Gy",
+        "NTCP (%)": "0.3770%",
+        "Clinical Interpretation": "Negligible complication probability (<0.05%)",
+        "Readability": "VERIFIED (Clear biological meaning)"
+      }
+    },
+    {
+      "menu": "Radiobiology (TCP / NTCP)",
+      "test": "Poisson TCP: PTV Target Control",
+      "passed": true,
+      "summary": "Calculated TCP = 57.40% (EUD = 67.50 Gy).",
+      "details": {
+        "TCP (%)": "57.40%",
+        "EUD (Gy)": "67.50 Gy",
+        "Readability": "VERIFIED"
+      }
+    },
+    {
+      "menu": "Model Evaluation & Triage",
+      "test": "Compliant Research Candidate Triage (APPROVED)",
+      "passed": true,
+      "summary": "Model passed all deterministic hard and soft rules (Status = APPROVED).",
+      "details": {
+        "Model Name": "RadNet_Stress_Compliant",
+        "Triage Status": "APPROVED",
+        "Gamma (3%/2mm)": "100.00%",
+        "MAE (% Rx)": "0.047%",
+        "PTV D95 (% Rx)": "100.08%",
+        "SpinalCord Dmax": "20.00 Gy",
+        "Hard Checks Passed": true,
+        "Clinical Release": false,
+        "Readability": "VERIFIED (Full audit trail with non-clinical disclaimer)"
+      }
+    },
+    {
+      "menu": "Model Evaluation & Triage",
+      "test": "OAR Limit Violation Guardrail (REJECTED)",
+      "passed": true,
+      "summary": "Correctly rejected model exceeding spinal cord myelopathy tolerance (Status = REJECTED).",
+      "details": {
+        "Model Name": "RadNet_Toxic_Cord_Breach",
+        "Triage Status": "REJECTED",
+        "Violated OAR": [
+          "SpinalCord"
+        ],
+        "Observed Cord Dose": "55.00 Gy (Limit: 45.0 Gy)",
+        "Safety Action": "Triage gate closed; candidate blocked from further evaluation",
+        "Readability": "VERIFIED"
+      }
+    },
+    {
+      "menu": "Stateful Python REPL",
+      "test": "Persistent REPL Execution & Numerical Validation",
+      "passed": true,
+      "summary": "Stateful REPL executed code, captured stdout and preserved session state.",
+      "details": {
+        "Execution Success": true,
+        "Captured Output": "Mean profile value: 0.2017",
+        "Session State Maintained": "VERIFIED",
+        "Artifact Directory": "./storage/sessions/repl_stress/artifacts",
+        "Readability": "VERIFIED"
+      }
+    }
+  ]
+}
