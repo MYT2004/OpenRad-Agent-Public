@@ -15,6 +15,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "matplotlib>=3.5.0",
     "python-dotenv>=1.0.0",
+    "shapely>=2.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -27,3 +28,8 @@ pythonpath = ["."]
 
 [tool.setuptools.package-data]
 openrad = ["data/*.json"]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.30", "pandas>=2.0", "pypdf>=3.0"]
+api = ["fastapi>=0.100", "uvicorn>=0.23"]
+test = ["pytest>=7.0", "httpx>=0.24"]

@@ -21,6 +21,7 @@ class DVHAnalysisInput(BaseModel):
     dicom_rtstruct_path: str = Field(description="Path to the DICOM RTSTRUCT file containing contour data.")
     dicom_rtdose_path: str = Field(description="Path to the DICOM RTDOSE file containing 3D dose grid.")
     roi_names: List[str] = Field(description="Exact source or TG-263 primary names to analyze.")
+    dicom_rtplan_path: Optional[str] = None
     reviewed_name_map: Optional[Dict[str, str]] = Field(default=None, description="Human-reviewed source ROI name to TG-263 primary/target name mapping. Never infer anatomy from names.")
 
 
@@ -29,6 +30,7 @@ def analyze_dvh(
     dicom_rtdose_path: str,
     roi_names: List[str],
     reviewed_name_map: Optional[Dict[str, str]] = None,
+    dicom_rtplan_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Parses DICOM-RT files and computes Dose Volume Histograms (DVH).
 
@@ -44,6 +46,16 @@ def analyze_dvh(
     ds_struct = pydicom.dcmread(dicom_rtstruct_path)
     ds_dose = pydicom.dcmread(dicom_rtdose_path)
 
+    linkage_verified = False
+    if getattr(ds_dose, 'ReferencedRTPlanSequence', None):
+        if not dicom_rtplan_path:
+            raise DICOMGeometryError("Referenced RTPLAN is required to verify dose/structure course linkage.")
+        plan = pydicom.dcmread(dicom_rtplan_path, stop_before_pixels=True)
+        dose_refs = {str(r.ReferencedSOPInstanceUID) for r in ds_dose.ReferencedRTPlanSequence}
+        struct_refs = {str(r.ReferencedSOPInstanceUID) for r in getattr(plan, 'ReferencedStructureSetSequence', [])}
+        if plan.Modality != 'RTPLAN' or dose_refs != {str(plan.SOPInstanceUID)} or struct_refs != {str(ds_struct.SOPInstanceUID)} or plan.PatientID != ds_dose.PatientID:
+            raise DICOMGeometryError("Dose, plan and structure references/patient identifiers do not match.")
+        linkage_verified = True
     from openrad.tools.dose_geometry import validate_axial_dose
     validate_axial_dose(ds_dose)
     frames = {str(roi.ReferencedFrameOfReferenceUID) for roi in ds_struct.StructureSetROISequence}
@@ -68,6 +80,8 @@ def analyze_dvh(
     # 2. Physics Validation: Dose Grid Integrity
     scaling = float(getattr(ds_dose, "DoseGridScaling", 1.0))
     raw_array = ds_dose.pixel_array.astype(float)
+    if raw_array.ndim != 3 or raw_array.shape[0] != len(ds_dose.GridFrameOffsetVector):
+        raise DICOMGeometryError("Dose pixel shape does not match frame geometry.")
     dose_grid = raw_array * scaling  # Shape: (Z, Y, X) in Gy
 
     PhysicsValidationEngine.validate_dose_grid(dose_grid, raise_on_fail=True)
@@ -100,8 +114,9 @@ def analyze_dvh(
 
     results: Dict[str, Any] = {
         "status": "research_only",
+        "course_linkage_verified": linkage_verified,
         "clinical_release": False,
-        "limitations": ["Voxel-center contour sampling; no commissioned contour topology or partial-volume model. No clinical uncertainty bound established."],
+        "limitations": ["Axial voxel-center sampling with contour-plane slab thickness and linear z dose interpolation. Keyhole contours, irregular planes and partial dose coverage are blocked. No clinical uncertainty bound established."],
         "dose_grid_shape": list(dose_grid.shape),
         "max_dose_Gy": float(np.max(dose_grid)),
         "voxel_volume_cc": float(voxel_volume_cc),
@@ -127,56 +142,18 @@ def analyze_dvh(
         actual_name = roi_lookup[matched_num]
         contour_item = roi_contours[matched_num]
 
-        # Extract doses inside ROI contours
-        roi_voxel_doses: List[float] = []
-
-        if hasattr(contour_item, "ContourSequence"):
-            for c_seq in contour_item.ContourSequence:
-                pts = np.array(c_seq.ContourData, dtype=float).reshape(-1, 3)
-                if pts.shape[0] < 3:
-                    continue
-
-                c_z = pts[0, 2]
-                z_idx = int(np.argmin(np.abs(z_coords - c_z)))
-                # Only process if contour slice is reasonably close to dose grid slice
-                if abs(z_coords[z_idx] - c_z) > max(abs(dz) * 1.5, 3.0):
-                    continue
-
-                min_x, max_x = float(pts[:, 0].min()), float(pts[:, 0].max())
-                min_y, max_y = float(pts[:, 1].min()), float(pts[:, 1].max())
-
-                j_min = max(0, int(np.floor((min_x - x0) / dx)))
-                j_max = min(dose_grid.shape[2] - 1, int(np.ceil((max_x - x0) / dx)))
-                i_min = max(0, int(np.floor((min_y - y0) / dy)))
-                i_max = min(dose_grid.shape[1] - 1, int(np.ceil((max_y - y0) / dy)))
-
-                if j_min > j_max or i_min > i_max:
-                    continue
-
-                grid_x = x0 + np.arange(j_min, j_max + 1) * dx
-                grid_y = y0 + np.arange(i_min, i_max + 1) * dy
-                gx, gy = np.meshgrid(grid_x, grid_y)
-                grid_pts = np.vstack([gx.ravel(), gy.ravel()]).T
-
-                path = Path(pts[:, :2])
-                mask = path.contains_points(grid_pts)
-                if mask.any():
-                    sub_grid = dose_grid[z_idx, i_min : i_max + 1, j_min : j_max + 1].ravel()
-                    roi_voxel_doses.extend(sub_grid[mask].tolist())
-
-        doses = np.array(roi_voxel_doses, dtype=float)
-        if len(doses) == 0:
+        from openrad.tools.contours import sample_contour_doses
+        try:
+            doses, roi_voxel_volume_cc, contour_thickness = sample_contour_doses(
+                contour_item, dose_grid, z_coords, x0, y0, dx, dy)
+        except (ValueError, AttributeError) as exc:
             results["structures"][target_name] = {
-                "found": True,
-                "structure_name": actual_name,
-                "voxel_count": 0,
-                "volume_cc": 0.0,
-                "warning": "No dose voxels intercepted within contour volume.",
-            }
+                "found": False, "structure_name": actual_name,
+                "nomenclature": entry, "error": str(exc)}
             continue
 
         # Compute standard DVH metrics: D95, D50, D2, V50, mean, min, max
-        total_vol_cc = float(len(doses) * voxel_volume_cc)
+        total_vol_cc = float(len(doses) * roi_voxel_volume_cc)
         d_mean = float(np.mean(doses))
         d_min = float(np.min(doses))
         d_max = float(np.max(doses))
@@ -190,7 +167,7 @@ def analyze_dvh(
         # V50: volume receiving at least 50 Gy
         v50_count = int(np.sum(doses >= 50.0))
         v50_percent = float(100.0 * v50_count / len(doses))
-        v50_cc = float(v50_count * voxel_volume_cc)
+        v50_cc = float(v50_count * roi_voxel_volume_cc)
 
         # Generate cumulative DVH curve bins (100 points)
         dose_bins = np.linspace(0.0, max(d_max * 1.05, 1.0), 101)
@@ -205,6 +182,8 @@ def analyze_dvh(
             "nomenclature": entry,
             "tg263_metrics": tg263_dvh_metrics(d95, d50, d2, v50_percent, v50_cc),
             "voxel_count": len(doses),
+            "contour_plane_thickness_mm": contour_thickness,
+            "sampling_volume_cc": roi_voxel_volume_cc,
             "volume_cc": round(total_vol_cc, 3),
             "mean_dose_Gy": round(d_mean, 2),
             "min_dose_Gy": round(d_min, 2),

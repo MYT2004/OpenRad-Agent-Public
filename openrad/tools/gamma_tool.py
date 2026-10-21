@@ -5,7 +5,7 @@ and evaluated dose distributions with physics validation guardrails.
 """
 
 import os
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pydicom
 from pydantic import BaseModel, Field
@@ -23,16 +23,25 @@ class GammaEvaluationInput(BaseModel):
     evaluated_dose_path: str = Field(description="Path to measured or Monte Carlo simulated 3D dose array.")
     dose_tolerance_percent: float = Field(default=3.0, description="Dose difference tolerance in percent (e.g., 3.0 for 3%).")
     distance_tolerance_mm: float = Field(default=2.0, description="Distance-to-agreement tolerance in mm (e.g., 3.0 mm).")
+    reference_spacing_mm: Optional[List[float]] = None
+    evaluated_spacing_mm: Optional[List[float]] = None
     dose_threshold_percent: float = Field(default=10.0, description="Low-dose cutoff threshold percentage.")
+
+
+def _array_coords(arr, spacing):
+    if spacing is None or len(spacing)!=arr.ndim or not np.isfinite(spacing).all() or any(v<=0 for v in spacing):
+        raise GammaEvaluationError('Non-DICOM dose requires explicit positive spacing_mm per array axis; units must be Gy.')
+    return tuple(np.arange(size,dtype=float)*step for size,step in zip(arr.shape,spacing))
 
 
 def _load_dose_and_coords(
     path_or_array: Union[str, np.ndarray],
+    spacing_mm: Optional[List[float]] = None,
 ) -> Tuple[np.ndarray, Tuple[np.ndarray, ...]]:
     """Loads dose distribution and spatial coordinates (in mm) from DICOM RTDOSE, NPY, or array."""
     if isinstance(path_or_array, np.ndarray):
         arr = path_or_array.astype(float)
-        coords = tuple(np.arange(s, dtype=float) for s in arr.shape)
+        coords = _array_coords(arr, spacing_mm)
         return arr, coords
 
     if not isinstance(path_or_array, str) or not os.path.exists(path_or_array):
@@ -66,7 +75,7 @@ def _load_dose_and_coords(
         loaded = np.load(path_or_array, allow_pickle=False)
         if isinstance(loaded, np.ndarray):
             arr = loaded.astype(float)
-            coords = tuple(np.arange(s, dtype=float) for s in arr.shape)
+            coords = _array_coords(arr, spacing_mm)
             return arr, coords
         elif isinstance(loaded, dict) or hasattr(loaded, "item"):
             data = loaded.item() if hasattr(loaded, "item") else loaded
@@ -75,13 +84,13 @@ def _load_dose_and_coords(
             return dose, coords
         else:
             arr = np.asarray(loaded, dtype=float)
-            coords = tuple(np.arange(s, dtype=float) for s in arr.shape)
+            coords = _array_coords(arr, spacing_mm)
             return arr, coords
     else:
         # Default text/csv or general loader fallback
         try:
             arr = np.loadtxt(path_or_array, delimiter=",").astype(float)
-            coords = tuple(np.arange(s, dtype=float) for s in arr.shape)
+            coords = _array_coords(arr, spacing_mm)
             return arr, coords
         except Exception as e:
             raise ValueError(f"Unsupported dose format for file '{path_or_array}': {e}")
@@ -93,6 +102,8 @@ def evaluate_gamma_index(
     dose_tolerance_percent: float = 3.0,
     distance_tolerance_mm: float = 2.0,
     dose_threshold_percent: float = 10.0,
+    reference_spacing_mm: Optional[List[float]] = None,
+    evaluated_spacing_mm: Optional[List[float]] = None,
 ) -> Dict[str, float]:
     """Computes 2D/3D Gamma Index passing rates between reference and evaluated dose distributions.
 
@@ -101,8 +112,13 @@ def evaluate_gamma_index(
     """
     if not np.isfinite([dose_tolerance_percent, distance_tolerance_mm, dose_threshold_percent]).all() or dose_tolerance_percent <= 0 or distance_tolerance_mm <= 0 or not 0 <= dose_threshold_percent <= 100:
         raise GammaEvaluationError("Gamma tolerances must be finite and positive; cutoff must be in [0,100].")
-    ref_dose, ref_coords = _load_dose_and_coords(reference_dose_path)
-    eval_dose, eval_coords = _load_dose_and_coords(evaluated_dose_path)
+    if all(isinstance(p,str) and p.lower().endswith(('.dcm','.dicom')) for p in (reference_dose_path,evaluated_dose_path)):
+        headers=[pydicom.dcmread(p,stop_before_pixels=True) for p in (reference_dose_path,evaluated_dose_path)]
+        for tag in ('PatientID','FrameOfReferenceUID'):
+            if not getattr(headers[0],tag,None) or getattr(headers[0],tag,None)!=getattr(headers[1],tag,None):
+                raise GammaEvaluationError('DICOM gamma inputs require matching explicit patient and frame identifiers.')
+    ref_dose, ref_coords = _load_dose_and_coords(reference_dose_path, reference_spacing_mm)
+    eval_dose, eval_coords = _load_dose_and_coords(evaluated_dose_path, evaluated_spacing_mm)
 
     if ref_dose.ndim not in (2, 3) or eval_dose.ndim != ref_dose.ndim:
         raise GammaEvaluationError("Dose arrays must have matching dimensionality (2D or 3D).")
@@ -161,7 +177,7 @@ def evaluate_gamma_index(
         "clinical_release": False,
         "method": "discrete_global_gamma",
         "criteria": {"dose_percent": dose_tolerance_percent, "distance_mm": distance_tolerance_mm, "cutoff_percent": dose_threshold_percent},
-        "limitations": ["No interpolation or measurement uncertainty model; not commissioned for clinical QA.", "Array/NPY/CSV inputs assume 1 mm spacing and Gy; DICOM supports canonical axial geometry only."],
+        "limitations": ["No interpolation or measurement uncertainty model; not commissioned for clinical QA.", "Array/NPY/CSV inputs require explicit mm spacing and assume Gy with zero origin; DICOM supports canonical axial geometry only."],
         "passing_rate": pass_rate,
         "average_gamma": round(avg_gamma, 3),
         "max_gamma": round(max_gamma, 3),

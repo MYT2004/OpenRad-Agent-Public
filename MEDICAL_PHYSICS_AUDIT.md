@@ -48,3 +48,7 @@ Sources were consulted for scope and selected requirements; the matrix is not an
 ## TG-263 follow-up
 
 See [implementation scope and provenance](docs/TG263.md). Added the official pinned vocabulary, collision detection, explicit reviewed aliases and unit-explicit metric outputs. This applies nomenclature checks within the documented scope; anatomy, complex naming forms and clinical commissioning still require review.
+
+## Local integration follow-up
+
+Local workflows now discover linked DICOM objects, verify course references, use contour rather than dose-grid slab thickness, interpolate z-dose and quarantine malformed contours. API mappings are forwarded and synthetic patient outputs have been removed. See docs/LOCAL_WORKFLOWS.md; dataset-specific evidence remains in ignored local reports. 86 automated tests plus real-data UI/API checks were performed. Prior DVH volume estimates should not be reused. Clinical release blockers remain open.

@@ -145,12 +145,13 @@ class OpenRadAgent:
                 error=f"Execution error: {str(e)}",
             )
 
-    def run(self, task: str, max_retries: int = 3) -> AgentExecutionResult:
+    def run(self, task: str, max_retries: int = 3, context: Optional[Dict[str, Any]] = None) -> AgentExecutionResult:
         """Main execution loop for user queries.
 
         Orchestrates task analysis, tool invocation, physics validation,
         and self-correction loops.
         """
+        context = context or {}
         tool_records: List[ToolExecutionRecord] = []
         artifacts: List[str] = []
         retries = 0
@@ -165,45 +166,10 @@ class OpenRadAgent:
 
         # 1. DVH Analysis Intent
         if any(w in task_lower for w in ["dvh", "dose volume", "rtstruct", "rtdose"]):
-            # Extract paths and ROIs from query if present, or use standard defaults
-            rtdose_match = re.search(r"([\w/\-\.]+\.dcm)", task)
-            dcm_files = re.findall(r"([\w/\-\.\\]+\.dcm)", task)
-            
-            # Check if user provided explicit files
-            rtstruct_path = None
-            rtdose_path = None
-            for f in dcm_files:
-                f_norm = f.replace("\\", "/")
-                if "struct" in f_norm.lower() or not rtdose_path:
-                    if "struct" in f_norm.lower():
-                        rtstruct_path = f_norm
-                    elif "dose" in f_norm.lower():
-                        rtdose_path = f_norm
-
-            # Default to real sample dataset in repo if not explicitly specified
-            if not rtstruct_path or not rtdose_path:
-                default_struct = "data/raw/HNSCC-01-0199/10-26-2002-NA-RT SIMULATION-18560/1.000000-NA-59395/1-1.dcm"
-                default_dose = "data/raw/HNSCC-01-0199/10-26-2002-NA-RT SIMULATION-18560/1.000000-NA-67954/1-1.dcm"
-                if os.path.exists(default_struct) and os.path.exists(default_dose):
-                    rtstruct_path = rtstruct_path or default_struct
-                    rtdose_path = rtdose_path or default_dose
-
-            # Parse ROI names from task
-            roi_names = []
-            for target in ["SpinalCord", "Brainstem", "PTV_High", "PTV", "Rectum", "Bladder", "Parotid_L", "Parotid_R"]:
-                if target.lower() in task_lower:
-                    roi_names.append(target)
-            if not roi_names:
-                roi_names = ["SpinalCord", "Brainstem", "PTV_High"]
-
-            record = self.dispatch_tool(
-                "analyze_dvh",
-                {
-                    "dicom_rtstruct_path": rtstruct_path,
-                    "dicom_rtdose_path": rtdose_path,
-                    "roi_names": roi_names,
-                },
-            )
+            args = context.get("dvh")
+            if not args:
+                return AgentExecutionResult(task=task, response="Select a linked dose/structure dataset, exact ROI names and reviewed mappings in the DVH workflow. No sample patient is substituted.", success=False)
+            record = self.dispatch_tool("analyze_dvh", args)
             tool_records.append(record)
 
             if record.physics_passed and record.output:
@@ -233,8 +199,9 @@ class OpenRadAgent:
                     response=response,
                     tool_records=tool_records,
                     artifacts=artifacts,
-                    success=True,
+                    success=all(v.get('found') and 'tg263_metrics' in v for v in res_dict.get('structures', {}).values()) and bool(res_dict.get('structures')),
                 )
+            return AgentExecutionResult(task=task, response=record.error or "DVH failed.", tool_records=tool_records, success=False)
 
         # 2. Gamma Index Evaluation Intent
         elif any(w in task_lower for w in ["gamma", "gamma index", "qa", "passing rate"]):
@@ -265,7 +232,7 @@ class OpenRadAgent:
                     break
 
             energy = 150.0
-            m_e = re.search(r"(\d+(\.\d+)?)\s*mev", task_lower)
+            m_e = re.search(r"([+-]?\d+(\.\d+)?)\s*mev", task_lower)
             if m_e:
                 energy = float(m_e.group(1))
 
@@ -275,7 +242,7 @@ class OpenRadAgent:
                 {
                     "particle_type": particle,
                     "energy_MeV": energy,
-                    "geometry_type": "water_phantom",
+                    "geometry_type": "ct_patient" if any(w in task_lower for w in ("ct_patient", "patient", "dicom")) else "water_phantom",
                     "phantom_dimensions_cm": [30.0, 30.0, 30.0],
                     "number_of_histories": 100000,
                 },
@@ -306,64 +273,20 @@ class OpenRadAgent:
                     success=True,
                 )
 
+            return AgentExecutionResult(task=task, response=record.error or "TOPAS generation failed.", tool_records=tool_records, success=False)
+
         # 4. Radiobiological Modeling Intent (TCP / NTCP)
         elif any(w in task_lower for w in ["ntcp", "tcp", "lkb", "radiobiology", "eud"]):
-            # LKB demo modeling
-            dvh_sample = {
-                "dose_bins_Gy": list(np.linspace(0, 70, 71)),
-                "volume_percent": list(np.maximum(0, 100 - (np.linspace(0, 70, 71) / 70.0) ** 2 * 100)),
-            }
-            record = self.dispatch_tool(
-                "calculate_tcp_ntcp",
-                {
-                    "dvh_data": dvh_sample,
-                    "model_type": "LKB",
-                    "parameters": {"TD50": 60.0, "m": 0.15, "n": 0.25},
-                },
-            )
-            tool_records.append(record)
+            args = context.get("radiobiology")
+            if not args:
+                return AgentExecutionResult(task=task, response="Provide an explicit DVH and model parameters in the radiobiology workflow. No synthetic patient results are substituted.", success=False)
+            record = self.dispatch_tool("calculate_tcp_ntcp", args)
+            return AgentExecutionResult(task=task, response=str(record.output) if record.physics_passed else record.error, tool_records=[record], success=record.physics_passed)
 
-            if record.physics_passed and record.output:
-                out = record.output
-                response = (
-                    f"### OpenRad Agent: Radiobiological Modeling Result\n"
-                    f"- **Model**: {out.get('model')}\n"
-                    f"- **Equivalent Uniform Dose (EUD)**: {out.get('EUD_Gy')} Gy\n"
-                    f"- **Normal Tissue Complication Probability (NTCP)**: {out.get('NTCP')}\n"
-                    f"- **Parameters**: TD50={out.get('TD50_Gy')} Gy, m={out.get('m_slope')}, n={out.get('n_volume_effect')}\n"
-                    f"- **Physics Guardrail Check**: Passed (0.0 <= NTCP <= 1.0)"
-                )
-                return AgentExecutionResult(
-                    task=task,
-                    response=response,
-                    tool_records=tool_records,
-                    artifacts=artifacts,
-                    success=True,
-                )
-
-        # 5. Default: Route to Stateful REPL Execution
-        repl_res = self.repl.execute(task)
-        record = ToolExecutionRecord(
-            tool_name="execute_python_repl",
-            arguments={"code": task},
-            output=repl_res.to_dict(),
-            physics_passed=repl_res.physics_validation.passed if repl_res.physics_validation else repl_res.success,
-            error=repl_res.error,
-        )
-        tool_records.append(record)
-        artifacts.extend(repl_res.artifacts)
-
-        return AgentExecutionResult(
-            task=task,
-            response=repl_res.stdout or repl_res.error or "Executed successfully.",
-            tool_records=tool_records,
-            artifacts=artifacts,
-            success=repl_res.success,
-            error=repl_res.error,
-        )
+        return AgentExecutionResult(task=task, response="Choose an explicit analysis workflow. Natural-language text and document contents are never executed as Python.", success=False)
 
     def _run_llm_loop(self, task: str, max_retries: int) -> AgentExecutionResult:
         """Runs multi-turn tool calling with LLM API client if provided."""
         # Stub for external LLM API client (OpenAI, Gemini, etc.)
         # Follows standard function calling schema with self-correction loop
-        return self.run(task)
+        return AgentExecutionResult(task=task, response="External LLM tool calling is not implemented. Use deterministic workflows.", success=False)

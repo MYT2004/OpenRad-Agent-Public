@@ -1,5 +1,6 @@
 """Storage Manager for OpenRad Agent sessions, execution trajectories, and artifacts."""
 
+import re
 import json
 import os
 import time
@@ -42,6 +43,8 @@ class StorageManager:
         return os.path.exists(self.get_session_dir(session_id))
 
     def get_session_dir(self, session_id: str) -> str:
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", session_id):
+            raise ValueError("Invalid session ID.")
         return os.path.join(self.base_dir, session_id)
 
     def get_artifacts_dir(self, session_id: str) -> str:

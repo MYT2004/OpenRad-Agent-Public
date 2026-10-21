@@ -8,5 +8,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install . pytest pypdf pandas
+      - run: pip install ".[app,api,test]"
       - run: python -m pytest tests -q

@@ -1,224 +1,166 @@
-"""Streamlit Interactive Application for OpenRad Agent."""
-
-import os
+"""Local research workflows; patient files are never executed or sent to an LLM."""
 import json
-import streamlit as st
+import os
+from pathlib import Path
 import matplotlib.pyplot as plt
-import numpy as np
-
+import streamlit as st
+from dotenv import load_dotenv
 from openrad.core.agent import OpenRadAgent
+from openrad.tools.dataset import discover_dataset
 from openrad.tools.dicom_tool import analyze_dvh
 from openrad.tools.gamma_tool import evaluate_gamma_index
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp
 from openrad.tools.topas_tool import generate_topas_deck
-from openrad.validation.physics_rules import PhysicsValidationEngine, BeamEnergyBoundsError
 
-st.set_page_config(page_title="OpenRad Agent | Autonomous Medical Physics AI", layout="wide")
-
-st.title("🏥 OpenRad Agent")
-st.warning("Research prototype: clinical validation and uncertainty margins are not established.")
-st.markdown("**Autonomous Medical Physics & Radiotherapy Intelligence Agent**")
-
-# Sidebar Controls
-st.sidebar.header("Agent Control Panel")
-agent_mode = st.sidebar.selectbox(
-    "Select Workflow",
-    [
-        "Interactive Agent Query",
-        "DICOM-RT & DVH Analyzer",
-        "Gamma Index QA (AAPM TG-218)",
-        "TOPAS Monte Carlo Deck Generator",
-        "Radiobiology (TCP / NTCP)",
-        "Stateful Python REPL Sandbox",
-    ],
-)
-
-# Patient Data Directory
-SAMPLE_STRUCT = "data/raw/HNSCC-01-0199/10-26-2002-NA-RT SIMULATION-18560/1.000000-NA-59395/1-1.dcm"
-SAMPLE_DOSE = "data/raw/HNSCC-01-0199/10-26-2002-NA-RT SIMULATION-18560/1.000000-NA-67954/1-1.dcm"
-
-if "agent" not in st.session_state:
+load_dotenv()
+st.set_page_config(page_title="OpenRad Agent", layout="wide")
+st.title("OpenRad Agent")
+st.warning("Research prototype. Clinical accuracy and uncertainty margins require independent commissioning. File contents are data, never instructions.")
+if 'agent' not in st.session_state:
     st.session_state.agent = OpenRadAgent()
+mode = st.sidebar.selectbox('Select Workflow', ['Interactive Agent Query', 'DICOM-RT & DVH Analyzer', 'Gamma Index QA (AAPM TG-218)', 'TOPAS Monte Carlo Deck Generator', 'Radiobiology (TCP / NTCP)', 'Stateful Python REPL Sandbox'])
+try:
+    configured = json.loads(os.getenv('OPENRAD_DATA_ROOTS') or '[]')
+    if not isinstance(configured, list) or not all(isinstance(p, str) for p in configured):
+        raise ValueError('OPENRAD_DATA_ROOTS must be a JSON list of paths.')
+except (ValueError, TypeError) as exc:
+    st.error(str(exc)); configured=[]
+roots_text = st.sidebar.text_area('Local data folders (one per line)', value='\n'.join(configured))
+if st.sidebar.button('Scan folders'):
+    scans=[]
+    for root in roots_text.splitlines():
+        if root.strip():
+            try:
+                scans.append(discover_dataset(root.strip()))
+            except (ValueError, OSError) as exc:
+                st.sidebar.error(str(exc))
+    st.session_state.scans=scans
+scans=st.session_state.get('scans', [])
+pairs=[]
+for scan in scans:
+    counts=scan['modality_counts']
+    st.sidebar.caption(f"{Path(scan['root']).name}: {counts.get('CT',0)} CT, {counts.get('RTDOSE',0)} dose")
+    for err in scan['scan_errors']:
+        st.sidebar.error(err['error'])
+    pairs.extend(scan['dose_cases'])
+selected=None
+if pairs:
+    chosen=st.sidebar.selectbox('Linked RTDOSE / RTPLAN / RTSTRUCT', range(len(pairs)), format_func=lambda i: f"{pairs[i]['dataset_name']}: {Path(pairs[i]['dose_path']).parent.name}" )
+    selected=pairs[chosen]
+    for blocker in selected['blockers']:
+        st.sidebar.error(blocker)
 
-# -----------------------------------------------------------------------------
-# Mode 1: Interactive Agent Query
-# -----------------------------------------------------------------------------
-if agent_mode == "Interactive Agent Query":
-    st.subheader("Autonomous Orchestration & Tool Routing")
-    st.info("Ask the agent clinical tasks, DVH queries, or Monte Carlo setups. Guardrails will validate output automatically.")
 
-    user_query = st.text_input(
-        "Enter clinical radiotherapy task:",
-        value="Calculate DVH metrics for Cord, Brainstem, and PTV 69.96 Gy",
-    )
+def dvh_inputs(prefix):
+    if selected is None:
+        st.info('Scan and select a dataset in the sidebar.')
+        return None
+    with st.expander('Source files and provenance'):
+        st.json({k: selected[k] for k in ('dose_path','plan_path','struct_path')})
+    if selected['blockers']:
+        st.error('Selected pair is blocked: ' + '; '.join(selected['blockers']))
+        return None
+    with st.expander('Structure naming review'):
+        st.dataframe([{'ROI': r['name'], 'TG-263':r['nomenclature']['status']} for r in selected['rois']])
+    options=[r['name'] for r in selected['rois']]
+    defaults=[n for n in options if n.casefold()=='brainstem']
+    names=st.multiselect('Exact source ROI names', options, default=defaults, key=prefix+'_names')
+    raw=st.text_area('Human-reviewed legacy ROI mapping (JSON)', value='{}', key=prefix+'_map', help='Example after anatomical review: {"Cord":"SpinalCord"}. Nothing is automatically renamed.')
+    try:
+        mappings=json.loads(raw)
+        if not isinstance(mappings, dict) or not all(isinstance(k,str) and isinstance(v,str) for k,v in mappings.items()):
+            raise ValueError('Mappings must be name-to-name JSON strings.')
+    except ValueError as exc:
+        st.error(str(exc));return None
+    return dict(dicom_rtstruct_path=selected['struct_path'],dicom_rtdose_path=selected['dose_path'],roi_names=names,reviewed_name_map=mappings,dicom_rtplan_path=selected['plan_path'])
 
-    if st.button("Execute Task"):
-        with st.spinner("Agent orchestrating tools and validating physics guardrails..."):
-            result = st.session_state.agent.run(user_query)
 
-            st.markdown(result.response)
+if mode=='Interactive Agent Query':
+    st.subheader('Deterministic agent')
+    query=st.text_input('Task', value='Calculate DVH metrics')
+    args=dvh_inputs('agent') if any(w in query.lower() for w in ('dvh','dose volume','rtstruct','rtdose')) else None
+    if st.button('Execute Task'):
+        result=st.session_state.agent.run(query, context={'dvh':args} if args and args['roi_names'] else {})
+        (st.success if result.success else st.error)(result.response)
+        for rec in result.tool_records:
+            if rec.error: st.error(rec.error)
+            if isinstance(rec.output,dict):st.json(rec.output)
 
-            if result.tool_records:
-                st.subheader("Subsystem Execution Trajectory")
-                for rec in result.tool_records:
-                    status_badge = "✅ Passed" if rec.physics_passed else "❌ Guardrail Violation"
-                    with st.expander(f"Tool: `{rec.tool_name}` - Physics: {status_badge}"):
-                        st.write("**Arguments:**", rec.arguments)
-                        if rec.error:
-                            st.error(rec.error)
-                        if rec.output:
-                            st.json(rec.output if isinstance(rec.output, dict) else str(rec.output)[:500])
-
-            if result.artifacts:
-                st.subheader("Generated Artifacts")
-                for art in result.artifacts:
-                    if art.endswith(".png"):
-                        st.image(art)
-                    elif art.endswith(".txt"):
-                        with open(art, "r") as f:
-                            st.code(f.read()[:1000], language="bash")
-
-# -----------------------------------------------------------------------------
-# Mode 2: DICOM-RT & DVH Analyzer
-# -----------------------------------------------------------------------------
-elif agent_mode == "DICOM-RT & DVH Analyzer":
-    st.subheader("Dose Volume Histogram (DVH) Analyzer (ICRU 83)")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        struct_file = st.text_input("RTSTRUCT Path:", value=SAMPLE_STRUCT)
-    with col2:
-        dose_file = st.text_input("RTDOSE Path:", value=SAMPLE_DOSE)
-
-    roi_text = st.text_area("Exact ROI names (one per line; TG-263 primary names preferred)", value="SpinalCord\nBrainstem\nPTV_High")
-    rois = [name for name in roi_text.splitlines() if name]
-    mapping_text = st.text_area("Human-reviewed legacy ROI mapping (JSON)", value="{}", help='Example after anatomical review: {"Cord": "SpinalCord"}. No automatic renaming occurs.')
-
-    if st.button("Compute DVH"):
-        if os.path.exists(struct_file) and os.path.exists(dose_file):
-            with st.spinner("Extracting contours, sampling 3D dose grid, and calculating DVH..."):
-                try:
-                    if not rois:
-                        raise ValueError("Select at least one ROI.")
-                    reviewed_map = json.loads(mapping_text)
-                    if not isinstance(reviewed_map, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in reviewed_map.items()):
-                        raise ValueError("Mapping must be a JSON object of source and canonical name strings.")
-                    dvh_res = analyze_dvh(struct_file, dose_file, rois, reviewed_name_map=reviewed_map)
-                except (ValueError, AttributeError) as exc:
-                    st.error(str(exc))
-                    st.stop()
-                st.json(dvh_res["nomenclature"])
-                for name, entry in dvh_res["structures"].items():
-                    if not entry.get("found"):
-                        st.error(f"{name}: {entry['error']}")
-                st.success(f"Processed 3D dose grid {dvh_res['dose_grid_shape']} | Max Dose: {dvh_res['max_dose_Gy']:.2f} Gy")
-
-                fig, ax = plt.subplots(figsize=(8, 5))
-                cols = st.columns(len(rois))
-
-                for idx, (r_name, s_data) in enumerate(dvh_res["structures"].items()):
-                    if s_data.get("found"):
-                        with cols[idx % len(cols)]:
-                            st.metric(f"{r_name} D95%[Gy]", f"{s_data.get('D95_Gy')} Gy")
-                            st.write(f"Volume: `{s_data.get('volume_cc')} cc`")
-                            st.write(f"Dmean: `{s_data.get('mean_dose_Gy')} Gy`")
-                            st.write(f"V50Gy[%]: `{s_data.get('V50_percent')}%`")
-
-                        curve = s_data.get("dvh_curve")
-                        if curve:
-                            ax.plot(curve["dose_bins_Gy"], curve["volume_percent"], label=r_name, lw=2.2)
-
-                ax.set_title("Dose Volume Histogram", fontsize=12, fontweight="bold")
-                ax.set_xlabel("Dose (Gy)")
-                ax.set_ylabel("Volume (%)")
-                ax.grid(True, linestyle="--", alpha=0.5)
-                ax.legend()
-                ax.set_xlim(0, max(dvh_res["max_dose_Gy"] * 1.05, 80))
-                ax.set_ylim(0, 105)
-                st.pyplot(fig)
-        else:
-            st.error("DICOM files not found at specified paths.")
-
-# -----------------------------------------------------------------------------
-# Mode 3: Gamma Index QA
-# -----------------------------------------------------------------------------
-elif agent_mode == "Gamma Index QA (AAPM TG-218)":
-    st.subheader("Gamma Index QA Evaluation")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        d_tol = st.number_input("Dose Tolerance (%)", value=3.0)
-    with c2:
-        dist_tol = st.number_input("Distance Tolerance (mm)", value=2.0)
-    with c3:
-        cut_tol = st.number_input("Low-dose Cutoff (%)", value=10.0)
-
-    if st.button("Evaluate Gamma Index"):
-        with st.spinner("Computing spatial distance-to-agreement and dose differences..."):
-            gamma_res = evaluate_gamma_index(
-                SAMPLE_DOSE,
-                SAMPLE_DOSE,
-                dose_tolerance_percent=d_tol,
-                distance_tolerance_mm=dist_tol,
-                dose_threshold_percent=cut_tol,
-            )
-            st.metric("Gamma Passing Rate", f"{gamma_res['passing_rate']}%")
-            st.write(f"Average Gamma: `{gamma_res['average_gamma']}` | Max Gamma: `{gamma_res['max_gamma']}`")
-            st.write(f"Evaluated Voxels: `{gamma_res['evaluated_voxels']}` / `{gamma_res['total_voxels']}`")
-
-# -----------------------------------------------------------------------------
-# Mode 4: TOPAS Monte Carlo Deck Generator
-# -----------------------------------------------------------------------------
-elif agent_mode == "TOPAS Monte Carlo Deck Generator":
-    st.subheader("TOPAS / Geant4 Parameter Deck Generator")
-    c1, c2 = st.columns(2)
-    with c1:
-        particle = st.selectbox("Particle Type", ["proton", "e-", "gamma", "neutron"])
-        energy = st.number_input("Beam Energy (MeV)", value=150.0, min_value=0.0, max_value=1000.0)
-    with c2:
-        geom = st.selectbox("Geometry", ["water_phantom", "slab_heterogeneity", "ct_patient"])
-        histories = st.number_input("Number of Histories", value=100000, step=50000)
-
-    if st.button("Generate TOPAS Deck"):
+elif mode=='DICOM-RT & DVH Analyzer':
+    st.subheader('DVH analysis with TG-263 naming checks')
+    args=dvh_inputs('dvh')
+    if st.button('Compute DVH', disabled=not args or not args['roi_names']):
         try:
-            deck = generate_topas_deck(particle, energy, geom, number_of_histories=histories)
-            st.success("Deck generated and passed clinical physics bounds (0.01 - 250 MeV)!")
-            st.code(deck, language="bash")
-        except BeamEnergyBoundsError as e:
-            st.error(f"Physics Guardrail Rejection: {e}")
+            result=analyze_dvh(**args)
+            with st.expander('Detailed TG-263 report'):
+                st.json(result['nomenclature'])
+            fig,ax=plt.subplots(figsize=(8,5));plotted=False
+            for name, entry in result['structures'].items():
+                if not entry.get('found'):
+                    st.error(f"{name}: {entry['error']}");continue
+                st.write(name)
+                st.dataframe([entry['tg263_metrics'] | {'Volume [cc]':entry['volume_cc'],'Contour spacing [mm]':entry['contour_plane_thickness_mm']}])
+                curve=entry['dvh_curve']; ax.plot(curve['dose_bins_Gy'],curve['volume_percent'],label=name);plotted=True
+            if plotted:
+                ax.set(xlabel='Dose (Gy)',ylabel='Volume (%)');ax.legend();st.pyplot(fig)
+                st.session_state.last_dvh=result
+            plt.close(fig)
+            st.info('; '.join(result['limitations']))
+        except (ValueError, OSError, AttributeError) as exc:
+            st.error(str(exc))
 
-# -----------------------------------------------------------------------------
-# Mode 5: Radiobiology
-# -----------------------------------------------------------------------------
-elif agent_mode == "Radiobiology (TCP / NTCP)":
-    st.subheader("Radiobiological Modeling (LKB NTCP & Poisson TCP)")
-    model = st.radio("Model Type", ["LKB", "Poisson_LQ"])
-    if model == "LKB":
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            td50 = st.number_input("TD50 (Gy)", value=65.0)
-        with c2:
-            m = st.number_input("Slope (m)", value=0.175)
-        with c3:
-            n = st.number_input("Volume effect (n)", value=0.05)
+elif mode=='Gamma Index QA (AAPM TG-218)':
+    st.subheader('Independent dose comparison')
+    reference=st.text_input('Reference RTDOSE/NPY path', value=selected['dose_path'] if selected else '')
+    evaluated=st.text_input('Independent evaluated dose path', value='')
+    dt=st.number_input('Dose Tolerance (%)',value=3.,min_value=.01)
+    dr=st.number_input('Distance Tolerance (mm)',value=2.,min_value=.01)
+    cutoff=st.number_input('Low-dose Cutoff (%)',value=10.,min_value=0.,max_value=100.)
+    spacing=st.text_input('Non-DICOM spacing in mm, per array axis (JSON; dose must be Gy)',value='[]')
+    if st.button('Evaluate Gamma Index'):
+        try:
+            if not reference or not evaluated or Path(reference).resolve()==Path(evaluated).resolve():
+                raise ValueError('Provide two independent dose files; a self-comparison cannot verify patient QA.')
+            result=evaluate_gamma_index(reference,evaluated,dt,dr,cutoff,reference_spacing_mm=json.loads(spacing),evaluated_spacing_mm=json.loads(spacing))
+            st.json(result)
+        except (ValueError, OSError, AttributeError) as exc:
+            st.error(str(exc))
 
-        dummy_dvh = {"dose_bins_Gy": [0, 20, 40, 60], "volume_percent": [100, 90, 40, 0]}
-        res = calculate_tcp_ntcp(dummy_dvh, "LKB", {"TD50": td50, "m": m, "n": n})
-        st.write("Result:", res)
+elif mode=='TOPAS Monte Carlo Deck Generator':
+    st.subheader('Research TOPAS deck generator')
+    particle=st.selectbox('Particle Type',['proton','e-','gamma','neutron'])
+    energy=st.number_input('Beam Energy (MeV)',value=150.)
+    geom=st.selectbox('Geometry',['water_phantom','slab_heterogeneity'])
+    histories=st.number_input('Number of Histories',value=100000,min_value=1,step=10000)
+    st.info('Patient CT transport is unavailable. Generated decks require TOPAS runtime and beam-model verification.')
+    if st.button('Generate TOPAS Deck'):
+        try:st.code(generate_topas_deck(particle,energy,geom,number_of_histories=histories))
+        except ValueError as exc:st.error(str(exc))
 
-# -----------------------------------------------------------------------------
-# Mode 6: REPL Sandbox
-# -----------------------------------------------------------------------------
-elif agent_mode == "Stateful Python REPL Sandbox":
-    st.subheader("Stateful Python REPL Sandbox")
-    code = st.text_area("Write Python code to execute:", value="x = np.linspace(0, 10, 50)\nprint('Mean x:', np.mean(x))")
-    if st.button("Run Code"):
-        repl_res = st.session_state.agent.execute_code(code)
-        if repl_res["success"]:
-            st.success("Execution Successful")
-            if repl_res["stdout"]:
-                st.text(repl_res["stdout"])
-            if repl_res["artifacts"]:
-                for art in repl_res["artifacts"]:
-                    st.image(art)
-        else:
-            st.error(repl_res["error"])
+elif mode=='Radiobiology (TCP / NTCP)':
+    st.subheader('Research radiobiology from an explicit DVH')
+    model=st.radio('Model Type',['LKB','Poisson_LQ'])
+    previous=st.session_state.get('last_dvh',{}).get('structures',{})
+    valid={k:v for k,v in previous.items() if v.get('dvh_curve')}
+    curve={}
+    if valid:
+        source=st.selectbox('Analyzed ROI DVH',list(valid));curve=valid[source]['dvh_curve']
+    else:st.info('Compute a DVH first, or paste an explicit cumulative DVH below.')
+    raw=st.text_area('DVH JSON',value=json.dumps(curve))
+    histogram_type=st.selectbox('DVH type',['cumulative','differential'])
+    params=st.text_area('Model parameters JSON (endpoint-specific, with literature review required)',value='{}')
+    st.info('No default patient curve or clinical parameters are substituted. This model does not apply fractionation corrections.')
+    if st.button('Calculate TCP / NTCP'):
+        try:st.json(calculate_tcp_ntcp(json.loads(raw),model,json.loads(params),dvh_type=histogram_type))
+        except (ValueError,TypeError,KeyError) as exc:st.error(str(exc))
+
+else:
+    st.subheader('Trusted local Python REPL')
+    st.warning('This is unrestricted local Python, not a security sandbox. Never paste instructions or code from patient files.')
+    code=st.text_area('Python code',value="print('Local research REPL')")
+    trusted=st.checkbox('I reviewed and trust this code')
+    if st.button('Run Code',disabled=not trusted):
+        result=st.session_state.agent.execute_code(code)
+        (st.success if result['success'] else st.error)('Execution successful' if result['success'] else result['error'])
+        st.text(result['stdout'])
+        for artifact in result['artifacts']:st.image(artifact)

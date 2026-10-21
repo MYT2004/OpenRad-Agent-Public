@@ -32,7 +32,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:8501", "http://127.0.0.1:8501"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,6 +55,7 @@ agent_instance = OpenRadAgent(artifact_dir=STORAGE_BASE)
 class AgentRunRequest(BaseModel):
     prompt: str = Field(..., example="Calculate DVH metrics for Cord, Brainstem, and PTV 69.96 Gy")
     session_id: Optional[str] = Field(default=None, description="Optional existing session ID to resume trajectory.")
+    context: Optional[Dict[str, Any]] = None
     model: str = Field(default="gemini-3.5-pro", description="Model identifier.")
 
 
@@ -90,15 +91,19 @@ async def health_check():
 @app.post("/api/v1/agent/run", response_model=AgentRunResponse)
 async def run_agent(payload: AgentRunRequest):
     session_id = payload.session_id or str(uuid.uuid4())
-    storage_mgr.initialize_session(session_id)
+    try:
+        storage_mgr.initialize_session(session_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     try:
-        result = agent_instance.run(payload.prompt)
+        session_agent = OpenRadAgent(artifact_dir=storage_mgr.get_artifacts_dir(session_id))
+        result = session_agent.run(payload.prompt, context=payload.context)
         storage_mgr.save_trajectory(session_id, payload.prompt, result.response)
         artifacts = storage_mgr.list_artifacts(session_id)
 
         # Include direct artifacts if any
-        all_artifacts = list(set(artifacts + result.artifacts))
+        all_artifacts = artifacts
 
         return AgentRunResponse(
             session_id=session_id,
@@ -118,6 +123,8 @@ async def run_dvh(payload: DVHAnalysisInput):
             dicom_rtstruct_path=payload.dicom_rtstruct_path,
             dicom_rtdose_path=payload.dicom_rtdose_path,
             roi_names=payload.roi_names,
+            reviewed_name_map=payload.reviewed_name_map,
+            dicom_rtplan_path=payload.dicom_rtplan_path,
         )
         return results
     except Exception as e:
@@ -133,6 +140,8 @@ async def run_gamma(payload: GammaEvaluationInput):
             dose_tolerance_percent=payload.dose_tolerance_percent,
             distance_tolerance_mm=payload.distance_tolerance_mm,
             dose_threshold_percent=payload.dose_threshold_percent,
+            reference_spacing_mm=payload.reference_spacing_mm,
+            evaluated_spacing_mm=payload.evaluated_spacing_mm,
         )
         return results
     except Exception as e:
@@ -163,6 +172,7 @@ async def run_radiobio(payload: RadiobiologyInput):
             dvh_data=payload.dvh_data,
             model_type=payload.model_type,
             parameters=payload.parameters,
+            dvh_type=payload.dvh_type,
         )
         return results
     except Exception as e:
@@ -171,7 +181,11 @@ async def run_radiobio(payload: RadiobiologyInput):
 
 @app.get("/api/v1/sessions/{session_id}", response_model=SessionStatusResponse)
 async def get_session(session_id: str):
-    if not storage_mgr.session_exists(session_id):
+    try:
+        exists = storage_mgr.session_exists(session_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    if not exists:
         raise HTTPException(status_code=404, detail="Session not found.")
 
     meta = storage_mgr.get_metadata(session_id)
@@ -188,4 +202,4 @@ async def get_session(session_id: str):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", "8000"))
-    uvicorn.run("server:app", host="0.0.0.0", port=port, reload=False)
+    uvicorn.run("server:app", host="127.0.0.1", port=port, reload=False)

@@ -8,7 +8,7 @@ import math
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 from pydantic import BaseModel, Field
-from scipy.special import erf
+from scipy.special import erf, logsumexp
 
 from openrad.validation.physics_rules import (
     PhysicsValidationEngine,
@@ -19,76 +19,56 @@ from openrad.validation.physics_rules import (
 class RadiobiologyInput(BaseModel):
     dvh_data: Dict[str, List[float]] = Field(description="Dose and volume bins extracted from DVH analysis.")
     model_type: str = Field(description="'LKB' (Lyman-Kutcher-Burman) or 'Poisson_LQ'.")
+    dvh_type: str = "cumulative"
     parameters: Dict[str, float] = Field(
         description="Model constants: e.g., {'TD50': 55.0, 'm': 0.15, 'n': 0.25, 'alpha_beta': 3.0}."
     )
 
 
-def _extract_diff_dvh(dvh_data: Dict[str, List[float]]) -> Tuple[np.ndarray, np.ndarray]:
-    """Converts cumulative or differential DVH dictionary into differential volume fractions and doses."""
-    # Find dose keys
-    dose_key = next((k for k in dvh_data if "dose" in k.lower()), None)
-    vol_key = next((k for k in dvh_data if "vol" in k.lower()), None)
+def _extract_diff_dvh(dvh_data, dvh_type="cumulative"):
+    """Explicit Gy/percent format; no guessing of histogram semantics."""
+    if not isinstance(dvh_data, dict) or 'dose_bins_Gy' not in dvh_data or 'volume_percent' not in dvh_data:
+        raise RadiobiologyBoundsError("DVH requires dose_bins_Gy and volume_percent arrays.")
+    doses=np.asarray(dvh_data['dose_bins_Gy'],dtype=float)
+    volumes=np.asarray(dvh_data['volume_percent'],dtype=float)
+    if doses.ndim!=1 or volumes.ndim!=1 or len(doses)!=len(volumes) or len(doses)<2:
+        raise RadiobiologyBoundsError("Matching one-dimensional DVH arrays of length >=2 are required.")
+    PhysicsValidationEngine.validate_dose_grid(doses,raise_on_fail=True)
+    if not np.isfinite(volumes).all() or (volumes<0).any() or (volumes>100).any() or volumes.sum()<=0 or (np.diff(doses)<=0).any():
+        raise RadiobiologyBoundsError("Ordered doses and finite nonnegative volume percentages are required.")
+    if dvh_type=='cumulative':
+        if doses[0]!=0 or not np.isclose(volumes[0],100,atol=1e-6) or volumes[-1]!=0 or (np.diff(volumes)>0).any():
+            raise RadiobiologyBoundsError("Cumulative DVH must start at 0 Gy/100%, decrease monotonically and end at zero volume.")
+        weights=-np.diff(volumes)
+        return .5*(doses[:-1]+doses[1:]),weights/weights.sum()
+    if dvh_type=='differential':
+        if not np.isclose(volumes.sum(),100,atol=1e-6):
+            raise RadiobiologyBoundsError("Differential volume percentages must sum to 100.")
+        return doses,volumes/volumes.sum()
+    raise RadiobiologyBoundsError("dvh_type must be cumulative or differential.")
 
-    if not dose_key or not vol_key:
-        keys = list(dvh_data.keys())
-        if len(keys) >= 2:
-            dose_key, vol_key = keys[0], keys[1]
-        else:
-            raise ValueError(f"DVH data dictionary must contain dose and volume lists. Got keys: {keys}")
 
-    doses = np.asarray(dvh_data[dose_key], dtype=float)
-    vols = np.asarray(dvh_data[vol_key], dtype=float)
-
-    if len(doses) != len(vols) or len(doses) < 2:
-        raise ValueError("Dose and volume arrays must have matching length >= 2.")
-
-    PhysicsValidationEngine.validate_dose_grid(doses, raise_on_fail=True)
-    if doses.ndim != 1 or vols.ndim != 1 or not np.isfinite(vols).all() or (vols < 0).any() or vols.sum() <= 0:
-        raise RadiobiologyBoundsError("DVH volumes must be finite, non-negative, one-dimensional and nonempty.")
-    if (np.diff(doses) <= 0).any():
-        raise RadiobiologyBoundsError("Dose bins must be strictly increasing.")
-    # Check if cumulative (monotonically decreasing or non-increasing volume)
-    is_cumulative = bool(vols[0] > vols[-1])
-
-    if is_cumulative:
-        if (np.diff(vols) > 0).any() or vols[-1] != 0:
-            raise RadiobiologyBoundsError("Cumulative DVH must decrease monotonically to zero; incomplete tails cannot be normalized.")
-        # Normalize volumes to percentages [0, 100]
-        max_v = float(np.max(vols))
-        if max_v > 1.0:
-            vol_pct = vols
-        else:
-            vol_pct = vols * 100.0
-
-        # Calculate differential volume fractions
-        diff_vol = np.abs(np.diff(vol_pct))
-        total_vol = np.sum(diff_vol)
-        if total_vol > 0:
-            fracs = diff_vol / total_vol
-        else:
-            fracs = np.ones(len(diff_vol)) / len(diff_vol)
-
-        # Midpoint doses
-        mid_doses = 0.5 * (doses[:-1] + doses[1:])
-        return mid_doses, fracs
-    else:
-        # Already differential
-        total_vol = float(np.sum(vols))
-        fracs = vols / total_vol if total_vol > 0 else np.ones(len(vols)) / len(vols)
-        return doses, fracs
+def _eud(doses,fracs,power):
+    mask=fracs>0
+    d,v=doses[mask],fracs[mask]
+    if power<0 and (d==0).any():
+        return 0.
+    positive=d>0
+    if not positive.any():return 0.
+    return float(np.exp(logsumexp(np.log(v[positive])+power*np.log(d[positive]))/power))
 
 
 def calculate_tcp_ntcp(
     dvh_data: Dict[str, List[float]],
     model_type: str,
     parameters: Dict[str, float],
+    dvh_type: str = "cumulative",
 ) -> Dict[str, float]:
     """Calculates Tumor Control Probability (TCP) or Normal Tissue Complication Probability (NTCP)
 
     using radiobiological parameters and equivalent uniform dose (EUD).
     """
-    mid_doses, fracs = _extract_diff_dvh(dvh_data)
+    mid_doses, fracs = _extract_diff_dvh(dvh_data, dvh_type)
     m_type = model_type.strip().upper()
 
     # Parameter lookup helper (case insensitive)
@@ -97,7 +77,7 @@ def calculate_tcp_ntcp(
     if not all(np.isfinite(v) for v in params_norm.values()):
         raise RadiobiologyBoundsError("Model parameters must be finite.")
 
-    if "LKB" in m_type or "LYMAN" in m_type:
+    if m_type in ("LKB", "LYMAN"):
         # Lyman-Kutcher-Burman (LKB) NTCP Model
         # Required: TD50 (or td50), m, n
         td50 = params_norm.get("td50") or params_norm.get("d50")
@@ -114,8 +94,7 @@ def calculate_tcp_ntcp(
 
         # Generalized EUD: EUD = (sum(v_i * D_i^(1/n)))^n
         inv_n = 1.0 / n
-        power_sum = float(np.sum(fracs * (mid_doses ** inv_n)))
-        eud = power_sum ** n
+        eud = _eud(mid_doses,fracs,inv_n)
 
         # Normalized variable t = (EUD - TD50) / (m * TD50)
         t = (eud - td50) / (m * td50)
@@ -126,27 +105,31 @@ def calculate_tcp_ntcp(
 
         res = {
             "model": "Lyman-Kutcher-Burman (LKB)",
-            "EUD_Gy": round(eud, 2),
-            "NTCP": round(ntcp, 4),
+            "EUD_Gy": eud,
+            "NTCP": ntcp,
             "t_score": round(t, 3),
             "TD50_Gy": td50,
             "m_slope": m,
             "n_volume_effect": n,
         }
 
+        if not np.isfinite(eud):
+            raise RadiobiologyBoundsError("EUD is nonfinite; review numerical conditioning.")
+        res.update(clinical_release=False, dvh_type=dvh_type, parameters_used=parameters,
+                   limitations=["No fractionation conversion, parameter uncertainty or clinical calibration."])
         PhysicsValidationEngine.validate_radiobiology(res, raise_on_fail=True)
         return res
 
-    elif "POISSON" in m_type or "LQ" in m_type or "TCP" in m_type:
+    elif m_type in ("POISSON_LQ", "POISSON_TCP"):
         # Poisson-LQ / Logistic TCP Model
         # Required: TCD50 (or TD50), gamma50 (or gamma_50)
-        tcd50 = params_norm.get("tcd50") or params_norm.get("td50") or params_norm.get("d50", 65.0)
-        gamma50 = params_norm.get("gamma50") or params_norm.get("gamma") or 2.0
+        tcd50 = params_norm.get("tcd50")
+        gamma50 = params_norm.get("gamma50")
         a_param = params_norm.get("a", -10.0)  # tumor volume effect exponent
 
-        if tcd50 <= 0:
+        if tcd50 is None or tcd50 <= 0:
             raise RadiobiologyBoundsError("TCP parameter 'TCD50' must be > 0 Gy.")
-        if gamma50 <= 0:
+        if gamma50 is None or gamma50 <= 0:
             raise RadiobiologyBoundsError("TCP slope parameter 'gamma_50' must be > 0.")
 
         if a_param >= 0:
@@ -154,8 +137,7 @@ def calculate_tcp_ntcp(
 
         # Generalized EUD for tumor
         # Cold spots dominate tumor control -> negative exponent
-        power_sum = float(np.sum(fracs * (np.maximum(mid_doses, 0.01) ** a_param)))
-        eud = power_sum ** (1.0 / a_param)
+        eud = _eud(mid_doses,fracs,a_param)
 
         # Poisson TCP form: TCP = (0.5) ** exp((2 * gamma50 / ln2) * (1 - EUD / TCD50))
         exponent = (2.0 * gamma50 / math.log(2.0)) * (1.0 - (eud / tcd50))
@@ -165,13 +147,17 @@ def calculate_tcp_ntcp(
         tcp = max(0.0, min(1.0, tcp))
 
         res = {
-            "model": "Poisson-LQ TCP",
-            "EUD_Gy": round(eud, 2),
-            "TCP": round(tcp, 4),
+            "model": "Poisson EUD TCP (no fractionation correction)",
+            "EUD_Gy": eud,
+            "TCP": tcp,
             "TCD50_Gy": tcd50,
             "gamma50": gamma50,
         }
 
+        if not np.isfinite(eud):
+            raise RadiobiologyBoundsError("EUD is nonfinite; review numerical conditioning.")
+        res.update(clinical_release=False, dvh_type=dvh_type, parameters_used=parameters,
+                   limitations=["No fractionation conversion, parameter uncertainty or clinical calibration."])
         PhysicsValidationEngine.validate_radiobiology(res, raise_on_fail=True)
         return res
 

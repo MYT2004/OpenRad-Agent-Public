@@ -18,3 +18,7 @@ data/raw/*
 # Ignore runtime generated outputs but keep the directory structure
 data/processed/*
 !data/processed/.gitkeep
+
+/storage/
+build/
+dist/

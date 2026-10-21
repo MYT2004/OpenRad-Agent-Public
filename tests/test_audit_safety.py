@@ -21,7 +21,7 @@ def test_gamma_bad_criteria(kwargs):
         evaluate_gamma_index(np.ones((2, 2)), np.ones((2, 2)), **kwargs)
 
 def test_gamma_analytic_constant_difference():
-    result = evaluate_gamma_index(np.full((2, 2), 100.), np.full((2, 2), 106.))
+    result = evaluate_gamma_index(np.full((2, 2), 100.), np.full((2, 2), 106.), reference_spacing_mm=[1,1], evaluated_spacing_mm=[1,1])
     assert result['passing_rate'] == 0
     assert result['average_gamma'] == 2
     assert result['clinical_release'] is False

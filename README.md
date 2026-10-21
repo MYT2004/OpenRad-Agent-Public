@@ -1,3 +1,5 @@
+See [local dataset workflows](docs/LOCAL_WORKFLOWS.md) for linked-data discovery, supported analyses and validation limits.
+
 # Clinical validation status
 
 Research prototype: clinical standards compliance and uncertainty margins are not established. See [TG-263 naming and metric implementation](docs/TG263.md) and the [medical physics audit](MEDICAL_PHYSICS_AUDIT.md) for mitigations, unsupported cases and release blockers.

@@ -153,6 +153,8 @@ def test_gamma_tool_in_memory():
         dose_tolerance_percent=3.0,
         distance_tolerance_mm=3.0,
         dose_threshold_percent=10.0,
+        reference_spacing_mm=[80/30,80/30],
+        evaluated_spacing_mm=[80/30,80/30],
     )
     assert res["passing_rate"] >= 95.0
     assert res["average_gamma"] < 1.0

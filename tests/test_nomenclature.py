@@ -87,7 +87,7 @@ def test_dvh_integration_preserves_source_and_blocks_unreviewed_alias(monkeypatc
     source_roi.ReferencedFrameOfReferenceUID = '1.2.3'
     struct = SimpleNamespace(PatientID='synthetic', StructureSetROISequence=[source_roi],
         ROIContourSequence=[SimpleNamespace(ReferencedROINumber=1,
-            ContourSequence=[SimpleNamespace(ContourData=[0,0,1,4,0,1,4,4,1,0,4,1])])])
+            ContourSequence=[SimpleNamespace(ContourGeometricType="CLOSED_PLANAR", ContourData=[0,0,z,4,0,z,4,4,z,0,4,z]) for z in (0,1)])])
     monkeypatch.setattr('openrad.tools.dicom_tool.os.path.exists', lambda _: True)
     monkeypatch.setattr('openrad.tools.dicom_tool.pydicom.dcmread', lambda path: struct if path=='struct' else dose)
     blocked = analyze_dvh('struct', 'dose', ['Cord'])
