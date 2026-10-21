@@ -12,7 +12,7 @@ Outputs use the normal session artifact directory and restricted report download
 
 ## Reproducible synthetic demo
 
-No patient dataset is required to try the proof of concept. In the verification UI, choose **Create an explicitly synthetic demo case**, then verify it and continue into the DVH workflow. Artificial anatomy/dose is prominently labelled; it is never substituted silently for a selected patient case. The generated files use a new, isolated runtime directory and are not clinically complete DICOM IOD examples.
+No patient dataset is required to try the proof of concept. In the verification UI, choose **Create an explicitly synthetic demo case**, then verify it and continue into the DVH workflow. Artificial anatomy/dose is prominently labelled in intake and derived DVH reports/plots; mixed teaching-marker and unmarked DICOM sources are blocked; it is never substituted silently for a selected patient case. The generated files use a new, isolated runtime directory and are not clinically complete DICOM IOD examples.
 
 ```bash
 python agent_main.py demo-case --output data/processed/demo-inputs
@@ -44,7 +44,7 @@ The default budget is 10,000 files and 256 MiB per file; larger files require re
 
 ## Evidence and scope
 
-The full local suite passes 217 tests at this milestone. The intake-specific tests execute 36 checks/parameterized cases. Synthetic tests inject missing referenced end slices, irregular stacks, duplicate planes, wrong patient/issuer, dose/plan/structure frame mismatches, mismatched SOP metadata, missing/corrupted pixels, negative dose scaling, malformed contours and ROI ambiguity. Interface tests execute the UI, API, CLI and report downloads. Source hashes are compared before and after verification.
+The full local suite passes 218 tests at this milestone. The intake-specific tests execute 37 checks/parameterized cases. Synthetic tests inject missing referenced end slices, irregular stacks, duplicate planes, wrong patient/issuer, dose/plan/structure frame mismatches, mismatched SOP metadata, missing/corrupted pixels, negative dose scaling, malformed contours and ROI ambiguity. Interface tests execute the UI, API, CLI and report downloads. Source hashes are compared before and after verification.
 
 Local integration on three authorized folders decoded 1,301 CT/dose objects and hashed 1,318 source files without changing their contents. Two folders required naming/privacy/spacing review; the other was blocked by frame, source-image association/completeness and duplicate-plane findings. These selected folders are not representative of all international vendors, sites, modalities or practices. Detailed patient-derived results remain local and ignored by Git.
 

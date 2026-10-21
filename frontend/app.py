@@ -247,7 +247,7 @@ elif mode=='DICOM-RT & DVH Analyzer':
             if entry.get('found'):
                 curve=entry['dvh_curve']; ax.plot(curve['dose_bins_Gy'],curve['volume_percent'],label=name)
         if ax.lines:
-            ax.set(xlabel='Dose (Gy)', ylabel='Volume (%)', ylim=(0,105), title='Cumulative DVH — research assessment')
+            ax.set(xlabel='Dose (Gy)', ylabel='Volume (%)', ylim=(0,105), title='Synthetic teaching DVH — research only' if result.get('synthetic') else 'Cumulative DVH — research assessment')
             ax.legend(); st.pyplot(fig)
         plt.close(fig)
 

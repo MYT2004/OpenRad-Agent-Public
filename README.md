@@ -6,20 +6,17 @@ A deterministic research proof of concept for DICOM-RT dose-volume analysis and 
 
 ```mermaid
 flowchart TD
-    UserQuery["User Query / Clinical Task"] --> AgentCore["Orchestrator / Agent Core<br/>(LLM Reasoning & Strategy)"]
-    
-    AgentCore --> DeterministicTools["Deterministic Tools<br/>(Structured Schema API)"]
-    AgentCore --> PythonREPL["Stateful Python REPL<br/>(Dynamic Execution)"]
-    
-    DeterministicTools --> PhysicsEngine["Physics Validation Engine<br/>(Constraints & Boundary Checks)"]
-    PythonREPL --> PhysicsEngine
-    
-    PhysicsEngine --> PassFail{"Pass / Fail?"}
-    
-    PassFail -- Pass --> Artifacts["Output / Artifacts<br/>(DVH Plots, Audited Results)"]
-    PassFail -- "Fail: Self-Correction Loop" --> ErrorFeedback["Return Error + Trajectory<br/>Back to Agent Core"]
-    ErrorFeedback --> AgentCore
+    Interfaces["Streamlit / FastAPI / CLI"] --> Router["Deterministic workflow routing"]
+    Router --> Intake["Identity, source linkage, geometry,<br/>pixels and TG-263 naming review"]
+    Intake --> Tools["Supported dosimetry / model-comparison tools"]
+    Tools --> Policy["Numerical guards and explicit research policy"]
+    Policy --> Report["Research status, measurements,<br/>limitations and follow-up actions"]
+    Intake --> Report
+    Report --> Artifacts["Markdown / CSV / JSON / plots<br/>Source hashes and audit records"]
+    Artifacts --> Review["Human review / signed research disposition"]
 ```
+
+The controlled assessment pathway is deterministic. Autonomous LLM orchestration is future work; the separate trusted-local REPL is not a security sandbox or a clinical approval route. See the [submission specification and evidence boundaries](docs/HACKATHON_SPECIFICATION.md).
 
 ## Patient-file verification
 

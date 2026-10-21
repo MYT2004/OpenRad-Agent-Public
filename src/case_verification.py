@@ -17,6 +17,7 @@ from openrad.tools.dose_geometry import validate_axial_dose
 from openrad.validation.nomenclature import build_roi_index, check_structure_name
 from src.governance import digest, append_record
 from src.storage import current_session
+from src.demo import has_synthetic_teaching_marker
 
 
 class CaseVerificationRequest(BaseModel):
@@ -157,7 +158,7 @@ def verify_patient_case(request: CaseVerificationRequest):
             if modality not in expected_classes:
                 finding('unsupported_modality','REVIEW',label,'DICOM object type is outside the supported conventional CT/RT workflow.',
                         'Use a validated modality-specific assessment. No unsupported object is treated as verified.')
-            record=dict(file_id=label,ds=ds,sha256=sha,modality=modality,pixel_state='not_checked')
+            record=dict(file_id=label,ds=ds,sha256=sha,modality=modality,pixel_state='not_checked',synthetic=has_synthetic_teaching_marker(ds))
             records[uid]=record
             if modality in ('CT','RTDOSE'):
                 try:
@@ -196,6 +197,11 @@ def verify_patient_case(request: CaseVerificationRequest):
     if not records:
         finding('no_dicom','BLOCK','case','No supported readable DICOM objects were found.',
                 'Select the patient-specific DICOM export directory; no sample patient is substituted.')
+    teaching_markers=[record['synthetic'] for record in records.values()]
+    synthetic=bool(teaching_markers) and all(teaching_markers)
+    if any(teaching_markers) and not synthetic:
+        finding('mixed_synthetic_provenance','BLOCK','case','Synthetic teaching markers disagree across the DICOM sources.',
+                'Separate teaching inputs from unmarked sources and verify provenance; do not combine them into a patient assessment.')
     identities={_identity(item['ds']) for item in records.values()}
     if request.case_id in {identity[0] for identity in identities}:
         raise ValueError('Use a case pseudonym different from the source patient identifier')
@@ -377,7 +383,7 @@ def verify_patient_case(request: CaseVerificationRequest):
         if len(group['example_scopes'])<5:group['example_scopes'].append(item['scope'])
         if item['observed'] is not None and len(group['example_observations'])<5:
             group['example_observations'].append({'scope':item['scope'],'observed':item['observed']})
-    result=dict(case_id=request.case_id,status=status,clinical_release=False,profile='case-intake-1',
+    result=dict(case_id=request.case_id,status=status,clinical_release=False,synthetic=synthetic,profile='case-intake-1',
                 counts=dict(counts),files_hashed=len(inventory),pixel_objects_decoded=pixel_checks,
                 check_pixels=request.check_pixels,ct_series=series_summaries,dose_cases=dose_cases,findings=findings,
                 source_inventory=inventory,references=REFERENCES,findings_summary=list(grouped.values()),

@@ -137,6 +137,10 @@ def build_report(result, kind):
                             'Caller-supplied evidence files are hashed, not scientifically certified.'])
     else:
         raise ValueError('Unknown report type')
+    if result.get('synthetic'):
+        summary='SYNTHETIC TEACHING DATA — '+summary
+        rows.insert(0, {'Measure':'Input provenance','Result':'Source marked as synthetic teaching data','Interpretation':'Artificial anatomy/dose; never interpret as a clinical patient assessment.'})
+        limitations.insert(0,'Synthetic markers disclose the source category; they do not certify provenance or relax any checks.')
     return dict(title=title, summary=summary, metrics=rows, follow_up_actions=actions, references=result.get('references', []),
                 limitations=list(dict.fromkeys([RESEARCH_SCOPE] + limitations)))
 

@@ -11,6 +11,12 @@ from pydicom.uid import CTImageStorage,RTDoseStorage,RTPlanStorage,RTStructureSe
 from src.readonly import assert_output_path
 
 
+def has_synthetic_teaching_marker(dataset):
+    """Disclosure label only; never relaxes numerical checks or authorizes use."""
+    return (str(getattr(dataset,'PatientID',''))=='SYNTHETIC_TEACHING_ONLY' and
+            str(getattr(dataset,'StudyDescription',''))=='SYNTHETIC NONCLINICAL DEMO')
+
+
 def create_synthetic_case(output_dir, defect='none'):
     if defect not in ('none','missing_slice','wrong_frame','negative_dose_scaling'):
         raise ValueError('Unknown synthetic defect')

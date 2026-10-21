@@ -8,6 +8,7 @@ import pymedphys
 from src.hooks import post_tool_call, validate_tool_output
 from src.privacy import scrub_analysis_copies
 from src.storage import current_session
+from src.demo import has_synthetic_teaching_marker
 from openrad.tools.dicom_tool import analyze_dvh_datasets
 from openrad.tools.dose_geometry import validate_axial_dose
 from openrad.tools.topas_tool import generate_topas_deck
@@ -136,6 +137,10 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
         dose = pydicom.dcmread(rtdose_path)
         struct = pydicom.dcmread(rtstruct_path)
         plan = pydicom.dcmread(rtplan_path, stop_before_pixels=True) if rtplan_path else None
+        teaching_markers = [has_synthetic_teaching_marker(ds) for ds in [dose,struct] + ([plan] if plan is not None else [])]
+        if any(teaching_markers) and not all(teaching_markers):
+            raise ValueError('Synthetic teaching and unmarked sources must not be mixed')
+        synthetic = all(teaching_markers)
         dose, struct, plan, name_map = scrub_analysis_copies(dose, struct, plan, reviewed_name_map)
         validate_axial_dose(dose)
         # PyMedPhys supplies physical axes in mm and absorbed dose in Gy;
@@ -176,7 +181,7 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
     if not result['course_linkage_verified']:
         result['limitations'].append('RTPLAN not supplied; dose/structure course linkage is unverified.')
     manager, session_id = current_session()
-    result.update(session_id=session_id, artifacts=[], privacy={'profile':'minimal_in_memory_analysis_projection',
+    result.update(session_id=session_id, artifacts=[], synthetic=synthetic, privacy={'profile':'minimal_in_memory_analysis_projection',
         'source_files_modified':False,'original_identifiers_exported':False})
     curves = [(name, values['dvh_curve']) for name, values in result['structures'].items() if values.get('found')]
     if curves:
@@ -186,7 +191,7 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
         ax = figure.subplots()
         for name, curve in curves:
             ax.plot(curve['dose_bins_Gy'], curve['volume_percent'], label=name)
-        ax.set(xlabel='Dose (Gy)', ylabel='Volume (%)', title='Cumulative DVH — research analysis', ylim=(0, 105))
+        ax.set(xlabel='Dose (Gy)', ylabel='Volume (%)', title='Synthetic teaching DVH — research only' if synthetic else 'Cumulative DVH — research analysis', ylim=(0, 105))
         ax.legend(); ax.grid(alpha=.2)
         filename = 'dvh_' + uuid4().hex + '.png'
         output = Path(manager.get_artifacts_dir(session_id)) / filename

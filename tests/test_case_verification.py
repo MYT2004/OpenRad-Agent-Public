@@ -274,7 +274,8 @@ def test_explicit_synthetic_demo_exercises_real_checks(tmp_path,defect,expected_
         result=verify_patient_case(CaseVerificationRequest(root=demo['root'],case_id=demo['case_id']))
     assert result['status']==demo['expected_intake_state']
     assert expected_code in codes(result)
-    assert demo['synthetic'] and not result['clinical_release']
+    assert demo['synthetic'] and result['synthetic'] and not result['clinical_release']
+    assert result['human_report']['summary'].startswith('SYNTHETIC TEACHING DATA')
     with pytest.raises(FileExistsError):create_synthetic_case(demo['root'])
 
 
@@ -291,6 +292,8 @@ def test_frontend_explicit_demo_to_dvh(tmp_path,monkeypatch):
     next(button for button in app.button if button.label=='Continue to DVH and structure review').click().run()
     next(button for button in app.button if button.label=='Compute DVH').click().run()
     assert not app.exception and not app.error and app.session_state['last_dvh']['structures']['Brainstem']['found']
+    assert app.session_state['last_dvh']['synthetic']
+    assert app.session_state['last_dvh']['human_report']['summary'].startswith('SYNTHETIC TEACHING DATA')
 
 
 def test_all_suggested_aliases_use_pinned_canonical_names_without_target_priority():
@@ -300,3 +303,16 @@ def test_all_suggested_aliases_use_pinned_canonical_names_without_target_priorit
     for value in BUILTIN_ROI_ALIASES.values():
         verdict=check_structure_name(value)
         assert verdict['canonical_name']==value and verdict['status']=='official_primary'
+
+
+def test_synthetic_and_unmarked_sources_cannot_be_mixed(tmp_path):
+    from src.demo import create_synthetic_case
+    from src.tools import parse_and_evaluate_dvh
+    demo=create_synthetic_case(tmp_path/'generated')
+    root=Path(demo['root']);struct=pydicom.dcmread(root/'synthetic_struct.dcm')
+    struct.StudyDescription='Unmarked source';struct.save_as(root/'synthetic_struct.dcm')
+    with session_scope(StorageManager(str(tmp_path/'out'))):
+        result=verify_patient_case(CaseVerificationRequest(root=demo['root'],case_id=demo['case_id']))
+        assert result['status']=='BLOCKED' and 'mixed_synthetic_provenance' in codes(result)
+        with pytest.raises(ValueError):
+            parse_and_evaluate_dvh(str(root/'synthetic_dose.dcm'),str(root/'synthetic_struct.dcm'),['Brainstem'],rtplan_path=str(root/'synthetic_plan.dcm'))
