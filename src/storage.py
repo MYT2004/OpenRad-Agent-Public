@@ -7,6 +7,19 @@ import time
 from typing import Any, Dict, List, Optional
 
 
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
+import shutil
+from uuid import uuid4
+
+
+class CorruptedSessionError(ValueError, IOError):
+    """Raised when session data or trajectory log is unreadable or corrupted."""
+    pass
+
+
 class StorageManager:
     """Manages session directories, execution trajectory logs, and visual/code artifacts
 
@@ -59,29 +72,87 @@ class StorageManager:
         extra: Optional[Dict[str, Any]] = None,
     ) -> str:
         session_dir = self.get_session_dir(session_id)
+        os.makedirs(session_dir, exist_ok=True)
         traj_file = os.path.join(session_dir, "trajectory.json")
+        lock_file = os.path.join(session_dir, ".trajectory.lock")
 
-        history = []
-        if os.path.exists(traj_file):
+        # Serialized atomic append via file locking
+        with open(lock_file, "a", encoding="utf-8") as lock_f:
+            if fcntl:
+                fcntl.flock(lock_f, fcntl.LOCK_EX)
             try:
-                with open(traj_file, "r", encoding="utf-8") as f:
-                    history = json.load(f)
-            except Exception:
                 history = []
+                if os.path.exists(traj_file):
+                    with open(traj_file, "r", encoding="utf-8") as f:
+                        content = f.read()
+                    if content.strip():
+                        try:
+                            history = json.loads(content)
+                            if not isinstance(history, list):
+                                raise ValueError("Trajectory content is not a list")
+                        except Exception as exc:
+                            corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
+                            try:
+                                shutil.copy2(traj_file, corrupt_backup)
+                            except Exception:
+                                pass
+                            raise CorruptedSessionError(
+                                f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
+                            ) from exc
 
-        entry = {
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "user_prompt": prompt,
-            "agent_response": response,
-        }
-        if extra:
-            entry.update(extra)
-        history.append(entry)
+                entry = {
+                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "user_prompt": prompt,
+                    "agent_response": response,
+                }
+                if extra:
+                    entry.update(extra)
+                history.append(entry)
 
-        with open(traj_file, "w", encoding="utf-8") as f:
-            json.dump(history, f, indent=2)
+                # Atomic replacement in session dir ensures zero torn writes
+                tmp_file = os.path.join(session_dir, f".trajectory.{uuid4().hex}.tmp")
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    json.dump(history, f, indent=2)
+                    f.flush()
+                    os.fsync(f.fileno())
+                os.replace(tmp_file, traj_file)
+            finally:
+                if fcntl:
+                    fcntl.flock(lock_f, fcntl.LOCK_UN)
 
         return traj_file
+
+    def load_trajectory(self, session_id: str) -> List[Dict[str, Any]]:
+        session_dir = self.get_session_dir(session_id)
+        traj_file = os.path.join(session_dir, "trajectory.json")
+        if not os.path.exists(traj_file):
+            return []
+        lock_file = os.path.join(session_dir, ".trajectory.lock")
+        with open(lock_file, "a", encoding="utf-8") as lock_f:
+            if fcntl:
+                fcntl.flock(lock_f, fcntl.LOCK_SH)
+            try:
+                with open(traj_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                if not content.strip():
+                    return []
+                try:
+                    data = json.loads(content)
+                    if not isinstance(data, list):
+                        raise ValueError("Trajectory content is not a list")
+                    return data
+                except Exception as exc:
+                    corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
+                    try:
+                        shutil.copy2(traj_file, corrupt_backup)
+                    except Exception:
+                        pass
+                    raise CorruptedSessionError(
+                        f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
+                    ) from exc
+            finally:
+                if fcntl:
+                    fcntl.flock(lock_f, fcntl.LOCK_UN)
 
     def list_artifacts(self, session_id: str) -> List[str]:
         artifacts_dir = self.get_artifacts_dir(session_id)

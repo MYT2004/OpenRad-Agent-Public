@@ -45,7 +45,8 @@ def _load_dose_and_coords(
         return arr, coords
 
     if not isinstance(path_or_array, str) or not os.path.exists(path_or_array):
-        raise FileNotFoundError(f"Dose file not found at path: {path_or_array}")
+        clean_name = os.path.basename(str(path_or_array))
+        raise FileNotFoundError(f"Dose file not found: {clean_name}")
 
     lower_path = path_or_array.lower()
     if lower_path.endswith(".dcm") or lower_path.endswith(".dicom"):
@@ -87,13 +88,13 @@ def _load_dose_and_coords(
             coords = _array_coords(arr, spacing_mm)
             return arr, coords
     else:
-        # Default text/csv or general loader fallback
+        # Default text/csv or general loader fallback with sanitized exceptions
         try:
             arr = np.loadtxt(path_or_array, delimiter=",").astype(float)
             coords = _array_coords(arr, spacing_mm)
             return arr, coords
-        except Exception as e:
-            raise ValueError(f"Unsupported dose format for file '{path_or_array}': {e}")
+        except Exception:
+            raise GammaEvaluationError("Unsupported or malformed dose data: file could not be parsed as a numerical dose grid.")
 
 
 def evaluate_gamma_index(
@@ -112,6 +113,11 @@ def evaluate_gamma_index(
     """
     if not np.isfinite([dose_tolerance_percent, distance_tolerance_mm, dose_threshold_percent]).all() or dose_tolerance_percent <= 0 or distance_tolerance_mm <= 0 or not 0 <= dose_threshold_percent <= 100:
         raise GammaEvaluationError("Gamma tolerances must be finite and positive; cutoff must be in [0,100].")
+    if isinstance(reference_dose_path, str) and isinstance(evaluated_dose_path, str):
+        ref_resolved = os.path.abspath(os.path.expanduser(reference_dose_path))
+        eval_resolved = os.path.abspath(os.path.expanduser(evaluated_dose_path))
+        if ref_resolved == eval_resolved:
+            raise GammaEvaluationError("INDEPENDENT_REFERENCE_REQUIRED: Evaluation and reference dose distributions must be independent files; self-comparison cannot serve as QA verification.")
     if all(isinstance(p,str) and p.lower().endswith(('.dcm','.dicom')) for p in (reference_dose_path,evaluated_dose_path)):
         headers=[pydicom.dcmread(p,stop_before_pixels=True) for p in (reference_dose_path,evaluated_dose_path)]
         for tag in ('PatientID','FrameOfReferenceUID'):

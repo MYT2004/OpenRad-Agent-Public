@@ -74,12 +74,13 @@ def dvh_inputs(prefix):
         st.error('Selected pair is blocked: ' + '; '.join(selected['blockers']))
         return None
     with st.expander('Structure naming review (AAPM TG-263 Standards)'):
-        st.caption('Evaluates contour names against AAPM TG-263 standardized nomenclature. Legacy aliases require human confirmation.')
-        standard_count = sum(1 for r in selected['rois'] if r.get('nomenclature', {}).get('status') == 'standard')
-        review_count = len(selected['rois']) - standard_count
-        c1, c2 = st.columns(2)
-        c1.metric("TG-263 Standard Contours", f"{standard_count} Standard")
-        c2.metric("Review Required", f"{review_count} Review Required")
+        primary_count = sum(1 for r in selected['rois'] if r.get('nomenclature', {}).get('status') == 'official_primary')
+        pattern_count = sum(1 for r in selected['rois'] if r.get('nomenclature', {}).get('status') in ('target_pattern_checked', 'derived_pattern_checked'))
+        review_count = len(selected['rois']) - (primary_count + pattern_count)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Official Primary", f"{primary_count}")
+        c2.metric("Pattern Checked", f"{pattern_count}")
+        c3.metric("Review Required", f"{review_count}")
         st.dataframe([
             {
                 'ROI (Source)': r['name'],
@@ -341,11 +342,13 @@ elif mode=='Interactive Agent Query':
                     st.info(f"📋 **Nomenclature Review**: {nom.get('standard', 'AAPM TG-263')} (Catalog: {nom.get('vocabulary_version', '20170815')})")
                     structs = nom.get('structures', [])
                     if structs:
-                        std_c = sum(1 for s in structs if s.get('status') == 'standard')
-                        rev_c = len(structs) - std_c
-                        col_nom1, col_nom2 = st.columns(2)
-                        col_nom1.metric("TG-263 Standard", f"{std_c} Standard")
-                        col_nom2.metric("Review Required", f"{rev_c} Review Required")
+                        primary_c = sum(1 for s in structs if s.get('status') == 'official_primary')
+                        pattern_c = sum(1 for s in structs if s.get('status') in ('target_pattern_checked', 'derived_pattern_checked'))
+                        rev_c = len(structs) - (primary_c + pattern_c)
+                        col_nom1, col_nom2, col_nom3 = st.columns(3)
+                        col_nom1.metric("Official Primary", f"{primary_c}")
+                        col_nom2.metric("Pattern Checked", f"{pattern_c}")
+                        col_nom3.metric("Review Required", f"{rev_c}")
                         with st.expander('TG-263 Structure Mapping Details', expanded=False):
                             st.dataframe([
                                 {
@@ -384,11 +387,13 @@ elif mode=='DICOM-RT & DVH Analyzer':
         with st.expander('TG-263 naming details'):
             nom_structs = result.get('nomenclature', {}).get('structures', [])
             if nom_structs:
-                std_c = sum(1 for s in nom_structs if s.get('status') == 'standard')
-                rev_c = len(nom_structs) - std_c
-                c1, c2 = st.columns(2)
-                c1.metric("TG-263 Standard", f"{std_c} Standard")
-                c2.metric("Review Required", f"{rev_c} Review Required")
+                primary_c = sum(1 for s in nom_structs if s.get('status') == 'official_primary')
+                pattern_c = sum(1 for s in nom_structs if s.get('status') in ('target_pattern_checked', 'derived_pattern_checked'))
+                rev_c = len(nom_structs) - (primary_c + pattern_c)
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Official Primary", f"{primary_c}")
+                c2.metric("Pattern Checked", f"{pattern_c}")
+                c3.metric("Review Required", f"{rev_c}")
             st.dataframe(nom_structs, width='stretch')
         fig, ax = plt.subplots(figsize=(8,5))
         for name, entry in result['structures'].items():

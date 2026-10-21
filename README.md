@@ -1,6 +1,6 @@
 # OpenRad-Agent — OSI Hackathon 2026
 
-[![Tests: 283 Passed](https://img.shields.io/badge/pytest-283%20passed%20(100%25)-brightgreen.svg)](validation/)
+[![Tests: 289 Passed](https://img.shields.io/badge/pytest-289%20passed%20(100%25)-brightgreen.svg)](validation/)
 [![Physics Guardrails: Enforced](https://img.shields.io/badge/physics--guardrails-strictly%20enforced-blue.svg)](openrad/validation/physics_rules.py)
 [![Standards: TG--263%20%7C%20TG--218](https://img.shields.io/badge/standards-TG--263%20%7C%20TG--218-purple.svg)](openrad/validation/nomenclature.py)
 [![Scope: Research Only](https://img.shields.io/badge/scope-research%20use%20only-orange.svg)](validation/audits/medical_physics.md)
@@ -87,8 +87,8 @@ OpenRad Agent bridges safety-critical deterministic computing with modern tool-a
 
 ## 3. Verified Validation Milestones
 
-### 285 Automated Tests Passing
-The platform passes 285 automated unit, integration, and physics regression tests across all core capabilities:
+### 289 Automated Tests Passing
+The platform passes 289 automated unit, integration, and physics regression tests across all core capabilities:
 * **DICOM Intake & Spatial Geometry:** Slice spacing regularity, UID chain linkage, orthogonal direction cosines, and metadata de-identification.
 * **AAPM TG-263 Structure Standardization:** Strict primary contour checking against 20170815 vocabulary and anatomical alias review (`Cord` $\to$ `SpinalCord`).
 * **ICRU-83 Dosimetric Metrics:** Sub-millimeter DVH sampling: $D_{95}$ (95% target dose), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.

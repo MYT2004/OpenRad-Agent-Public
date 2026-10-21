@@ -12,7 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pathlib import Path
 import re
-from pydantic import BaseModel, Field, AliasChoices
+import math
+from pydantic import BaseModel, Field, AliasChoices, field_validator
 
 from openrad.core.agent import OpenRadAgent
 from src.storage import StorageManager, session_scope
@@ -27,7 +28,7 @@ from src.governance import signed_review, verify_records
 from openrad.tools.gamma_tool import evaluate_gamma_index, GammaEvaluationInput
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp, RadiobiologyInput
 from openrad.tools.topas_tool import generate_topas_deck, TOPASGeneratorInput
-from openrad.validation.physics_rules import PhysicsValidationEngine, BeamEnergyBoundsError
+from openrad.validation.physics_rules import PhysicsValidationEngine, BeamEnergyBoundsError, GammaEvaluationError, DoseIntegrityError
 
 # =====================================================================
 # Application Initialization & Setup
@@ -83,6 +84,19 @@ class TOPASRequest(BaseModel):
     energy_mev: float = Field(validation_alias=AliasChoices('energy_mev', 'energy_MeV'))
     histories: int = Field(default=100000, strict=True, gt=0, validation_alias=AliasChoices('histories','number_of_histories'))
     session_id: Optional[str] = None
+
+    @field_validator('energy_mev', mode='before')
+    @classmethod
+    def reject_boolean_energy(cls, v):
+        if isinstance(v, bool):
+            raise ValueError("energy_mev cannot be a boolean; explicit finite numeric value in MeV required.")
+        try:
+            val = float(v)
+        except (TypeError, ValueError):
+            raise ValueError("energy_mev must be a finite numeric value in MeV.")
+        if not math.isfinite(val):
+            raise ValueError("energy_mev must be finite.")
+        return val
 
 
 class SessionStatusResponse(BaseModel):
@@ -143,7 +157,8 @@ def run_dvh(payload: DVHRequest):
             return parse_and_evaluate_dvh(payload.rtdose_path, payload.rtstruct_path, payload.rois,
                 rtplan_path=payload.rtplan_path, reviewed_name_map=payload.reviewed_name_map)
     except (ValueError, OSError) as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        clean_msg = re.sub(r'(/[^:\s\'"\n]+/)', '[redacted_path]/', str(exc))
+        raise HTTPException(status_code=400, detail=clean_msg)
 
 
 @app.post("/api/v1/gamma/evaluate")
@@ -160,8 +175,11 @@ def run_gamma(payload: GammaEvaluationInput):
         )
         with session_scope(storage_mgr):
             return attach_report(results, 'gamma')
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except (GammaEvaluationError, DoseIntegrityError, ValueError, FileNotFoundError) as e:
+        clean_msg = re.sub(r'(/[^:\s\'"\n]+/)', '[redacted_path]/', str(e))
+        raise HTTPException(status_code=400, detail=clean_msg)
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal processing error during gamma evaluation.")
 
 
 @app.post("/api/v1/topas/generate")

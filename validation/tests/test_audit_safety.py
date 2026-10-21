@@ -137,3 +137,85 @@ def test_ensure_case_output_separation_enforces_permission_error(tmp_path):
         ensure_case_output_separation(case_dir, "data/raw/forbidden_out")
 
 
+def test_storage_trajectory_concurrency_and_corruption_quarantine(tmp_path):
+    import concurrent.futures
+    from src.storage import StorageManager, CorruptedSessionError
+    mgr = StorageManager(str(tmp_path / "sessions"))
+    session_id = "concurrent_test"
+    mgr.initialize_session(session_id)
+
+    # 1. Test concurrent writes preserve all entries
+    num_writes = 32
+    def write_worker(idx):
+        mgr.save_trajectory(session_id, f"prompt_{idx}", f"response_{idx}", {"worker": idx})
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        list(executor.map(write_worker, range(num_writes)))
+
+    history = mgr.load_trajectory(session_id)
+    assert len(history) == num_writes
+    assert len({h["user_prompt"] for h in history}) == num_writes
+
+    # 2. Test corruption quarantine: corrupt JSON must not be silently wiped
+    traj_file = tmp_path / "sessions" / session_id / "trajectory.json"
+    traj_file.write_text("{invalid_json_corrupted", encoding="utf-8")
+
+    with pytest.raises(CorruptedSessionError):
+        mgr.load_trajectory(session_id)
+
+    with pytest.raises(CorruptedSessionError):
+        mgr.save_trajectory(session_id, "new_prompt", "new_response")
+
+    # Confirm quarantine file exists
+    corrupt_files = list((tmp_path / "sessions" / session_id).glob("trajectory.json.corrupt.*"))
+    assert len(corrupt_files) >= 1
+
+
+def test_api_rejects_boolean_beam_energy(tmp_path, monkeypatch):
+    import server
+    from fastapi.testclient import TestClient
+    from src.storage import StorageManager
+    monkeypatch.setattr(server, 'storage_mgr', StorageManager(str(tmp_path / 'api')))
+    client = TestClient(server.app)
+
+    # Boolean energy must be rejected with HTTP 422
+    res_bool = client.post('/api/v1/topas/generate', json={'particle': 'proton', 'energy_mev': True, 'histories': 1000})
+    assert res_bool.status_code == 422
+    assert 'boolean' in res_bool.text.lower()
+
+    # Valid float energy must be accepted
+    res_valid = client.post('/api/v1/topas/generate', json={'particle': 'proton', 'energy_mev': 150.0, 'histories': 1000})
+    assert res_valid.status_code == 200
+
+
+def test_gamma_rejects_same_path_self_comparison(tmp_path):
+    from openrad.tools.gamma_tool import evaluate_gamma_index, GammaEvaluationError
+    dose_file = tmp_path / "dose.npy"
+    np.save(dose_file, np.ones((5, 5)))
+
+    with pytest.raises(GammaEvaluationError, match="INDEPENDENT_REFERENCE_REQUIRED"):
+        evaluate_gamma_index(str(dose_file), str(dose_file), reference_spacing_mm=[1,1], evaluated_spacing_mm=[1,1])
+
+
+def test_api_gamma_sanitizes_errors_and_redacts_paths(tmp_path, monkeypatch):
+    import server
+    from fastapi.testclient import TestClient
+    from src.storage import StorageManager
+    monkeypatch.setattr(server, 'storage_mgr', StorageManager(str(tmp_path / 'api')))
+    client = TestClient(server.app)
+
+    # Malformed file with internal text sentinel
+    bad_file = tmp_path / "secret_patient_data.csv"
+    bad_file.write_text("INTERNAL_SECRET_DIAGNOSTIC_DATA,123", encoding="utf-8")
+
+    response = client.post('/api/v1/gamma/evaluate', json={
+        'reference_dose_path': str(bad_file),
+        'evaluated_dose_path': str(bad_file),
+        'reference_spacing_mm': [1.0, 1.0],
+        'evaluated_spacing_mm': [1.0, 1.0],
+    })
+    assert response.status_code == 400
+    # Must NOT echo the file content or internal data
+    assert 'INTERNAL_SECRET_DIAGNOSTIC_DATA' not in response.text
+
+
