@@ -20,11 +20,18 @@ def main(argv=None):
     topas = sub.add_parser('topas')
     topas.add_argument('--particle',required=True); topas.add_argument('--energy-mev',type=float,required=True)
     topas.add_argument('--histories',type=int,required=True); topas.add_argument('--output')
+    evaluate = sub.add_parser('evaluate')
+    evaluate.add_argument('--manifest', required=True, help='JSON EvaluationRequest with read-only NPY paths')
     args = parser.parse_args(argv)
     try:
         manager = StorageManager(args.storage_dir)
         with session_scope(manager,args.session_id) as session_id:
-            if args.command == 'dvh':
+            if args.command == 'evaluate':
+                from src.decision import EvaluationRequest
+                from src.evaluation import evaluate_model
+                request = EvaluationRequest.model_validate_json(Path(args.manifest).read_text())
+                result = evaluate_model(request)
+            elif args.command == 'dvh':
                 result = parse_and_evaluate_dvh(args.rtdose,args.rtstruct,args.roi,
                     rtplan_path=args.rtplan,reviewed_name_map=args.roi_map)
             else:
@@ -32,6 +39,8 @@ def main(argv=None):
                 result = generate_topas_file(args.particle,args.energy_mev,args.histories,output)
                 result['session_id'] = session_id
             print(json.dumps(result, allow_nan=False))
+            if args.command == 'evaluate':
+                return {'APPROVED': 0, 'FLAGGED_FOR_REVIEW': 3, 'REJECTED': 2}[result['status']]
             return 0 if args.command != 'dvh' or all(r.get('found') for r in result['structures'].values()) else 2
     except (ValueError,OSError) as exc:
         print(json.dumps({'status':'failed','error':str(exc)}))

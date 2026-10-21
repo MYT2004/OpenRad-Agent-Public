@@ -8,6 +8,9 @@ A deterministic research proof of concept for DICOM-RT dose-volume analysis and 
 server.py                    FastAPI REST entry point for Cloud Run
 agent_main.py                CLI entry point
 src/
+  decision.py                Typed research triage contract and policy
+  evaluation.py              Read-only comparison, metrics and plots
+  governance.py              Hash chained audit and Ed25519 review
   tools.py                   Canonical DVH and TOPAS tools
   storage.py                 Session and artifact management
   hooks.py                   Enforced @post_tool_call validation
@@ -79,6 +82,10 @@ docker run --rm -p 8080:8080 -e PORT=8080 openrad-osi
 The image runs as a non-root user. `.dockerignore` and explicit Docker copies exclude patient datasets, secrets and runtime sessions. Cloud Run storage defaults to `/tmp/openrad/sessions` and is ephemeral. Mount authorized, appropriately de-identified input files separately; do not bake patient records into the image. Use Cloud Run IAM authentication before any network deployment with sensitive data. This refactor does not deploy a service or provision durable storage.
 
 Both entry points use `skills_paths = ["./skills/radiation_physics", "./SKILL.md"]`. Run from the repository root; the image uses `/app` as its working directory.
+
+## Model evaluation and signed review
+
+The CLI `evaluate --manifest evaluation.json`, REST `POST /api/v1/evaluations`, and frontend Model Evaluation & Triage workflow compare supplied dose arrays against a reference. Three-way triage records physical checks, gamma, PTV/OAR/MAE thresholds, uncertainty/OOD evidence and SHA-256 provenance. Signed reviewer dispositions preserve the automated result. `APPROVED` is a per-case research candidate, with `clinical_release=false`. Raw sources are read-only. See [the contract, exact thresholds, review protocol and remaining validation gaps](docs/DECISION_ENGINE.md).
 
 ## Optional frontend
 

@@ -17,6 +17,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "shapely>=2.0",
     "pymedphys>=0.40.0",
+    "cryptography>=42.0",
 ]
 
 [tool.setuptools.packages.find]

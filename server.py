@@ -18,6 +18,9 @@ from openrad.core.agent import OpenRadAgent
 from src.storage import StorageManager, session_scope
 from src.tools import parse_and_evaluate_dvh, generate_topas_file
 from src.config import skills_paths
+from src.decision import EvaluationRequest
+from src.evaluation import evaluate_model
+from src.governance import signed_review, verify_records
 
 from openrad.tools.gamma_tool import evaluate_gamma_index, GammaEvaluationInput
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp, RadiobiologyInput
@@ -209,7 +212,7 @@ def get_session(session_id: str):
 
 @app.get('/artifacts/{session_id}/artifacts/{filename}')
 def get_artifact(session_id: str, filename: str):
-    if not re.fullmatch(r'(?:dvh|topas)_[a-f0-9]{32}\.(?:png|txt)', filename):
+    if not re.fullmatch(r'(?:dvh|topas|decision)_[a-f0-9]{32}\.(?:png|txt)', filename):
         raise HTTPException(status_code=404, detail='Artifact not found.')
     try:
         directory = Path(storage_mgr.get_artifacts_dir(session_id)).resolve()
@@ -219,6 +222,36 @@ def get_artifact(session_id: str, filename: str):
     if target.parent != directory or not target.is_file():
         raise HTTPException(status_code=404, detail='Artifact not found.')
     return FileResponse(target)
+
+
+@app.post('/api/v1/evaluations')
+def run_evaluation(payload: EvaluationRequest):
+    try:
+        with session_scope(storage_mgr):
+            return evaluate_model(payload)
+    except (ValueError, OSError):
+        raise HTTPException(status_code=400, detail='Evaluation could not be committed; check inputs and server configuration.')
+
+
+class SignedReviewRequest(BaseModel):
+    payload: Dict[str, str]
+    signature_b64: str
+
+
+@app.post('/api/v1/sessions/{session_id}/reviews')
+def review_evaluation(session_id: str, request: SignedReviewRequest):
+    import json
+    try:
+        audit = Path(storage_mgr.get_session_dir(session_id)) / 'decisions.jsonl'
+        records = [json.loads(line) for line in audit.read_text().splitlines() if line.strip()]
+        verify_records(records)
+        decision = next(r['event'] for r in records if r['event'].get('type') == 'evaluation'
+                        and r['event'].get('decision_hash') == request.payload.get('decision_hash'))
+        # Registry belongs to the server operator; it is never supplied by this request.
+        keys = json.loads(os.getenv('OPENRAD_REVIEWER_KEYS', '{}'))
+        return signed_review(audit, decision, request.payload, request.signature_b64, keys)
+    except (ValueError, OSError, StopIteration):
+        raise HTTPException(status_code=400, detail='Review rejected: check signature, trusted identity, decision, justification and nonce.')
 
 
 def main():

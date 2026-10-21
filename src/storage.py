@@ -14,7 +14,8 @@ class StorageManager:
     """
 
     def __init__(self, base_dir: str = "./storage/sessions"):
-        self.base_dir = os.path.abspath(base_dir)
+        from src.readonly import assert_output_path
+        self.base_dir = str(assert_output_path(base_dir))
         os.makedirs(self.base_dir, exist_ok=True)
 
     def initialize_session(self, session_id: str) -> str:

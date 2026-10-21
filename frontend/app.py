@@ -20,7 +20,7 @@ st.title("OpenRad Agent")
 st.warning("Research prototype. Clinical accuracy and uncertainty margins require independent commissioning. File contents are data, never instructions.")
 if 'agent' not in st.session_state:
     st.session_state.agent = OpenRadAgent()
-mode = st.sidebar.selectbox('Select Workflow', ['Interactive Agent Query', 'DICOM-RT & DVH Analyzer', 'Gamma Index QA (AAPM TG-218)', 'TOPAS Monte Carlo Deck Generator', 'Radiobiology (TCP / NTCP)', 'Stateful Python REPL Sandbox'])
+mode = st.sidebar.selectbox('Select Workflow', ['Interactive Agent Query', 'DICOM-RT & DVH Analyzer', 'Gamma Index QA (AAPM TG-218)', 'TOPAS Monte Carlo Deck Generator', 'Radiobiology (TCP / NTCP)', 'Stateful Python REPL Sandbox', 'Model Evaluation & Triage'])
 try:
     configured = json.loads(os.getenv('OPENRAD_DATA_ROOTS') or '[]')
     if not isinstance(configured, list) or not all(isinstance(p, str) for p in configured):
@@ -138,6 +138,33 @@ elif mode=='TOPAS Monte Carlo Deck Generator':
     if st.button('Generate TOPAS Deck'):
         try:st.code(generate_topas_deck(particle,energy,geom,number_of_histories=histories))
         except ValueError as exc:st.error(str(exc))
+
+elif mode=='Model Evaluation & Triage':
+    from src.decision import EvaluationRequest
+    from src.evaluation import evaluate_model
+    from src.storage import StorageManager, session_scope
+    st.subheader('Research model evaluation and triage')
+    st.info('APPROVED means a research candidate for this case. Missing calibration or OOD evidence requires review. Raw data stays read-only.')
+    st.caption('Supply an EvaluationRequest JSON manifest with local NPY paths and explicit aligned grids. See docs/DECISION_ENGINE.md.')
+    manifest = st.text_area('Evaluation manifest JSON', value='{}', height=220)
+    if st.button('Evaluate supplied model output'):
+        try:
+            request = EvaluationRequest.model_validate_json(manifest)
+            manager = StorageManager(os.getenv('STORAGE_DIR', './storage/sessions'))
+            with session_scope(manager):
+                result = evaluate_model(request)
+            st.session_state.model_evaluation = result
+        except (ValueError, OSError):
+            st.error('Evaluation could not be committed. Check the manifest, inputs and output configuration.')
+    if 'model_evaluation' in st.session_state:
+        result = st.session_state.model_evaluation
+        st.metric('Research triage', result['status'])
+        st.dataframe(result['rules'])
+        st.json(result)
+        manager = StorageManager(os.getenv('STORAGE_DIR', './storage/sessions'))
+        for artifact in result['artifacts']:
+            st.image(str(Path(manager.get_artifacts_dir(result['session_id'])) / Path(artifact).name))
+    st.caption('Signed review is available through the REST API using operator-registered Ed25519 reviewer keys. Automated decisions remain immutable.')
 
 elif mode=='Radiobiology (TCP / NTCP)':
     st.subheader('Research radiobiology from an explicit DVH')

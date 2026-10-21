@@ -99,7 +99,8 @@ def generate_topas_file(particle: str, energy_mev: float, histories: int, output
     """Write a validated water-phantom TOPAS template without overwriting files."""
     PhysicsValidationEngine.validate_beam_energy(energy_mev, particle, raise_on_fail=True)
     deck = generate_topas_deck(particle, energy_mev, number_of_histories=histories)
-    target = Path(output_path)
+    from src.readonly import assert_output_path
+    target = assert_output_path(output_path)
     if target.suffix.lower() != '.txt':
         raise ValueError('TOPAS output must use a .txt extension.')
     target.parent.mkdir(parents=True, exist_ok=True)
