@@ -1,6 +1,6 @@
 # OpenRad-Agent — OSI Hackathon
 
-A deterministic research proof of concept for DICOM-RT dose-volume analysis and TOPAS input generation. The FastAPI server and CLI share real tools, session storage, metadata scrubbing and mandatory physics checks. Clinical commissioning and regulatory conformity are not established; see [the physics audit](MEDICAL_PHYSICS_AUDIT.md).
+A deterministic research proof of concept for DICOM-RT dose-volume analysis and TOPAS input generation. The FastAPI server and CLI share real tools, session storage, metadata scrubbing and mandatory physics checks. Clinical commissioning and regulatory conformity are not established; see [the physics audit](validation/audits/medical_physics.md).
 
 ## System Architecture
 
@@ -24,11 +24,13 @@ Choose **Patient-file Verification** in the UI or run `python agent_main.py veri
 
 ## Physicist-facing assessments
 
-DVH, gamma, radiobiology, TOPAS and model-assessment views provide readable summaries, measurements with units, criteria, limitations and follow-up actions. Download Markdown reports, CSV metrics and technical JSON; TOPAS also exports its parameter file. Reports show unperformed checks explicitly and preserve incomplete/blocked outcomes. See the [workflow audit and verification boundaries](docs/PHYSICIST_WORKFLOW_AUDIT.md).
+DVH, gamma, radiobiology, TOPAS and model-assessment views provide readable summaries, measurements with units, criteria, limitations and follow-up actions. Download Markdown reports, CSV metrics and technical JSON; TOPAS also exports its parameter file. Reports show unperformed checks explicitly and preserve incomplete/blocked outcomes. See the [workflow audit and verification boundaries](validation/audits/physicist_workflows.md).
 
 ## External-data benchmark
 
-Run `python -m scripts.benchmark_slicerrt fetch` to explicitly download five pinned public SlicerRT examples, then `python -m scripts.benchmark_slicerrt run` for read-only intake checks and an Eclipse phantom DVH comparison against its exported TPS curves and dicompyler-core. Human reports and plots go to ignored `data/processed/slicerrt-benchmark/`. Existing inputs are never replaced. See [observations, source terms, limitations and unresolved discrepancies](docs/SLICERRT_BENCHMARK.md). Passing this software benchmark does not qualify a clinical model.
+All benchmark tooling, tests, audits and published evidence are indexed in [validation/](validation/README.md). Reviewed evidence snapshots are under `validation/evidence/`; private and newly generated runs are isolated under ignored `validation/runs/`.
+
+Run `python -m validation.benchmarks.slicerrt fetch` to explicitly download five pinned public SlicerRT examples, then `python -m validation.benchmarks.slicerrt run` for read-only intake checks and an Eclipse phantom DVH comparison against its exported TPS curves and dicompyler-core. Human reports and plots go to ignored `validation/runs/slicerrt/<run-id>/`. Existing inputs are never replaced. See [observations, source terms, limitations and unresolved discrepancies](validation/benchmarks/slicerrt/README.md). Passing this software benchmark does not qualify a clinical model.
 
 ## Repository layout
 
@@ -46,7 +48,7 @@ src/
   config.py                  Shared relative skills_paths
 openrad/                     Deterministic physics and nomenclature engine
 frontend/app.py              Optional local Streamlit UI
-tests/                       Automated tests and reader smoke runner
+validation/                  Benchmarks, tests, audits and reviewed evidence
 skills/radiation_physics/    Physics workflow instructions
 SKILL.md                     Entry-point execution policy
 storage/sessions/            Runtime outputs only; ignored by Git
@@ -62,7 +64,7 @@ Python 3.9+ is supported by the project; the Cloud Run image uses Python 3.11.
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python -m pytest tests -q
+python -m pytest validation/tests -q
 ```
 
 ## CLI

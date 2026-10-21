@@ -6,7 +6,7 @@ import pytest
 from src.validation import verify_model_output
 from src.reports import build_report, markdown, metrics_csv
 from src.storage import StorageManager
-from tests.test_submission import dicom_pair
+from validation.tests.test_submission import dicom_pair
 
 
 def test_preflight_missing_reference_is_not_a_perfect_score():
@@ -120,7 +120,7 @@ def test_frontend_dvh_confirmed_aliases_and_exports(dicom_pair,tmp_path,monkeypa
     datasets['struct'].StructureSetROISequence[0].ROIName='Cord';datasets['struct'].save_as(paths['struct'])
     monkeypatch.setenv('OPENRAD_DATA_ROOTS',json.dumps([str(tmp_path)]))
     monkeypatch.setenv('STORAGE_DIR',str(tmp_path.parent/(tmp_path.name+'-outputs')))
-    app=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'frontend/app.py')).run()
+    app=AppTest.from_file(str(Path(__file__).resolve().parents[2]/'frontend/app.py')).run()
     next(button for button in app.button if button.label=='Scan folders').click().run()
     app.sidebar.selectbox[0].select('DICOM-RT & DVH Analyzer').run()
     app.multiselect[0].set_value(['Cord']).run()
@@ -136,7 +136,7 @@ def test_frontend_dvh_confirmed_aliases_and_exports(dicom_pair,tmp_path,monkeypa
 def test_frontend_topas_gamma_and_radiobiology_success(tmp_path,monkeypatch):
     from streamlit.testing.v1 import AppTest
     monkeypatch.setenv('OPENRAD_DATA_ROOTS','[]');monkeypatch.setenv('STORAGE_DIR',str(tmp_path/'outputs'))
-    app=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'frontend/app.py')).run()
+    app=AppTest.from_file(str(Path(__file__).resolve().parents[2]/'frontend/app.py')).run()
     app.sidebar.selectbox[0].select('TOPAS Monte Carlo Deck Generator').run()
     next(b for b in app.button if b.label=='Generate TOPAS Deck').click().run()
     assert not app.exception and len(app.get('download_button'))==4

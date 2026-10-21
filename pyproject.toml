@@ -27,7 +27,7 @@ include = ["openrad*", "src*"]
 exclude = ["openrad.storage*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["validation/tests"]
 pythonpath = ["."]
 
 [tool.setuptools.package-data]

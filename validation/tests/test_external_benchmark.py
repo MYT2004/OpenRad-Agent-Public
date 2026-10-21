@@ -3,7 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import pytest
-from scripts import benchmark_slicerrt as bench
+from validation.benchmarks.slicerrt import runner as bench
 
 
 def entry(data=b'fixture'):
@@ -63,6 +63,7 @@ def test_external_runner_real_pipeline_and_source_preservation(tmp_path):
     assert result['source_files_unchanged'] and not result['clinical_release']
     assert result['cases'][0]['status']=='READY_FOR_RESEARCH_ANALYSIS'
     assert 'Follow-up actions' in (tmp_path/'reports/assessment.md').read_text()
+    with pytest.raises(FileExistsError):bench.run(manifest,root,tmp_path/'reports')
     with pytest.raises(ValueError):bench.run(manifest,root,root/'bad-output')
     (root/'unpinned.txt').write_text('untracked input')
     with pytest.raises(ValueError):bench.inventory(manifest,root)
@@ -84,7 +85,7 @@ Relative dose [%] Dose [cGy] Ratio of Total Structure Volume [%]
 
 
 def test_tps_reference_parser_explicit_units_and_linear_oracle():
-    from scripts.slicerrt_reference import parse_eclipse_export
+    from validation.benchmarks.slicerrt.reference import parse_eclipse_export
     result=parse_eclipse_export(export_fixture())
     roi=result['structures']['Bladder']
     assert result['prescription_gy']==100 and result['plan']=='TEST'
@@ -97,12 +98,12 @@ def test_tps_reference_parser_explicit_units_and_linear_oracle():
     ('50 5000 50','50 5000 101'),('50 5000 50','50 5001 50'),
     ('50 5000 50','50 nan 50')])
 def test_tps_reference_parser_rejects_ambiguous_or_corrupt_curves(old,new):
-    from scripts.slicerrt_reference import parse_eclipse_export
+    from validation.benchmarks.slicerrt.reference import parse_eclipse_export
     with pytest.raises(ValueError):parse_eclipse_export(export_fixture().replace(old,new))
 
 
 def test_tps_reference_selection_is_explicit_and_complete():
-    from scripts.slicerrt_reference import parse_eclipse_export
+    from validation.benchmarks.slicerrt.reference import parse_eclipse_export
     with pytest.raises(ValueError):parse_eclipse_export(export_fixture(),['Rectum'])
     duplicate=export_fixture()+'Structure:'+export_fixture().split('Structure:',1)[-1]
     with pytest.raises(ValueError):parse_eclipse_export(duplicate,['Bladder'])
@@ -132,3 +133,25 @@ def test_exported_curve_threshold_matches_the_threshold_actually_evaluated():
     curve=cumulative_dvh_curve(np.array([.29]))
     index=curve['dose_bins_Gy'].index(.29)
     assert curve['volume_percent'][index]==100
+
+
+def test_default_run_directories_are_unique_and_centralized():
+    first,second=bench.default_run_output(),bench.default_run_output()
+    assert first!=second
+    assert first.parent==bench.REPO_ROOT/'validation/runs/slicerrt'
+
+
+def test_published_snapshot_preserves_hashes_audit_chains_and_report_links():
+    from src.governance import verify_records
+    root=bench.REPO_ROOT/'validation/evidence/slicerrt/2026-10-21-bc757c0'
+    provenance=json.loads((root/'provenance.json').read_text())
+    for name,sha in provenance['artifacts_sha256'].items():
+        path=root/name
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==sha
+        if path.suffix=='.jsonl':
+            verify_records([json.loads(line) for line in path.read_text().splitlines() if line.strip()])
+    result=json.loads((root/'assessment.json').read_text())
+    assert result['source_commit']==bench.load_manifest()['commit']
+    assert all((root/case['report']).is_file() for case in result['cases'])
+    assert (root/result['dose_comparison']['openrad_report']).is_file()
+    assert (root/result['dose_comparison']['plot']).is_file()

@@ -1,0 +1,919 @@
+{
+  "source_repository": "https://github.com/SlicerRt/SlicerRtData",
+  "source_commit": "704936e8889c77174a0dd97cfb8703b47952e62c",
+  "generated_at_utc": "2026-10-21T11:15:15.825100+00:00",
+  "clinical_release": false,
+  "source_files_unchanged": true,
+  "source_sha256": {
+    "aria-phantom-contours-keyhole/CT.PYTIM05_1.dcm": "891cabd9ef907bdfd7c47e022c3660cadba12795fce55947115a4165137fc63b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_10.dcm": "efc06d63dce56cc53e5d92e716a3ad1b4955268048e8c480a2d4ec03903640e9",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_100.dcm": "485d5a3d6df818f3cb34a4545b71c7c5f6dcd9096baa14d780b0e9eb3458f93f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_101.dcm": "1f9b6d3396257cb1f0a544e9ac992bb3ecebe0e08740f1804cb9725574bcf8ae",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_102.dcm": "8b87386aab0ad42c7c2e5ac9c806cacd82e618c1d137fc238ade1f040b6cb463",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_103.dcm": "157afea4d731862a9fde0be63d8f14d1d1947ba57a6e5bc7e7508bce6c403e79",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_104.dcm": "744e921a13093790fab749e947401457b299094ace66bcb8cbe59d83a00a9ddf",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_105.dcm": "fe3115fdc10a1f74fd3e324000ff510d5d1ed5375abff88be1a3977b025a1c86",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_106.dcm": "76918935f841c0904ccedc868d23ac41e96c03f6fd1b4d88894fca59cad1472f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_107.dcm": "3536b9552186972fa9d22d25bd16e920d96b3b356e9c8399d12a242d2fc06bff",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_108.dcm": "05b0fdfb4c817fe66ed6494d0d0175ccfdbf61a9eaa92350ccba62904def8c87",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_109.dcm": "d854cfc84f9b0d84b6df886bfdb1a6860a72d98f4f24d2500073729c81f25add",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_11.dcm": "18d9276e62429d175ee240b706b41a86a7ef907e573581ff28c400165a826171",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_110.dcm": "8f4e64be94d72bf49fb888a7167635887af296d024a08d3a9a8466d2b4a08b05",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_111.dcm": "fcbac9b05e17f1211b4095eb5393ab9090ee68101b40f2beee1bf87dc9bacdf4",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_112.dcm": "edb5568d20bc29074df82e31ba36f3c997297e1771a20de3bacd60b82168a813",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_113.dcm": "bc24e2f093ef6782dbfb5f2debcd65edc89a3a79fb201d92476cbfc1738dca85",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_114.dcm": "90fede81daf03160e4228b062a044e9052d153d4759940d6c9c2196e4bdd2df2",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_115.dcm": "8996df2339e49c6f75b0b18405b8dca8249a71ce586ebaa259daa59fa8aef161",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_116.dcm": "4ba3c3df8c9e710abbd70004c78c3f9adf2ecb2708b19ea774561918e8f41b7e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_117.dcm": "ae9c41cfc25ec18d62859df00a54c92b9345fc3a40e50de91fd69a2fae19f5d3",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_118.dcm": "2d5562a984b489647664a400d29af538615d3b01da3c579f6568af27647e6aad",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_119.dcm": "6458c83d1be3e6175baa1ad2b1d35fb31eac56e028004be304f8abb674765062",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_12.dcm": "7ab1c11622514520b4b20428c97fb22691d96b0dfef9a857004676f1091a9867",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_120.dcm": "9d6315124ebd150ef92565c5cdfa34e16f6d9abfe3310723e76dfa5c529508ae",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_121.dcm": "0773b93c86ba71c570f60878930c3a00b2b6988947587adc53a2acb06509d6d8",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_122.dcm": "b9437346cd782116ac2755d1c7b38a9e50b32438281973ee04dc8387511ed121",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_123.dcm": "3d04280f7a5277c9b0ddc0fff4fa9134972b92f680cedfd82e66a59b91cfe1ae",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_124.dcm": "170081bfb82578db0a62cd1e42f21fb0379ac048858ed712bc26afdc11ee11bf",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_125.dcm": "c47e72c7297ac96dbd0895cc64579214ca0c67e560c895ef64c29a8cf87263a5",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_126.dcm": "991b7674ae02810dc3f84b75576e40f7d5474c305529492ce4024f1a75c1998d",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_127.dcm": "bc63dea32e60b318633e07761fd4d155d7f95bcaa7e3b582aab27c4155b361ea",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_128.dcm": "c221c0a879e56c79f24ae380a9f6176541e2e78573b689107d55e7b02b34fd2e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_129.dcm": "8b6b016baf2a2d53d07b48a6cc299d4ec3e7ae33b916f3b2c24a1b7f7f359688",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_13.dcm": "d8a03920f80d4b3cd4a082f2e948001916c2a3786e0c3e769a3d59f029b7127f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_130.dcm": "99aae6c4dd045b2b12b6ddfd1d54aa23a7bd10d681b4fe965419c002ef61242e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_131.dcm": "fe6d225498400ef717523eaeb041837cdc6b36c19230e95f5696f40db7466eb1",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_132.dcm": "18bd2c752d71335ee95baa8ee1c9ebba25598a9a119d5ebb62dff23ba531f698",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_133.dcm": "94a0a4f4bc9cf5afc1efcde005211bc9d2039c95e27ac8c0c23721faf990224c",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_134.dcm": "5c4afc47f1df9955334190baab8dec816172bf2f474bb7cd7f070291b7b47942",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_135.dcm": "09eb82d9d259eb28e6bcd1e668dbf1014dd6accdf001e4edebd474f214673fe2",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_136.dcm": "ddee6eef484bb17004ce2222e948c6a7abdecfc2671285d8dd4449be2d02f9dc",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_137.dcm": "b1794a8404d530c69b32f42849c1e3b5257f71791cafd81d9860262d5073f98d",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_138.dcm": "9c229608c31901b497757150c9f2cda43cf4bd80a8fe72a76644400885680fc1",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_139.dcm": "bf6519da8ad23e33b75840b62d910e080419a1210790317b84362f4502806e37",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_14.dcm": "b4208ce70f07b1a97238180530426152edb0219b0bdee520364e6d5b59ccc7ff",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_140.dcm": "2340b82cfc9ebed488aff4c97c4e281f49a15277de156362cdf3d95e03f7cae8",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_141.dcm": "3414b54f3ede2a87268fb5186d40810f5ba341a015069f8a8e437359330dfc65",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_142.dcm": "5b87fe79e5fbf8955925200b715890e6ab2db6f8f4f95bc6304d657396094ce0",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_143.dcm": "0c273f5ea2af347e8942de4ad57e6244f53a8153ae488dc3d91df09987265b94",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_144.dcm": "44a1bf25ef87df9126d19df475b240cbe2777addacbd5ef324523d48cee6b73a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_145.dcm": "491b46147cc5afddb1f319707577c4eff1ee57fdd72b60013ba872d72e9aa7dd",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_146.dcm": "aa32b1956a01298a628149e80b6cb1ee62df3a53c99c13b3c8862d3e0856adef",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_147.dcm": "621ba1ad1ab63ba5ba2a95378f2a55603efdd883eb1c6a0aa719215825289d81",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_148.dcm": "03762a9afb6385d02865d0b4816b552799fb7587ca7eed6ebc2c7eb40de11788",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_149.dcm": "b944d3c8677165c8ffb187f26808b7242a5d09bbe34396ceeb996d92314a0dee",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_15.dcm": "6166db6f369c4559eb960e5f17c6146d10387d857547520c2e0dc210972fd27f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_150.dcm": "7ce3c10fa8ecf320ef275c139e9f19233e521cce9acb8d3cef2117c32d004289",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_151.dcm": "bc82ef86ea58968d544e58d6174bef409300c3c3840b8265f8d4e0d5fddea639",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_152.dcm": "2b4e4e05c1aff256164846f1ccc0868f32cb1cbf02b3f414acaa51d3e9c7b0bb",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_16.dcm": "95229791adbd07ccaf395197af3cac9480aa5c6af3c8eefa003a960633d4c72c",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_17.dcm": "ec2bc0863ac97b347d5d8c8f21cefd06f4c02e5170e4ef82b8c424b281b56699",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_18.dcm": "7e23e95cb1e11f17c62bc975d1c58f748d110013d274fcaf5664b3f083008ee1",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_19.dcm": "df320e3bf46ce2bcf5e2a912f5a1c53c693a666c12289ce6bd57c5c681f42c5e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_2.dcm": "c9da41d74c5701287b0a39b7eb11eba689e645e504cc8853e6748072bda8734a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_20.dcm": "3bb387fd7fc205a283d33d9a2f21414afd5f6ae4a2eb1582fcdbaf3d81c3d4b0",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_21.dcm": "f6233d9a261597672abe34ff6740cfb9184da966bc217ea9eef92646d1c0dfc4",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_22.dcm": "854bdd4fd79f89741a483fd079b1c8b0c305dfdce0af0b7abc57e89a66c4e76d",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_23.dcm": "76aae4a30eaecca06e26ca7c8dec2edf72a61a6ad86f554fa21cedff06ba57be",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_24.dcm": "47353e3b474fca1e793bb77e5d3914b51d9f6c9b79383ccfb35ff5876f7e8a53",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_25.dcm": "e14ae2f1ac602e9528635e9e68cc77fc59ff3037e9fea37b5a2bab977665275e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_26.dcm": "8907c7496099a214487c3b2bbec7c33635543442edc97c9e1fa61545c0a7623b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_27.dcm": "9ac557462c1396765085f566ddbf70ba903259d8ab0132416d8d719567ab5722",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_28.dcm": "47b38d1a8fcf709db3476d40336799d9544c67e2560200d9895f0f96d3ce2796",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_29.dcm": "7eab7dcb4135850e34d79c05983fd4202f78abfb1d48aca3a709e76421ecd231",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_3.dcm": "9a12b2ac88e2cb78dfcbbdde3ffa80d6c3088c57cac6698f4ef4b8ed15d94f84",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_30.dcm": "02805456a3e6bbbde82dfcfc3a7a9409e53ac97615ade647b5b4b9c4a1c0a31b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_31.dcm": "f98531e38adfb0928d1fb06d33022061355fcab774fde5c49af1f125d7c49609",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_32.dcm": "08ba1a9b181fcda417eaad973531f6d00c5240fbee61fe585de49baf2e12ef4a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_33.dcm": "a180a65c673223f9f38b3fcce2be01edb7c72317b38f30bb8ffb5aa850f5e4cc",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_34.dcm": "5a4ac81afda29d0c5e9fc5655f1c735c83bc186aed73f1b8ecda4b255e11e18e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_35.dcm": "c5dc9c63fc2c316d5205dd770c0843db7f4f0b0ad7bcb9a1c6b3ef8667401d82",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_36.dcm": "6a38b3b8a56be0ed3ec29448009e6f398b9305cb657293949ec7c26cace6d478",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_37.dcm": "07e2105b42d5885fda22ff7170b03b62921c0b4e1060caff40bdf7ecc28cbfc3",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_38.dcm": "b2acbd0d5125d9dc3374a926ea02c4b71773a99b8c42614c20a7e9a25d012870",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_39.dcm": "b5f0ad9953c0bc8ce7617719eb0b168a13d4325685a0192bf8c460ec65bc4535",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_4.dcm": "e2d1684ecfc9a39c46aa7be1ce0300c2a1aa99185a6520abdd4a8fe243d828c5",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_40.dcm": "c71f3b90ecb4ef300901324dc0d48d427ed0db857acd1b98630272203c19b81e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_41.dcm": "a141e04837ffe85ebe36fa122c644f5fd39bcf1fb39e409d3e32fb7c7a8850ee",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_42.dcm": "9c1410a1b3a75a94b35320e4307c34ce0383b7e4efcf3658a23b3e977e4feb2b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_43.dcm": "b354591ddb3845d8b05fa6eec3a3b74aeb545c0d18e8587d687e8f2765751d9e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_44.dcm": "d4a20dbc986e1e77d4f88d3ed5cd2592b4321192ca22a76fa3d5b1e7a3f186cd",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_45.dcm": "54c45fcfdd04de11e8dede471e7fd4ab3f4913b918c503dfd5158f4c26f1ddfd",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_46.dcm": "a1bc07b08ddcdc409b9545eb3139f5d6c6d799e428e8550637b333ea250cd8d9",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_47.dcm": "946ea0a54e7c64cbcb779dc9fcddc6f4a60b56261308c192bab70ee17de871aa",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_48.dcm": "e50ed791eaf76ac086b60a60200adb216cfbdc83d3e98ce52ddd3790551564ef",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_49.dcm": "21a06ed6745798ca5589eb5680c477c15b47b9647e0558dbcd2a60914687302a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_5.dcm": "e96d201698429a4cdbdb1a9545991b40ba9658cbfaec7fe6568464f85d2b824a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_50.dcm": "036228e788babaccfc43569836cf1e0772e2a53f1ce65b362c293405468588b7",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_51.dcm": "df976116dd6f3c92a6c404017e114a8e620e267589ff674129471803209f2258",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_52.dcm": "b6820e0a54987763eb2af1285676f6ad8113010cd9d2ce7111319d001f5ce50b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_53.dcm": "33b560369e8a2aa6b8161180df13c0768cd0ece4b6440649499f080de329aae0",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_54.dcm": "2be9203bfe784df1aff341e0768c5c08ea5748fa4ffa9a5fe2b341c0468a1870",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_55.dcm": "7fdbb77f691582efe08977782b276284b46da61299a68ad92d2e6271a3c0399a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_56.dcm": "02d3f1ae48bb79ff1d3b0d6063c4d066fa074ad8dfd5e75977e0714e3fc6724c",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_57.dcm": "90cb144cd531e1d64908fda23b4b7b10cc78e46e0cfc42defda61c6e8c9bcd42",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_58.dcm": "21fa583e9da454a28826101d8506cffce63f900b098a9b6fe7b0d7f316aae5bb",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_59.dcm": "ad8c289e9c9eaae88480eb463a04e41b70a34d74d7e420b6d6677dd2f2530df6",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_6.dcm": "0d914d1a0c821a722a62ad5558a9cae21cd97320ec345a0720622f78a5a12d14",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_60.dcm": "f36ac5f9f6e9edf578eb0aed190548ed3c1f2ba5318c9f8e2747e7acd3f33251",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_61.dcm": "51ad660e4ff83338c11aec8eb7714aeb72c176973890731e2feadcc0ac00e05c",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_62.dcm": "b2c5ca9ebf4651cf67640cdc60f61e655ef3c24b769334ffb4358eab97802d41",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_63.dcm": "5473e01f0d11bb311948b21ccb53a3c3c26f16087b9f3e6c58020b459fe48e8f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_64.dcm": "e392cd1b423f344c01fd737df3e55202bab55b6d10b58aafaa23406368c57b24",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_65.dcm": "1fb70d84c02170f22731c233858eec845cfe62efa1a13611bf7304ccdc5dd670",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_66.dcm": "8cbbf897f264353602cbf339081d50d78195219a81f7948374be2e1b389c292c",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_67.dcm": "15ad17c1c21b847c82d24bbff45a6818bf39bbda81844ee84f762cd30945613b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_68.dcm": "06d015ecb0421510c5b11a623444fe4badfb76e805a222e57593f6fd10604030",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_69.dcm": "fec55198d1182d06e32691b4a0c6ad7271c0aed4fa9a2dfa087914b9270f54c9",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_7.dcm": "7df0543e6955922710635812cba9badd25420fd37633d43e5889a3577c8211cf",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_70.dcm": "b7df49443b42957c55aee005be20d18d240cb5bdc7806dd6f2efa5de00fc7883",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_71.dcm": "10234faf08a5de7c05762c5331a1c72e3c8634df97345d33bee327af759a253d",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_72.dcm": "ba1e4a51743d36b05aa906bc5a369f2a47b15b64b052b7421a9ae9facda6ad89",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_73.dcm": "e4dc3f19d4404db1bf9a764b883ccb14ad0dbcd8e7d8976133a50e5dac93e7ac",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_74.dcm": "e978de0ded02d346eb40db59b5e531ba22c734f6c1fa2108aae740abf2ddd989",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_75.dcm": "c45ea9b6c4fdafdcdf1ab9fc8b47dd647c6bf0f06f4d2a15bbeedf3ec28f50b0",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_76.dcm": "c51fc3fcad04a1426e0fa5f3972e925b4827d9e3da21a30f079ab53160fa9e2b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_77.dcm": "0abd678ceb974a90db2fd35b97673dc94b48b85b08c68680570e50a0bca26721",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_78.dcm": "548824f7e3cd8bf0f7938d8d81a8c16464b91686c66c0005407f10940ecd1815",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_79.dcm": "46a61cfcf7ed741debf3d030a81bbea4f76985515b143bbd61b8a53ca58f5da8",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_8.dcm": "8ccc6b21549982b138952551dd07c28edbe9ea2b90109a55c83e56c7d2cef866",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_80.dcm": "ba1ce72ca68a2fc097e99de8304fb2553434b9b036110b30296b162eb857e96b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_81.dcm": "1f505ba62c03083f89376e3edb14904140b2531c566fefbc1e565d85142ec35b",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_82.dcm": "dc912b79f9e6d161c9d0f6e1dd068e394828517ece34eb6ac19b6d05a5f90072",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_83.dcm": "4deb1e979c8a4b0824be9b04af49346571573dabfec2267af770bd6efe8abb37",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_84.dcm": "9f70fe1523b74456f4b61c0f8f67e2baf7ff5cb18641a603267aa4864030bb87",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_85.dcm": "0f74d0a6676c151b0f2198594a093827fefa0b09fec9d6e88944d0597d52da27",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_86.dcm": "3e5394bbdff04a31553e3ea2a15421c843868d6341099bb69cca83f26163f567",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_87.dcm": "02d6838977ad570fb42e9b4c986e9788069884f8907123245093a7d5bce2d5dc",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_88.dcm": "52ef2efeed1973fc285627a85974746790300cda680915c213f7c54f7b1fed6f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_89.dcm": "acce9d83b0ec14e20120f440393d3076389360085e1039ab0c9170435748a201",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_9.dcm": "8ed732b91e385f577eb5bd84d383e047bf7ed5609821c3b771b84919bfa7870e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_90.dcm": "a0245f67ecaa736128d803d76e2892c892fe921758acfa67a74055b5c12ad1ba",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_91.dcm": "b956b1fb10c3d25aa2b483ab94db411e8f03a8afeb10764a80459546e6babb02",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_92.dcm": "af2489e298089037f06739c8171b88b9d08e00375fb94a2699e6e9abbf90fe60",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_93.dcm": "3a2c5aca20d55d90ccab6f03f99155fa4a2c914e8f8c39e880014e6457cf8d6a",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_94.dcm": "272d653a3608f0517deeefacacb485e86ea2936563045db8cec8a9119f804ec5",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_95.dcm": "faeefb4b74aa054b5dbddf8757c9c9d8514e498547622478b6abe97644b18033",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_96.dcm": "fd9f6cd7567576db5dcc56550dd170d40ad5a510e41b3cf5f7fbeeb90bbb034f",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_97.dcm": "3d0b2ff8fbb27b5b0921574bd57c8e3ef63b9e168014d56d54b56297a5a26a1e",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_98.dcm": "a3bde30ae064bf172446e3fd7f42a3af7eedce4970a7dcb113dc40406a5ec9a8",
+    "aria-phantom-contours-keyhole/CT.PYTIM05_99.dcm": "4e4918ef1a9b756c369015f47350dd50d9c489cef082797c38e62cff6715ec47",
+    "aria-phantom-contours-keyhole/RD.PYTIM05_.dcm": "b75d961a48145e46e1cb8ae1cff0886c0028d813d0c6d86a41d28d06000347b5",
+    "aria-phantom-contours-keyhole/RP.PYTIM05_PS3.dcm": "f3af3ac03b621dbbeb08318eb53c061bdae34406b2bbe80ca13d3f5e6252bcb2",
+    "aria-phantom-contours-keyhole/RS.PYTIM05_.dcm": "8eac031124606ec732b1cfad197701fb84216b78228483394d840a0a0ae4ae5e",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.1.dcm": "2fb5ba6eafd7ab5e751ed1dfb976f76d59190af1fc108c1759b074224e616ea5",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.10.dcm": "fb123d1643ea197029019a4204bf3ea2d10d22c1a142780c1d66421b33f49bb3",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.11.dcm": "11792612580054c592e37aa2a84705b071d1a32028ed9e799f2f8b393741c491",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.12.dcm": "c4ec7577feca19a344733e529a6af4e4d29c8eef296f15bfcb4fe6c5952c60f3",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.13.dcm": "24fc49c3144c15c9b137e0e81d3a8c7bc2cfe4e5f0ae599021002784d8a22b7f",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.14.dcm": "96cb7a3243e52902c9fdee8bdfa1acfa3605c628de03544c21b6bdae1e30f414",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.15.dcm": "f74cc4ac7f8783a8c05926190f4df1a04776e15bd16a4ed8a13242541569cbb4",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.16.dcm": "32dbcd0a080765ff1631893f137d36e89b50d37c1c061c97e269e8d6af4021b0",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.17.dcm": "ae277ad2fc90fce423c2a9535c3245c8de5a12df2def65cf1247000beca53468",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.18.dcm": "20ae44725fd108e89e9563e7da639054ace46cb69bb14681bdff59de807fa87c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.19.dcm": "8c9f884d3cee013408a1c1b1a2148d950205fa2780778c5b5a1a974fcaad93d3",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.2.dcm": "d303dace892e2d843577c462a6233cbd1e2b5a4145e8f99cc80fb312a904020c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.20.dcm": "258632b2be6fdd790c3c53a750e51a7d3a6734bda19e3b94f5d9f63f73a06168",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.21.dcm": "473a0ca7c9d658abcc92ff9973beff32bd687de6095693934cfb8b5cc03354c1",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.22.dcm": "8807a68d2695fc4271e23a7c205728c8c7aba559a2d8dd08ea18c9eb85481b26",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.23.dcm": "62c612e286c96ae8beca3c0518d51cd845c62cf21574fa4989c0a6e506e23ffc",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.24.dcm": "27fec1f99271b4d2f66ec0e57471a1fc2e7536162f323fa95ca41b80df7bdf6a",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.25.dcm": "89f8ca2ae2005c5ddbb3bf67dc76a669a89ed7b74bb66e37c1f4ced6abefd5df",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.26.dcm": "d86aec4f1183dcf2c404601cb4612646d80e8f1a15acd5a19177d8ee758610f3",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.27.dcm": "e83d8213bdb326fc49fb22a2bc12e54d54ea4b0db9a0739dd2c24dd3822d09d9",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.28.dcm": "f1ec109407ade1a2ebaa2ff428801fb5952f18e6b60e9cd86892fe4d378cc51c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.29.dcm": "3223d03bc58017fb4a5d9d2a2173a773634ed0452d1c4bdb881515a5d771a92f",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.3.dcm": "4a2b0a0c43844c8e5398c0d37e002471b3c2455b06520818b312b32747b2b8d2",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.30.dcm": "c6696076f0e6cef56080e1b6f5466d86b0e8663f2e26a9f2ebfafce93efc0158",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.31.dcm": "02530f968e1a0aa239418e2eee030fe650b74bfe17449170382fb4b39621eb43",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.32.dcm": "76206cfdcf72343b67b4ee4894aa747c885d408c09cc646dff550719a0f0f41f",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.33.dcm": "8df4991afaf325bf310ba89547e78a3af85250c769463a2fce91043f552bdd7c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.34.dcm": "5ab5fccc8be71999df1b2af7f5bdfb1edefc4209330564ce74320f38dc6267b7",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.35.dcm": "df31ae959f175e4caaa117486a6efde3ca3e23560d460522efc1c09cba0b6861",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.36.dcm": "bac4854511211887569da246feb473057f406a4e14faf10820e11ff83943b39d",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.37.dcm": "ddae4e00a2de7e37c37cf731ac0ad4b9fcfac024a773dd4f2678a95565f02828",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.38.dcm": "f591c744d18a348a48cbe02d7fb558646f1fc5a3cd9c5f76ccba38e744ceefb2",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.39.dcm": "26d782c1e05a768b319d7d719fec370c728879f630cb46666a5c8fff0462fc77",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.4.dcm": "715bf8c6ef9ebf45c0ad415e83239782a0da5e9daf8434c6df90641c2e8060ad",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.40.dcm": "6974de7d583f9727092385a72df712bf02e841aef38f0febf639c5d0128beba2",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.41.dcm": "c1c8daf982c6c476503bedfcbcd432abb79cdb70975e994b28e241f7b9c2cee8",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.42.dcm": "2640aa6dd034f4032cfab5c9152d582e07715e54b070572a1d7ef683de38234a",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.43.dcm": "8c3ad8eb0531b3ce8c8277c0b9cd1811347e4665fb38eadc4f6717c0e29a67ff",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.44.dcm": "21c13873a9fbf74d6b3ff4498b5175817bf1e3b3cf82dc794ee186818982b11d",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.45.dcm": "d5552cc1ec8de945f568aab499a072803181480ace2e3e719208ee802325cb88",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.46.dcm": "9c9f8f7635b538ce40232517de3fa8964cdc67f464c84bbaa72bf0ccf6a26d2b",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.47.dcm": "f1f4e8b3dd8ba9340c38f032ac585c7d6663177e5c28479c7797c0d40980cc08",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.48.dcm": "e5342f1655c66e9b4b1c3219c4639ac810cd68d71de54affa8851cfc51f109c3",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.49.dcm": "cc841ecddd32d8f4650174c6fdc817abad37cdfa36e8861218b74963ee145ae1",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.5.dcm": "5891d4dff9816e5e95c2bcb802cc574377a7e36700565812f2cc0185c1106a6e",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.50.dcm": "d461d7feefc1b43e265c0bed2842e339a2debf54031d2318c5f5e42ef719a86a",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.51.dcm": "2bb635655d059ab37226263421d6cffbe9da5264dae5eeb64bee3004ae657d60",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.52.dcm": "a2f2c2eee0e735e920643bb0b0c3d596bf49c76d4a0c96cd30c62b48b104c8a1",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.53.dcm": "d3e714e66570e8c8f91aef7f5f6461a1906cb6241046ae9ebc4d64c8b2dd92d2",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.54.dcm": "397bd639e30c394a2d05da6277c241a6ead47b3ed50b6cb76296e422693787fc",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.55.dcm": "8ffa87e7ebb16413198a4f884afbbe21cb5ea49f8404a124f799b365f24790e0",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.56.dcm": "2818f2f77c5ce52ddb77413b773ba5a14a208dbbfc36b39b569f8111db3c9fc0",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.57.dcm": "7f37dd97c4359399ce65fd8ef2626af084915855ca109ec79cd0fd1fb41e4376",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.58.dcm": "045c4519754aefffa7f2a0ec3d4272a1a79e773aa7295de898594178f1eb2d58",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.59.dcm": "8309f322b3ce594135832ab0ba5441d48cf6e6d309b1143882f2d0e80575dd24",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.6.dcm": "2d613a598b4ef0e40256f41b02ae3e56be8adc0be30f85973567cb1168e26caa",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.60.dcm": "d084cf2b83d393cb075f25fec016e0a2a6aebaef8b37da12f52872c6afb80659",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.61.dcm": "b4937190c3c42aa2ec030beca65c9ec2b23b4db3404c4fd2672f7fd9332cc97f",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.62.dcm": "b25157d5176b5856d56e71511f7286a068b940bf64b76242e3ee1e51e2193438",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.63.dcm": "499af03ad4be8b52e07115b8dcac8f3732051496ce08d069aae30d546d0dedcf",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.64.dcm": "b0c1275d40e5bdef966111c3ae52bbc13f139f08d8319ca75bb2caa9990aeeb7",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.65.dcm": "97beb8e6bf93cdee8ee5abfe26144754a89c88221759e8fbc79485e5c85c45b2",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.66.dcm": "ec0a0a5d8b7c2644fae208f30d8d5d4189a7ba8fa179e1cddccadfb2e44ffcd5",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.67.dcm": "741276281cfc230d99474fed8e81986443754841590132f7899cc26f3de22ca3",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.68.dcm": "f1d295ce9bf2c0ec1a42f390ee5f6c5e42c89a002bbc34e188316188b2f4b39d",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.69.dcm": "00fa3d7f510a5e5d42f15280cc0a1215e95a19e122eaabbc4714e12a355a04e2",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.7.dcm": "d3e186f5d4ce68d32f86b03786f108e03c91f3fd36b7e3b3055fc3c6fb87f7f7",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.70.dcm": "4bd892b4dec71cf880090b55ee9db17b52027e3786df7ae24cd96214d66b24fd",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.71.dcm": "0b44b08fdd76415433ab78456625af780122835c594e2c5ce32ff2a2261dca1e",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.72.dcm": "73b4a569fa002da12d07ee6b5885c9d701b4e241a7725bda1d518c6a6433ec8c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.73.dcm": "1a87d9f32265f5bef92ec3893a9df1b605334ec053f9e11135575bc4a2b42f52",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.74.dcm": "8f2c8b5ecf86ac6da4ab97b25543369f31f71a8681b535840013bc5ef19a9fab",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.75.dcm": "aabdae53b81081aec9ba2585205534fd40b73b1bdae0091b1edada9475b7e433",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.76.dcm": "af1df533c0cc263d6f474d9466a497f07c86a833eb2c3535568037ca9e7fa04d",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.77.dcm": "398bc9fc745cab2e9e36e561782fc8f7235ff1e847d4969a4e5ae5fbff093528",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.78.dcm": "7f7ea2388c8126de248527ce72f19ceb1f89b3caf5e5979f522eb0528c485e68",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.79.dcm": "38d9eb801ba3008ff78de2948bc372d13566b9a0b281471c57c8efcbc9ff21c7",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.8.dcm": "1320b659d15c3c2a717684f7c7452c16268a9eba31d955e1bf5cc3b4137df4b4",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.80.dcm": "b33aa6c0b56054969a152e0aee8a56306a3603a853042ec23ea37f8cb4acb03a",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.81.dcm": "a00d23edb5988fcaf0b16865a02e58947c4c130ce0d02ab1c9147b759cb0b865",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.82.dcm": "e56e0ccc65638e0421501af670907863db62cb340d6a4c244dceb760b98a887c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.83.dcm": "e63bba21d084b7d0a9b129a42554144154041e17077794a957d610a86900e642",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.84.dcm": "5823a0ec1529b52d52ae5e4c1d4d5fd3ad0e3d1473d1bcfb1ce77e0881d51cf1",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.85.dcm": "029451423850ecc17ea839617c6d324e7ad8bbac5d7ad53150406f36dbaac454",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.86.dcm": "8db7cf67064c5805257498d078e6b74c3976e342c2050b50dd3c1714b7810491",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.87.dcm": "a11ecc0165a87e07cae53310da7c16225b916b9e0925023a5f6d5e9c72f11474",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.88.dcm": "663f1fb7c7e0c07efda350b1d8e8a1498bb6777f377d46402a34c75ade094451",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.89.dcm": "7bfa4cc06f287f733bbe44a4aab2e92464d7eea397ac80e6f57762a48960eaa5",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.9.dcm": "edf06f80290bb72dcd4f947845f6c54841885e69d91b4cc4038c93ec4263c15c",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.90.dcm": "efa9ce6b92b8421189d8f7ce9b769f6adf089d35a7c811b825234546e652758e",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.91.dcm": "c18df899b3bf2f724b41a2f29d332bb4642ec8adcc8432188f608ad8e3c278c0",
+    "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.92.dcm": "d332ed84c101a2b86960337d52a3da466ae63f16b5b10578542b78520e1eee2d",
+    "eclipse-8.1.20-phantom-prostate/Original/RD.1.2.246.352.71.7.2088656855.452083.20110920153746.dcm": "907110217d7fecb43360a45c242a23df7322975588b4ae5409aa2e4951e73c61",
+    "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381134.20110921150951.dcm": "5856b99266852c65ef533061df5f15b3c183117dd873cdca133a859d53860fab",
+    "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381137.20110921152343.dcm": "129c65dacfb58104b73856a8e909fa167f1bb39caa722fe40b5190fb7411c33d",
+    "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381138.20110921153147.dcm": "e45a3c606cf3d83f4453f66af444eb8fcdb4549b96af5fd786b772b13ff69b4e",
+    "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381139.20110921153147.dcm": "caeee4ea62b10b15863e687efe87c92315f5578bf33d634cb36b5be82e5ef456",
+    "eclipse-8.1.20-phantom-prostate/Original/RP.1.2.246.352.71.5.2088656855.377401.20110920153647.dcm": "f36a4f8482b5c9ed039dad3358df8a07075afbe5a5d4354323cb13fa2e9bdd09",
+    "eclipse-8.1.20-phantom-prostate/Original/RS.1.2.246.352.71.4.2088656855.2404649.20110920153449.dcm": "3de77a83ab03a6131b4cc104ecc0d0eb32ac94d032e567fb2d6886056e53e333",
+    "eclipse-8.1.20-phantom-prostate/Prostate DRR Screen Shot.jpg": "0c2d0155ce38b960c5c306307f5343fd21523cbc753a70066eaec66c75d02785",
+    "eclipse-8.1.20-phantom-prostate/Prostate Screen Shot.jpg": "73a12229a6c7fe03f809d36a6a4d666e60b960a07a8e0fe21225e6a30d48dea1",
+    "eclipse-8.1.20-phantom-prostate/Rando, PROSTATE (TEST PHYS PROSTATE) DVH": "dc751a028dcb524d6308b82c9d2a68c395e1f019e8893709755075b3691fcbf0",
+    "eclipse-8.1.20-phantom-prostate/readme.txt": "14ddabf293703c070481991a1c360f639190de8be10a50599994f51ee7879944",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.17872389039225636003114712517102552.dcm": "7f38da8012fc53222fea3072e9db8c6a9e09f2dc2c9339d2708d4919e1d5c024",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.22367612717862586288258937892514156.dcm": "1030b3eff90f2138cc206c1d7042c3ca794f588a84b4cc70516b5f5aa0098253",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.24868522841476962925438082942860851.dcm": "4403636e8cd809a71770f9b3e0edf042d75b14f6c0d889a80391f5d006463f87",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.28587439838923936873561131961000937.dcm": "70fc45dd9876e1c22da52a54a4773797f070cc8695268793dd24672db973f1b0",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.30526214367323423646480956973062494.dcm": "38ef69b7d113f74deafcbceec66848da595cdb23553915fa2675aa018c0ab710",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.3594312864895273758108617995376903.dcm": "218ada93a64b868a72cea8b3d09d90d7c5419ce20f68901d4eab70478a4572cf",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.37886923028252450464878538247756870.dcm": "316b24d4153d4a9bd3370540e26c45b4bf2428d6cde26de0c158d8f1759aca5d",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.41618595848150228809403094609706047.dcm": "902e046dfff27a6d0bd667d19ceb2fe3a5b94d9191882a9bc4e663abf6adb621",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.50289933122181835271381699721415458.dcm": "29a3cc8169cc9a21161a85b626060e72167eaa73accc3e5b6351ec24c6ccb7c4",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.50862443536301373561278005034163599.dcm": "b29e37503d7a2cfef5d19da13d82b2efd9f31924048d1027bdc998dbb2ffebb7",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.65357675627149094316041646442733138.dcm": "f0187f59ef58842164e79f89b5911f40ee9c0a52e080157d13fcf3d01406548a",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.73478682197005658050599728652691557.dcm": "028f7a7979ce51493860fb215c15ba60f6098a7c279baa5b3bd5dc08a48bf7db",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/RS 1.2.528.1.1007.189.1.32899.433512217.5.dcm": "ba9c3fd4f790efc43807c7476ff546507093a75b604074526ceaf63927d232b4",
+    "oncentra-4.1.6-prostate-ct-tilted-plane/_readme.txt": "0ad5a1af59ea89617501984ae7dade8ca27a6b4ebb1328199568d7c8008698eb",
+    "plastimatch_tiny-rt-study/dose_1.2.826.0.1.3680043.8.274.1.1.6549911257.77961.3133305374.424.dcm": "c44711ad5bafceb57e744f9c7f60c0a5971318681fd2af77740779738ecb0a12",
+    "plastimatch_tiny-rt-study/image0000_1.2.826.0.1.3680043.8.274.1.1.2750954856.34924.5415589575.496.dcm": "6e9ca3641860bee99302e3042cdc37acc7dbbbb16e013731e6afa01b75d8e7d7",
+    "plastimatch_tiny-rt-study/image0001_1.2.826.0.1.3680043.8.274.1.1.5945519238.35359.6590142192.335.dcm": "11f4c4672ed55d628f75005744ede0a0f3616c894854fc77f37138a8ebcdb0e4",
+    "plastimatch_tiny-rt-study/image0002_1.2.826.0.1.3680043.8.274.1.1.9491626044.80423.6766573165.382.dcm": "674aad71675baa7ea4092b94a5e8ede81201078b33be7c2fa897d55a113816ef",
+    "plastimatch_tiny-rt-study/image0003_1.2.826.0.1.3680043.8.274.1.1.7810785014.44800.3397379354.727.dcm": "0c93926604bb72b181e9dc020185b9e7a357916578625dec30dec4b3cb9b8fac",
+    "plastimatch_tiny-rt-study/image0004_1.2.826.0.1.3680043.8.274.1.1.9059479387.68963.4959156378.500.dcm": "66b387ae620be0471c1c0c8c64597fa18b8cc47de47b375719d3cda5aa2ecc1b",
+    "plastimatch_tiny-rt-study/image0005_1.2.826.0.1.3680043.8.274.1.1.9737344341.72642.5921474233.965.dcm": "750eb529d1b7036d8ac4b85fef88df1ef6ba49d66f3577e6fb785e31b17c1768",
+    "plastimatch_tiny-rt-study/image0006_1.2.826.0.1.3680043.8.274.1.1.1666165198.87321.6423451751.306.dcm": "1f23fdf7cbc4c96989c9feee479ee76a2dfe3677e6b0a8715a672d5d44ee6c2c",
+    "plastimatch_tiny-rt-study/image0007_1.2.826.0.1.3680043.8.274.1.1.5090341991.92345.1331754349.395.dcm": "d54d9426a26e905c02ede291ebfe4d86fc23a4e5b950514da2c684a09c6f7e04",
+    "plastimatch_tiny-rt-study/image0008_1.2.826.0.1.3680043.8.274.1.1.8517521574.11046.7875344575.134.dcm": "5a127370ea50323b1d3a9b676f6d5a28250668eb1d38523a82f7e12681c5672f",
+    "plastimatch_tiny-rt-study/image0009_1.2.826.0.1.3680043.8.274.1.1.7984847255.87224.1803445203.789.dcm": "2d75591ba3941223c4afc0ac98c3fc1f889d09c20b9faf5b47456393d2234071",
+    "plastimatch_tiny-rt-study/rtss_1.2.826.0.1.3680043.8.274.1.1.7145442384.75872.7982248107.258.dcm": "4f049270e3c103d3dafc54f71a0525066a89a9dc97e216cc40af544b24444771",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-1.5.CT.dcm": "ea9344cef0333e77ab3248e7fb524ec1e1597c695d0d188c02a6bec4ca23f95f",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-11.5.CT.dcm": "fff5c273fc1ae081d25a78a4b36ea3a440abf7f5a6a03037813121b4a37b8fef",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-14.CT.dcm": "416ec304879d007d21c2454d665c18d9a4a184ed9ea809c185f133be1e834bae",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-16.5.CT.dcm": "094404a232c9d7f3ea67903b6a2a71ebd1db66638d6a385bcf03ba7fa7bf3692",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-19.CT.dcm": "259f00e7c6ebfa7f98fe142a04a1d674e503fd7fc726693af3b130fb1ab84c74",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-20.CT.dcm": "ab6bf1a09bddbc8e4e78184b87069878c5d894d0eb0860c6db1574d7bdcb33cc",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-21.3.CT.dcm": "fbbf3ae95f11fb9efc8c31c84639af8046004fdc98d77798f5cd164b37b8e998",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-21.5.CT.dcm": "5593e2b6609cd431c13bca17dab97762454602ff7d6a975901605206f4a8d223",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-22.5.CT.dcm": "6b86c90bed50a24183a0fbd1d056351b3efe7be14201ef3b9d0793d8b2bafe27",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-23.8.CT.dcm": "a0c0f84e9cbc063d2bbbe2f85a0a64bca1467f6e2311837d3ca2583d875fe14e",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-4.CT.dcm": "59d5eba4ab7d43f9e24f9502cbc425aa0238ad38cf37769987c92afc6c01dc29",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-6.5.CT.dcm": "b0fa5a724019f6807bbdbabca1cdef961af9f9c7efbbe63ec0659c1ccc310b71",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-9.CT.dcm": "649a46fb74b0d6920c688e4d591dc69f3b2796e105289f6efd0522f6c2cb5d18",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.1.CT.dcm": "4006a34faba94f62dcba337347e40d49b87454ead402f095b346f7272f7b9e8a",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.11.CT.dcm": "3ead29dfed5a5261dac60dc9de727938d825d7a29fa9dc049ebdac317d0d9f90",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.13.5.CT.dcm": "fb25583fa26b074b2c8aa6a5abf76e26cef451b8965d8663ad757daf08eb3df4",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.16.5.CT.dcm": "65fc1ef390428c7e6c030167eefa536b31d5ef2399905d3e5c3cbb1605ce8ec4",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.17.8.CT.dcm": "f146d7abc76a367ce26f1a5008adbba4c50c4c2902d46bbc5608512b105260f2",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.19.CT.dcm": "e667795c5056cc3640f2282c3699cf39b03d938101a6ddcd482deb0608f772b3",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.20.3.CT.dcm": "78b5ad61040f72b23fe6d75ce2ede2d1aa0cf27d12b85276a1858008e8691da5",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.21.5.CT.dcm": "ce690f18be6c3ad3401b0cf2d7b73537f87df45c93d5b300746f493272188830",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.22.8.CT.dcm": "e3a80e01d3b553b326069614f2c94894614598ead767135dc57ed9fe15ebe6d5",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.24.CT.dcm": "777e7a8a8a9bdf561106cb45b1d1343cb0f5a5ea23d7423182e3513357f96430",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.3.5.CT.dcm": "31012b5cf3937ff4315908c7dd9a0df684b313a225c1deed456d146e6e08e73d",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.6.CT.dcm": "752d25131e989a44fca968b60251ca37df0d19955a97d755db7b466504d5ef0e",
+    "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.8.5.CT.dcm": "10402963c53340fa790edc1c62e32a791fcdaa6a3fe7954f85926ec6634b29aa",
+    "xio-4.60.00-phantom-irregular-spacing/DOSE.20110509.1010_Irregular.dcm": "3829606c3ec530d5be8103df64a57dc86ecc0e6069b5fb926b45878ac89b8540",
+    "xio-4.60.00-phantom-irregular-spacing/RTXPLAN.20110509.1010_Irregular.dcm": "327768ef4a297497870c976375794167da3e7d908d95dc748bed151837a33555",
+    "xio-4.60.00-phantom-irregular-spacing/SS.rtp99.5.20110509.1010.dcm": "95795362d5ec29d77ba390847e5ef4a976a443dd958a4fd71f4acec11fb6a55b",
+    "xio-4.60.00-phantom-irregular-spacing/readme.txt": "b50ab58673b256d413552e2778c55cc88b8c9b2948444c04490f99eac437b698"
+  },
+  "cases": [
+    {
+      "dataset": "plastimatch_tiny-rt-study",
+      "status": "BLOCKED",
+      "counts": {
+        "RTDOSE": 1,
+        "CT": 10,
+        "RTSTRUCT": 1
+      },
+      "findings": [
+        {
+          "code": "course_linkage",
+          "severity": "BLOCK",
+          "message": "A unique dose\u2192plan\u2192structure association or unambiguous ROI index could not be established.",
+          "follow_up_action": "Export all referenced RT objects together and resolve identity, reference or ROI ambiguities in the authorized source system.",
+          "count": 1,
+          "example_scopes": [
+            "F00001"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "burned_in_annotation",
+          "severity": "REVIEW",
+          "message": "Absence of burned-in identifying content is not explicitly established.",
+          "follow_up_action": "Review image content and the de-identification procedure; this check does not certify privacy.",
+          "count": 11,
+          "example_scopes": [
+            "F00001",
+            "F00002",
+            "F00003",
+            "F00004",
+            "F00005"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "roi_name_review",
+          "severity": "REVIEW",
+          "message": "Structure name requires scoped nomenclature/anatomical review.",
+          "follow_up_action": "Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.",
+          "count": 2,
+          "example_scopes": [
+            "F00012/ROI_1",
+            "F00012/ROI_2"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "completeness_scope",
+          "severity": "INFO",
+          "message": "Uniform spacing and resolved references cannot prove that no unreferenced end slices or source objects were omitted.",
+          "follow_up_action": "Compare with the authorized source-system inventory before consequential use. This tool does not provide independent clinical approval.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        }
+      ],
+      "report": "sessions/61b8f803-86dc-42b1-9cc1-5ab490afc503/artifacts/report_9de7348bf2774a5abaf5f934eb2e89a5.md",
+      "verification_hash": "78a73a42eee26b557e55b9513c9a167008fa1abf252fe6dec50b83eb03e5bf06",
+      "expected_findings_present": true
+    },
+    {
+      "dataset": "oncentra-4.1.6-prostate-ct-tilted-plane",
+      "status": "FLAGGED_FOR_REVIEW",
+      "counts": {
+        "CT": 12,
+        "RTSTRUCT": 1
+      },
+      "findings": [
+        {
+          "code": "burned_in_annotation",
+          "severity": "REVIEW",
+          "message": "Absence of burned-in identifying content is not explicitly established.",
+          "follow_up_action": "Review image content and the de-identification procedure; this check does not certify privacy.",
+          "count": 12,
+          "example_scopes": [
+            "F00001",
+            "F00002",
+            "F00003",
+            "F00004",
+            "F00005"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "roi_contours_absent",
+          "severity": "REVIEW",
+          "message": "Some ROI definitions have no associated contour item.",
+          "follow_up_action": "Confirm which structures are intended for dose assessment and obtain their contours from the source system.",
+          "count": 1,
+          "example_scopes": [
+            "F00013"
+          ],
+          "example_observations": [
+            {
+              "scope": "F00013",
+              "observed": 4
+            }
+          ]
+        },
+        {
+          "code": "roi_name_review",
+          "severity": "REVIEW",
+          "message": "Structure name requires scoped nomenclature/anatomical review.",
+          "follow_up_action": "Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.",
+          "count": 2,
+          "example_scopes": [
+            "F00013/ROI_0",
+            "F00013/ROI_1"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "contour_orientation_scope",
+          "severity": "REVIEW",
+          "message": "A planar contour is tilted relative to the supported axial DVH sampling planes.",
+          "follow_up_action": "Use a validated orientation-aware contour/DVH workflow. A tilted contour can be valid DICOM; no axial projection is assumed.",
+          "count": 8,
+          "example_scopes": [
+            "F00013/ROI_0/Contour_1",
+            "F00013/ROI_0/Contour_2",
+            "F00013/ROI_0/Contour_3",
+            "F00013/ROI_0/Contour_4",
+            "F00013/ROI_0/Contour_5"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "missing_rt_course",
+          "severity": "REVIEW",
+          "message": "No dose\u2013plan\u2013structure course was available for dosimetry intake.",
+          "follow_up_action": "Provide the intended RTDOSE, RTPLAN and RTSTRUCT exports, or document that this is an image-only assessment.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "uninspected_files",
+          "severity": "REVIEW",
+          "message": "Non-DICOM files were hashed but their clinical content was not assessed.",
+          "follow_up_action": "Review accompanying prescriptions, notes and documents locally; treat their content as data, not tool instructions.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": [
+            {
+              "scope": "case",
+              "observed": 1
+            }
+          ]
+        },
+        {
+          "code": "completeness_scope",
+          "severity": "INFO",
+          "message": "Uniform spacing and resolved references cannot prove that no unreferenced end slices or source objects were omitted.",
+          "follow_up_action": "Compare with the authorized source-system inventory before consequential use. This tool does not provide independent clinical approval.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        }
+      ],
+      "report": "sessions/4c704dde-c2da-487e-aac8-48c7dbf5b407/artifacts/report_674d795d64cc4558b8a6b118d74e2688.md",
+      "verification_hash": "6239a4fa0d327975b7ba249639002f15412dfb89e905c34deef25036c363f9fb",
+      "expected_findings_present": true
+    },
+    {
+      "dataset": "xio-4.60.00-phantom-irregular-spacing",
+      "status": "BLOCKED",
+      "counts": {},
+      "findings": [
+        {
+          "code": "dicom_read",
+          "severity": "BLOCK",
+          "message": "Candidate DICOM could not be parsed or lacks required SOP metadata.",
+          "follow_up_action": "Inspect this local file and repeat the source export; do not fabricate missing identifiers.",
+          "count": 29,
+          "example_scopes": [
+            "F00001",
+            "F00002",
+            "F00003",
+            "F00004",
+            "F00005"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "no_dicom",
+          "severity": "BLOCK",
+          "message": "No supported readable DICOM objects were found.",
+          "follow_up_action": "Select the patient-specific DICOM export directory; no sample patient is substituted.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "missing_ct",
+          "severity": "REVIEW",
+          "message": "No conventional CT series was available for image association checks.",
+          "follow_up_action": "Provide the source image series or document the explicitly supported non-CT workflow.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "missing_rt_course",
+          "severity": "REVIEW",
+          "message": "No dose\u2013plan\u2013structure course was available for dosimetry intake.",
+          "follow_up_action": "Provide the intended RTDOSE, RTPLAN and RTSTRUCT exports, or document that this is an image-only assessment.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "uninspected_files",
+          "severity": "REVIEW",
+          "message": "Non-DICOM files were hashed but their clinical content was not assessed.",
+          "follow_up_action": "Review accompanying prescriptions, notes and documents locally; treat their content as data, not tool instructions.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": [
+            {
+              "scope": "case",
+              "observed": 30
+            }
+          ]
+        },
+        {
+          "code": "completeness_scope",
+          "severity": "INFO",
+          "message": "Uniform spacing and resolved references cannot prove that no unreferenced end slices or source objects were omitted.",
+          "follow_up_action": "Compare with the authorized source-system inventory before consequential use. This tool does not provide independent clinical approval.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        }
+      ],
+      "report": "sessions/7bf2cef0-f6cb-4240-844f-39fe62df2337/artifacts/report_65a797a65b4d4ac6a202bcc92aaaf901.md",
+      "verification_hash": "91dec4af002c854499a7e6e8177b7793095934f5f0a042c83ba6fe7d29d5a13b",
+      "expected_findings_present": true
+    },
+    {
+      "dataset": "aria-phantom-contours-keyhole",
+      "status": "FLAGGED_FOR_REVIEW",
+      "counts": {
+        "CT": 152,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": [
+        {
+          "code": "burned_in_annotation",
+          "severity": "REVIEW",
+          "message": "Absence of burned-in identifying content is not explicitly established.",
+          "follow_up_action": "Review image content and the de-identification procedure; this check does not certify privacy.",
+          "count": 153,
+          "example_scopes": [
+            "F00001",
+            "F00002",
+            "F00003",
+            "F00004",
+            "F00005"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "roi_contours_absent",
+          "severity": "REVIEW",
+          "message": "Some ROI definitions have no associated contour item.",
+          "follow_up_action": "Confirm which structures are intended for dose assessment and obtain their contours from the source system.",
+          "count": 1,
+          "example_scopes": [
+            "F00155"
+          ],
+          "example_observations": [
+            {
+              "scope": "F00155",
+              "observed": 8
+            }
+          ]
+        },
+        {
+          "code": "roi_name_review",
+          "severity": "REVIEW",
+          "message": "Structure name requires scoped nomenclature/anatomical review.",
+          "follow_up_action": "Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.",
+          "count": 48,
+          "example_scopes": [
+            "F00155/ROI_1",
+            "F00155/ROI_10",
+            "F00155/ROI_11",
+            "F00155/ROI_12",
+            "F00155/ROI_13"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "completeness_scope",
+          "severity": "INFO",
+          "message": "Uniform spacing and resolved references cannot prove that no unreferenced end slices or source objects were omitted.",
+          "follow_up_action": "Compare with the authorized source-system inventory before consequential use. This tool does not provide independent clinical approval.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        }
+      ],
+      "report": "sessions/72bf1e00-86c2-4031-9cd6-3677b8d278be/artifacts/report_73814c431fd34035b9da311fe9ef5586.md",
+      "verification_hash": "6b17227099fdd449ba54546f691a1adedd906052db86ae60c9fb07046d52d939",
+      "expected_findings_present": true
+    },
+    {
+      "dataset": "eclipse-8.1.20-phantom-prostate",
+      "status": "FLAGGED_FOR_REVIEW",
+      "counts": {
+        "CT": 92,
+        "RTDOSE": 1,
+        "other-DICOM": 4,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": [
+        {
+          "code": "burned_in_annotation",
+          "severity": "REVIEW",
+          "message": "Absence of burned-in identifying content is not explicitly established.",
+          "follow_up_action": "Review image content and the de-identification procedure; this check does not certify privacy.",
+          "count": 93,
+          "example_scopes": [
+            "F00001",
+            "F00002",
+            "F00003",
+            "F00004",
+            "F00005"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "plan_frame_absent",
+          "severity": "REVIEW",
+          "message": "Plan frame association is not explicit.",
+          "follow_up_action": "Review plan geometry and the applicable DICOM requirements; do not infer a patient-space association.",
+          "count": 1,
+          "example_scopes": [
+            "F00093"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "unsupported_modality",
+          "severity": "REVIEW",
+          "message": "DICOM object type is outside the supported conventional CT/RT workflow.",
+          "follow_up_action": "Use a validated modality-specific assessment. No unsupported object is treated as verified.",
+          "count": 4,
+          "example_scopes": [
+            "F00094",
+            "F00095",
+            "F00096",
+            "F00097"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "roi_contours_absent",
+          "severity": "REVIEW",
+          "message": "Some ROI definitions have no associated contour item.",
+          "follow_up_action": "Confirm which structures are intended for dose assessment and obtain their contours from the source system.",
+          "count": 1,
+          "example_scopes": [
+            "F00099"
+          ],
+          "example_observations": [
+            {
+              "scope": "F00099",
+              "observed": 10
+            }
+          ]
+        },
+        {
+          "code": "roi_name_review",
+          "severity": "REVIEW",
+          "message": "Structure name requires scoped nomenclature/anatomical review.",
+          "follow_up_action": "Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.",
+          "count": 11,
+          "example_scopes": [
+            "F00099/ROI_10",
+            "F00099/ROI_11",
+            "F00099/ROI_12",
+            "F00099/ROI_14",
+            "F00099/ROI_15"
+          ],
+          "example_observations": []
+        },
+        {
+          "code": "completeness_scope",
+          "severity": "INFO",
+          "message": "Uniform spacing and resolved references cannot prove that no unreferenced end slices or source objects were omitted.",
+          "follow_up_action": "Compare with the authorized source-system inventory before consequential use. This tool does not provide independent clinical approval.",
+          "count": 1,
+          "example_scopes": [
+            "case"
+          ],
+          "example_observations": []
+        }
+      ],
+      "report": "sessions/d29b059d-1501-405b-9c66-1d79b2fd2483/artifacts/report_42efee36e0bc44dcb2a7afaa10306374.md",
+      "verification_hash": "3fd628e5db5f811e965ccd10d3072489937120bca82a32257e887c52014e2ca2",
+      "expected_findings_present": true
+    }
+  ],
+  "benchmark_expectations_passed": true,
+  "dose_comparison": {
+    "dataset": "eclipse-8.1.20-phantom-prostate",
+    "clinical_release": false,
+    "source_identity_plan_rx_match": true,
+    "structures": [
+      {
+        "structure": "Bladder",
+        "openrad": {
+          "volume_cc": 117.453,
+          "mean_dose_Gy": 45.87,
+          "D95_Gy": 43.61,
+          "D50_Gy": 46.29,
+          "D2_Gy": 46.78
+        },
+        "tps_export": {
+          "volume_cc": 116.8,
+          "mean_dose_Gy": 45.908,
+          "D95_Gy": 43.661402298850575,
+          "D50_Gy": 46.29608523189585,
+          "D2_Gy": 46.78135068236553
+        },
+        "dicompyler_core_default": {
+          "volume_cc": 117.453125,
+          "mean_dose_Gy": 45.8719136623653,
+          "D95_Gy": 43.59,
+          "D50_Gy": 46.29,
+          "D2_Gy": 46.78
+        },
+        "openrad_minus_tps": {
+          "volume_cc": 0.6530000000000058,
+          "mean_dose_Gy": -0.03800000000000381,
+          "D95_Gy": -0.05140229885057579,
+          "D50_Gy": -0.0060852318958524165,
+          "D2_Gy": -0.0013506823655262679
+        },
+        "openrad_minus_dicompyler": {
+          "volume_cc": -0.00012499999999704414,
+          "mean_dose_Gy": -0.001913662365303992,
+          "D95_Gy": 0.01999999999999602,
+          "D50_Gy": 0.0,
+          "D2_Gy": 0.0
+        },
+        "curve_difference_percentage_points": {
+          "max_absolute": 0.8753999999999991,
+          "mean_absolute_over_export_dose_bins": 0.10809340576171857
+        }
+      },
+      {
+        "structure": "PTV",
+        "openrad": {
+          "volume_cc": 49.094,
+          "mean_dose_Gy": 45.88,
+          "D95_Gy": 45.35,
+          "D50_Gy": 45.95,
+          "D2_Gy": 46.22
+        },
+        "tps_export": {
+          "volume_cc": 48.6,
+          "mean_dose_Gy": 45.861999999999995,
+          "D95_Gy": 45.36046780018056,
+          "D50_Gy": 45.94721243358129,
+          "D2_Gy": 46.22209156974868
+        },
+        "dicompyler_core_default": {
+          "volume_cc": 49.09375,
+          "mean_dose_Gy": 45.88122851686825,
+          "D95_Gy": 45.35,
+          "D50_Gy": 45.95,
+          "D2_Gy": 46.22
+        },
+        "openrad_minus_tps": {
+          "volume_cc": 0.4939999999999998,
+          "mean_dose_Gy": 0.018000000000007788,
+          "D95_Gy": -0.010467800180556708,
+          "D50_Gy": 0.0027875664187106963,
+          "D2_Gy": -0.0020915697486785234
+        },
+        "openrad_minus_dicompyler": {
+          "volume_cc": 0.0002500000000011937,
+          "mean_dose_Gy": -0.0012285168682453218,
+          "D95_Gy": 0.0,
+          "D50_Gy": 0.0,
+          "D2_Gy": 0.0
+        },
+        "curve_difference_percentage_points": {
+          "max_absolute": 0.4727000000006356,
+          "mean_absolute_over_export_dose_bins": 0.00554170068359632
+        }
+      },
+      {
+        "structure": "Rectum",
+        "openrad": {
+          "volume_cc": 30.516,
+          "mean_dose_Gy": 39.05,
+          "D95_Gy": 27.69,
+          "D50_Gy": 42.1,
+          "D2_Gy": 45.67
+        },
+        "tps_export": {
+          "volume_cc": 30.3,
+          "mean_dose_Gy": 39.146,
+          "D95_Gy": 28.0614670781893,
+          "D50_Gy": 41.88582619240098,
+          "D2_Gy": 45.670877884296154
+        },
+        "dicompyler_core_default": {
+          "volume_cc": 30.515625,
+          "mean_dose_Gy": 39.04626472094214,
+          "D95_Gy": 27.69,
+          "D50_Gy": 42.1,
+          "D2_Gy": 45.67
+        },
+        "openrad_minus_tps": {
+          "volume_cc": 0.21599999999999753,
+          "mean_dose_Gy": -0.09600000000000364,
+          "D95_Gy": -0.3714670781892977,
+          "D50_Gy": 0.2141738075990247,
+          "D2_Gy": -0.0008778842961518762
+        },
+        "openrad_minus_dicompyler": {
+          "volume_cc": 0.00037499999999823785,
+          "mean_dose_Gy": 0.003735279057856644,
+          "D95_Gy": 0.0,
+          "D50_Gy": 0.0,
+          "D2_Gy": 0.0
+        },
+        "curve_difference_percentage_points": {
+          "max_absolute": 2.4146999999999963,
+          "mean_absolute_over_export_dose_bins": 0.49160978105468844
+        }
+      }
+    ],
+    "plot": "dvh-comparison.png",
+    "openrad_report": "sessions/439351cc-783b-4758-bc31-4c45e03f12e4/artifacts/report_535f7eee736e4c0abe2a62004b91559b.md",
+    "limitations": [
+      "TPS export is a numerical comparator, not independently measured dose truth.",
+      "TPS summary means are rounded relative-dose values; inverse cumulative D metrics use linear interpolation.",
+      "OpenRad uses axial voxel-center sampling, inferred uniform contour slabs and linear z-dose interpolation; curve threshold spacing is exported explicitly (normally 0.01 Gy).",
+      "dicompyler-core uses its default rasterization and dose-bin settings. Differences are observations, not validated clinical error margins.",
+      "No SlicerRT runtime execution or population-level model qualification was performed."
+    ]
+  },
+  "keyhole_topology_probe": {
+    "unsupported_polygon_rois": [],
+    "sampler_rejected": false,
+    "probe_executed": true,
+    "scope": "Numeric topology probe only; no TG-263 alias or anatomical identity inferred. A keyhole encoding can be valid DICOM but outside this sampler.",
+    "reason": "Selected numeric contour probe was sampled; no anatomy or full topology correctness is established."
+  },
+  "implementation_sha256": {
+    "scripts/benchmark_slicerrt.py": "2fd84027bef9b3e3d5c19a4ca5ee466fa71e3b48ba15dde5c38207004f647c6c",
+    "scripts/slicerrt_reference.py": "e4c7de39b500e60403673d06832b127af2461abfa26dcf089b65d82408d71621",
+    "src/case_verification.py": "7ad6db83b04a1a10ba06a0f9aaa5dd762490c01b13d7882f57532b3152865ace",
+    "src/tools.py": "be6239640c824b18e3751f18437d36aec892b0d315a9a458512e6301d7eed354",
+    "openrad/tools/contours.py": "c50002800a9b5a8855f36f5b9ca5270b6a2d0ab952ba5f766982bbb30421f91a"
+  },
+  "software": {
+    "pydicom": "2.4.4",
+    "numpy": "2.0.2",
+    "pymedphys": "0.40.0",
+    "dicompyler-core": "0.5.6"
+  },
+  "limitations": [
+    "External software compatibility exercise; dataset contents are not certified ground truth.",
+    "Intake readiness does not validate dose accuracy, anatomy or a computational model."
+  ]
+}

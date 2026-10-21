@@ -5,6 +5,11 @@ __pycache__/
 *.pyc
 *.egg-info/
 .pytest_cache/
+
+# Local validation evidence can contain patient-derived measurements.
+/validation/runs/*
+!/validation/runs/.gitkeep
+
 .DS_Store
 artifacts/
 
@@ -30,3 +35,8 @@ storage/sessions/*
 data/raw/*.dcm
 data/raw/**/*.dcm
 .pytest_cache/
+
+# Reviewed public report snapshots are distinct from ignored runtime artifacts.
+!/validation/evidence/**/artifacts/
+/validation/evidence/**/artifacts/*
+!/validation/evidence/**/artifacts/*.md

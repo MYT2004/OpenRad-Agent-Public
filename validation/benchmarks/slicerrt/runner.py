@@ -1,7 +1,7 @@
 """Opt-in, pinned external-data benchmark. Never overwrite source inputs.
 
-Run from the repository root with ``python -m scripts.benchmark_slicerrt fetch``
-then ``python -m scripts.benchmark_slicerrt run``. No network is used by run.
+Run from the repository root with ``python -m validation.benchmarks.slicerrt fetch``
+then ``python -m validation.benchmarks.slicerrt run``. No network is used by run.
 """
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -20,9 +20,14 @@ import pydicom
 from src.case_verification import CaseVerificationRequest, verify_patient_case, ensure_case_output_separation
 from src.storage import StorageManager, session_scope
 from src.readonly import assert_output_path
+from validation.paths import REPO_ROOT, new_run_directory
 
 
-MANIFEST = Path(__file__).resolve().parents[1] / 'benchmarks/slicerrt_manifest.json'
+MANIFEST = Path(__file__).with_name('manifest.json')
+
+
+def default_run_output():
+    return new_run_directory('slicerrt')
 
 
 def load_manifest(path=MANIFEST):
@@ -92,6 +97,8 @@ def inventory(manifest,root):
 def run(manifest,root,output):
     root=Path(root).absolute();output=assert_output_path(output)
     ensure_case_output_separation(root,output)
+    if output.exists() and any(output.iterdir()):
+        raise FileExistsError('Choose a new run directory; existing benchmark evidence is never overwritten')
     before=inventory(manifest,root)  # refuse incomplete or modified downloads
     manager=StorageManager(str(output/'sessions'))
     cases=[]
@@ -106,7 +113,7 @@ def run(manifest,root,output):
                       'expected_findings_present':set(case.get('expected_findings',[]))<=set(f['code'] for f in result['findings'])})
     comparison=None;topology=None
     if manifest.get('comparison_profile')=='eclipse-prostate-1':
-        from scripts.slicerrt_reference import compare_prostate,probe_keyhole_topology
+        from .reference import compare_prostate,probe_keyhole_topology
         comparison=compare_prostate(root,manager)
         topology=probe_keyhole_topology(root)
     after=inventory(manifest,root)
@@ -117,8 +124,8 @@ def run(manifest,root,output):
             'benchmark_expectations_passed':all(c['expected_findings_present'] for c in cases) and
                 (topology is None or (topology['probe_executed'] and (not topology['unsupported_polygon_rois'] or topology['sampler_rejected']))),
             'dose_comparison':comparison,'keyhole_topology_probe':topology,
-            'implementation_sha256':{name:hashlib.sha256((MANIFEST.parent.parent/name).read_bytes()).hexdigest() for name in
-                ('scripts/benchmark_slicerrt.py','scripts/slicerrt_reference.py','src/case_verification.py','src/tools.py','openrad/tools/contours.py')},
+            'implementation_sha256':{name:hashlib.sha256((REPO_ROOT/name).read_bytes()).hexdigest() for name in
+                ('validation/paths.py','validation/benchmarks/slicerrt/runner.py','validation/benchmarks/slicerrt/reference.py','src/case_verification.py','src/tools.py','openrad/tools/contours.py')},
             'software':{name:version(name) for name in ('pydicom','numpy','pymedphys','dicompyler-core')},
             'limitations':['External software compatibility exercise; dataset contents are not certified ground truth.',
                            'Intake readiness does not validate dose accuracy, anatomy or a computational model.']}
@@ -154,11 +161,13 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action',choices=['fetch','run'])
     parser.add_argument('--cache',default='data/raw/slicerrt')
-    parser.add_argument('--output',default='data/processed/slicerrt-benchmark')
+    parser.add_argument('--output',help='New evidence directory; defaults to a unique validation/runs/slicerrt/<run-id>')
     args=parser.parse_args();manifest=load_manifest()
     root=Path(args.cache).absolute()/manifest['commit']
-    result=fetch(manifest,root) if args.action=='fetch' else run(manifest,root,Path(args.output))
-    print(json.dumps(result if args.action=='fetch' else {c['dataset']:c['status'] for c in result['cases']},indent=2))
+    output=Path(args.output) if args.output else default_run_output()
+    result=fetch(manifest,root) if args.action=='fetch' else run(manifest,root,output)
+    print(json.dumps(result if args.action=='fetch' else {'cases':{c['dataset']:c['status'] for c in result['cases']},
+                                                         'evidence_directory':str(output.resolve())},indent=2))
     if args.action=='run' and not result['benchmark_expectations_passed']:raise SystemExit(2)
 
 

@@ -10,7 +10,7 @@ from openrad.tools.multimodal_readers import (
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-RAW_DATA_DIR = os.path.join(SCRIPT_DIR, "..", "data", "raw")
+RAW_DATA_DIR = os.path.join(SCRIPT_DIR, "..", "..", "data", "raw")
 
 
 def run_reader_smoke(root_dir: str):

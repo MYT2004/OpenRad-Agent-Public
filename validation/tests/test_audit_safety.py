@@ -98,8 +98,9 @@ def test_resolve_save_path_blocks_raw_writes():
         resolve_save_path(str(raw_abs))
 
 
-def test_resolve_save_path_directs_to_processed():
+def test_resolve_save_path_directs_to_processed(tmp_path,monkeypatch):
     from src.tools import resolve_save_path
+    monkeypatch.chdir(tmp_path)
     out = resolve_save_path('dvh_test.png', patient_id='PT_123')
     assert 'data/processed/PT_123/dvh_test.png' in str(out).replace('\\', '/')
     assert out.parent.exists()

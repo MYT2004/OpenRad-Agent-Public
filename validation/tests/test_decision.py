@@ -189,7 +189,7 @@ def test_hard_rejection_cannot_be_signed_away(case):
 def test_frontend_triage(case,monkeypatch):
     from streamlit.testing.v1 import AppTest
     monkeypatch.setenv('STORAGE_DIR',case[1].base_dir)
-    app=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'frontend'/'app.py')).run()
+    app=AppTest.from_file(str(Path(__file__).resolve().parents[2]/'frontend'/'app.py')).run()
     app.selectbox[0].select('Model Evaluation & Triage').run()
     next(area for area in app.text_area if area.label=='Evaluation manifest JSON').input(json.dumps(case[0]))
     next(button for button in app.button if button.label=='Evaluate supplied model output').click().run()

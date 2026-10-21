@@ -68,7 +68,7 @@ def test_streamlit_all_modes_and_error_paths(monkeypatch):
     from streamlit.testing.v1 import AppTest
     modes=['Interactive Agent Query','DICOM-RT & DVH Analyzer','Gamma Index QA (AAPM TG-218)','TOPAS Monte Carlo Deck Generator','Radiobiology (TCP / NTCP)','Stateful Python REPL Sandbox']
     from pathlib import Path
-    app_path=Path(__file__).resolve().parents[1]/'frontend'/'app.py'
+    app_path=Path(__file__).resolve().parents[2]/'frontend'/'app.py'
     at=AppTest.from_file(str(app_path),default_timeout=15).run()
     for mode in modes:
         at.sidebar.selectbox[0].select(mode).run()

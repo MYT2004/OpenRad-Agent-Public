@@ -1,0 +1,25 @@
+{
+  "scope": "Reviewed evidence from public SlicerRT phantom examples only; no raw datasets, patient-folder reports or screenshots.",
+  "implementation_commit": "bc757c058ae8d470bbcfcc7d673c2712f2011e95",
+  "source_commit": "704936e8889c77174a0dd97cfb8703b47952e62c",
+  "ci_url": "https://github.com/MYT2004/OpenRad-Agent/actions/runs/39590664839",
+  "tests_passed_at_milestone": 239,
+  "artifacts_sha256": {
+    "assessment.json": "c1d6edeccf207f5375e78cdfbdfe1fd09f37a7c0dc2cd9b8a9393e18a832bfc1",
+    "assessment.md": "b7c62baf06fd86b2b120d467561902f30643c1c15cdb5e2cf9353869a0c08d13",
+    "dvh-comparison.png": "1af0d75d101bfc473386c5d5c9c7f831155403a751abfb47e1917714c881499c",
+    "sessions/61b8f803-86dc-42b1-9cc1-5ab490afc503/artifacts/report_9de7348bf2774a5abaf5f934eb2e89a5.md": "29d888802c1667247642afb79bba69c61a4716375e684a27bb53031e9a641ea4",
+    "sessions/4c704dde-c2da-487e-aac8-48c7dbf5b407/artifacts/report_674d795d64cc4558b8a6b118d74e2688.md": "bc3bc4c60c722a8f1ce95fbb72488c4e33db5a20b0abea15e28d293a4de3dfb1",
+    "sessions/7bf2cef0-f6cb-4240-844f-39fe62df2337/artifacts/report_65a797a65b4d4ac6a202bcc92aaaf901.md": "105a13bc856669feb034e5c753b3bb64808140a591e5ff53029f7e4884fdd3e7",
+    "sessions/72bf1e00-86c2-4031-9cd6-3677b8d278be/artifacts/report_73814c431fd34035b9da311fe9ef5586.md": "f9fc2eed202ccc95295fe5b018472b2915577cfa5f1752885457ef294278ae0f",
+    "sessions/d29b059d-1501-405b-9c66-1d79b2fd2483/artifacts/report_42efee36e0bc44dcb2a7afaa10306374.md": "02127de9349bdd3d8bb0a4145c3f9b66ae56e750430f4fd830b4d615c212d43b",
+    "sessions/439351cc-783b-4758-bc31-4c45e03f12e4/artifacts/report_535f7eee736e4c0abe2a62004b91559b.md": "812bbd0c4fee1ee3895e073cd2ca8f812f2c4606b3ea0aed5392913f4aa30805",
+    "sessions/61b8f803-86dc-42b1-9cc1-5ab490afc503/case-audit.jsonl": "6a5d37539959b07d59945c850089076fcc9a6f4e52ad05754d816b4a2e71b64a",
+    "sessions/4c704dde-c2da-487e-aac8-48c7dbf5b407/case-audit.jsonl": "eb54d874eec4b6ce9fee4ea9785e8d344307fb80d0c2aa7a7450e2b49bf246a9",
+    "sessions/7bf2cef0-f6cb-4240-844f-39fe62df2337/case-audit.jsonl": "3a1439405229fb847cb62bc5a189aac43d7eebc204d46c4263f85a6c5a34107e",
+    "sessions/72bf1e00-86c2-4031-9cd6-3677b8d278be/case-audit.jsonl": "4b9f8fa2d54e50dc59af643b4d75099564f325cead4403d49a53a703d6bd2965",
+    "sessions/d29b059d-1501-405b-9c66-1d79b2fd2483/case-audit.jsonl": "af02a05e21106e018b4c0532bf0f04634b80aa1fcf6f17762540faf4f4ef7c5a",
+    "sessions/439351cc-783b-4758-bc31-4c45e03f12e4/tool-audit.jsonl": "f98e2dded39ba0e0d2a8a01715394050a212f87a1ef125f7fc1f91dfbe911735"
+  },
+  "note": "Historical executed snapshot. Original report links, code hashes and audit chains are retained unchanged; paths in implementation_sha256 refer to the recorded commit before consolidation."
+}

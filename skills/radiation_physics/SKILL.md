@@ -70,7 +70,7 @@ Passing rate is the percentage of evaluated voxels (above low-dose threshold $10
 - Require finite beam energy from $0.01\text{ MeV}$ through $250\text{ MeV}$ and positive integer histories; these are application bounds.
 - Prefer TG-263 primary ROI names and explicit DVH units ($D_{95\%}\text{[Gy]}$, $V_{50\text{Gy}}\text{[\%]}$). Legacy identities require reviewed mappings or built-in aliases (`BUILTIN_ROI_ALIASES`); laterality is never inferred.
 - Use scrubbed in-memory analysis copies; never export original patient identifiers or write into `data/raw/`.
-- Direct all processed files, modified DICOMs, and cached DVH outputs strictly to `data/processed/{patient_id}/`.
+- Direct normal application derivatives to `data/processed/{patient_id}/` or isolated runtime session storage. Benchmark evidence belongs under ignored `validation/runs/<suite>/<run-id>/`; only reviewed public evidence snapshots belong under `validation/evidence/`. Never write derivatives into raw sources.
 - Preserve frame and course-reference mismatches as blockers. An omitted RTPLAN leaves course linkage unverified.
 - Use session artifact directories. The CPU filesystem is ephemeral on Cloud Run; durable storage requires a separately configured service.
-- Sampling restrictions, uncertainty, and clinical release limits in `MEDICAL_PHYSICS_AUDIT.md` remain applicable.
+- Sampling restrictions, uncertainty, and clinical release limits in `validation/audits/medical_physics.md` remain applicable.

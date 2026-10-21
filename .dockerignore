@@ -10,6 +10,7 @@ artifacts
 storage
 data/raw
 data/processed
+validation
 **/*.dcm
 **/*.dicom
 build

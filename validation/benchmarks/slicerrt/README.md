@@ -7,17 +7,17 @@ This is an executed compatibility and numerical-comparison exercise for OpenRad.
 From the repository root, after installing the existing requirements:
 
 ```bash
-python -m scripts.benchmark_slicerrt fetch
-python -m scripts.benchmark_slicerrt run
+python -m validation.benchmarks.slicerrt fetch
+python -m validation.benchmarks.slicerrt run
 ```
 
 The explicit fetch command downloads five selected examples (314 files; 170,232,024 bytes) from [SlicerRtData](https://github.com/SlicerRt/SlicerRtData) commit `704936e8889c77174a0dd97cfb8703b47952e62c`. The tracked manifest contains source paths, sizes and Git blob hashes, not DICOM payloads. Files are published exclusively into a new ignored `data/raw/slicerrt/<commit>/` cache after size/hash verification. Existing mismatched sources cause an error and are never repaired or overwritten. Run uses no network, rejects missing/extra/modified inputs, and compares SHA-256 inventories before and after assessment. The user's original patient folders are not used as this cache.
 
-Results are written under ignored `data/processed/slicerrt-benchmark/`: `assessment.md`, `assessment.json`, `dvh-comparison.png` and individual session reports. The Markdown assessment links those case reports. JSON records source hashes, library versions, implementation hashes, measured discrepancies and expected-finding checks. A successful benchmark exit means the specified software checks executed as expected; it does not mean the source cases or models were approved. Code 2 means an expected benchmark finding/probe was absent. Source modification or malformed comparison evidence aborts the run.
+Results are written under unique ignored `validation/runs/slicerrt/<run-id>/`: `assessment.md`, `assessment.json`, `dvh-comparison.png` and individual session reports. Existing run directories cannot be overwritten. The Markdown assessment links those case reports. JSON records source hashes, library versions, implementation hashes, measured discrepancies and expected-finding checks. A successful benchmark exit means the specified software checks executed as expected; it does not mean the source cases or models were approved. Code 2 means an expected benchmark finding/probe was absent. Source modification or malformed comparison evidence aborts the run. A reviewed [executed evidence snapshot](../../evidence/slicerrt/2026-10-21-bc757c0/assessment.md) is committed alongside the methodology; [artifact hashes and CI provenance](../../evidence/slicerrt/2026-10-21-bc757c0/provenance.json) retain its original implementation version.
 
 No new pip dependency is required: pydicom, NumPy, Shapely, Matplotlib and dicompyler-core are already present. The full data download is opt-in and is not performed by default CI tests. Offline tests cover source preservation, download hash failures, path restrictions, exact source inventories, the real intake runner, explicit TPS units, malformed curves and cumulative-DVH threshold semantics.
 
-No dataset-specific license was located at the data repository root. The SlicerRT software license must not be assumed to grant rights to every sample dataset. OpenRad publishes only the benchmark code/manifest and aggregate observations, not these downloaded files; check provenance and terms before redistribution.
+No dataset-specific license was located at the data repository root. The SlicerRT software license must not be assumed to grant rights to every sample dataset. OpenRad publishes benchmark code/manifests and reviewed generated evidence, not the downloaded datasets; check provenance and terms before redistribution.
 
 ## Observed intake findings
 

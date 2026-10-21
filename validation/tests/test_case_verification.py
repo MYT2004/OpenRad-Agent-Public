@@ -7,7 +7,7 @@ import pydicom
 import pytest
 from pydicom.dataset import FileDataset, FileMetaDataset, Dataset
 from pydicom.uid import CTImageStorage, ExplicitVRLittleEndian, generate_uid
-from tests.test_submission import dicom_pair
+from validation.tests.test_submission import dicom_pair
 from src.case_verification import CaseVerificationRequest, verify_patient_case
 from src.storage import StorageManager, session_scope
 from src.governance import verify_records
@@ -181,7 +181,7 @@ def test_frontend_guided_case_verification(case_files,monkeypatch):
     from streamlit.testing.v1 import AppTest
     monkeypatch.setenv('OPENRAD_DATA_ROOTS',json.dumps([str(case_files[0])]))
     monkeypatch.setenv('STORAGE_DIR',case_files[3].base_dir)
-    app=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'frontend/app.py')).run()
+    app=AppTest.from_file(str(Path(__file__).resolve().parents[2]/'frontend/app.py')).run()
     app.sidebar.selectbox[0].select('Patient-file Verification').run()
     next(button for button in app.button if button.label=='Verify patient files').click().run()
     assert not app.exception and not app.error
@@ -245,7 +245,7 @@ def test_guided_handoff_populates_dvh_without_retyping_paths(case_files,monkeypa
     from streamlit.testing.v1 import AppTest
     monkeypatch.setenv('OPENRAD_DATA_ROOTS',json.dumps([str(case_files[0])]))
     monkeypatch.setenv('STORAGE_DIR',case_files[3].base_dir)
-    app=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'frontend/app.py')).run()
+    app=AppTest.from_file(str(Path(__file__).resolve().parents[2]/'frontend/app.py')).run()
     app.sidebar.selectbox[0].select('Patient-file Verification').run()
     next(button for button in app.button if button.label=='Verify patient files').click().run()
     next(button for button in app.button if button.label=='Continue to DVH and structure review').click().run()
@@ -282,7 +282,7 @@ def test_explicit_synthetic_demo_exercises_real_checks(tmp_path,defect,expected_
 def test_frontend_explicit_demo_to_dvh(tmp_path,monkeypatch):
     from streamlit.testing.v1 import AppTest
     monkeypatch.setenv('OPENRAD_DATA_ROOTS','[]');monkeypatch.setenv('STORAGE_DIR',str(tmp_path/'out'))
-    app=AppTest.from_file(str(Path(__file__).resolve().parents[1]/'frontend/app.py')).run()
+    app=AppTest.from_file(str(Path(__file__).resolve().parents[2]/'frontend/app.py')).run()
     app.sidebar.selectbox[0].select('Patient-file Verification').run()
     next(button for button in app.button if button.label=='Create an explicitly synthetic demo case').click().run()
     assert not app.exception and not app.error
