@@ -90,14 +90,15 @@ class CaseOutputSeparationError(PermissionError, ValueError):
 
 
 def ensure_case_output_separation(root, output_dir):
+    from src.readonly import assert_output_path
     source = Path(root).expanduser().resolve()
-    output = Path(output_dir).expanduser().resolve()
-    norm_output = str(output).replace('\\', '/')
-    raw_patterns = ['/data/raw/', '/data/raw', 'data/raw/']
-    if any(pat in norm_output for pat in raw_patterns) or norm_output.endswith('/data/raw'):
-        raise CaseOutputSeparationError("Write operations into 'data/raw/' are strictly prohibited for data safety and immutability.")
-    if source == output or source in output.parents:
+    target = Path(output_dir).expanduser().resolve()
+    if source == target or source in target.parents:
         raise CaseOutputSeparationError('Session output must be outside the input case directory')
+    try:
+        assert_output_path(target)
+    except ValueError as exc:
+        raise CaseOutputSeparationError('Session output cannot target a protected raw directory') from exc
 
 
 def verify_patient_case(request: CaseVerificationRequest):

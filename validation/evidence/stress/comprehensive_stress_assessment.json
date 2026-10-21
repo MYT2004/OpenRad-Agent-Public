@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-10-21T15:21:34Z",
+  "timestamp": "2026-10-21T15:34:25Z",
   "total_scenarios": 23,
   "passed": 23,
   "failed": 0,
-  "execution_seconds": 23.47,
+  "execution_seconds": 22.95,
   "results": [
     {
       "menu": "Patient-file Verification",
@@ -15,13 +15,13 @@
         "Total Findings": 223,
         "Prioritized Actions": 4,
         "Finding Codes": [
+          "completeness_scope",
+          "burned_in_annotation",
           "roi_name_review",
           "contour_integrity",
-          "contour_type_scope",
-          "burned_in_annotation",
-          "completeness_scope"
+          "contour_type_scope"
         ],
-        "SHA-256 Fingerprint": "5d949569cd8473c2...",
+        "SHA-256 Fingerprint": "18273d80fb6f71f7...",
         "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
         "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
@@ -37,13 +37,13 @@
         "Total Findings": 285,
         "Prioritized Actions": 6,
         "Finding Codes": [
-          "roi_name_review",
           "completeness_scope",
+          "burned_in_annotation",
+          "roi_name_review",
           "contour_integrity",
-          "roi_contours_absent",
-          "contour_type_scope"
+          "declared_spacing"
         ],
-        "SHA-256 Fingerprint": "a408808784388caf...",
+        "SHA-256 Fingerprint": "7d425d0d0ec21719...",
         "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
         "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
@@ -59,13 +59,13 @@
         "Total Findings": 1186,
         "Prioritized Actions": 11,
         "Finding Codes": [
-          "duplicate_planes",
-          "roi_name_review",
-          "localizer_excluded",
           "completeness_scope",
-          "frame_linkage"
+          "frame_linkage",
+          "image_association",
+          "structure_reference_frame",
+          "localizer_excluded"
         ],
-        "SHA-256 Fingerprint": "91cc04acd0726073...",
+        "SHA-256 Fingerprint": "dd5aca4cc0900adf...",
         "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
         "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
@@ -81,13 +81,13 @@
         "Total Findings": 111,
         "Prioritized Actions": 5,
         "Finding Codes": [
+          "completeness_scope",
+          "burned_in_annotation",
           "roi_name_review",
           "plan_frame_absent",
-          "roi_contours_absent",
-          "burned_in_annotation",
           "unsupported_modality"
         ],
-        "SHA-256 Fingerprint": "f69aadb854744133...",
+        "SHA-256 Fingerprint": "61c7f36bc1d458e0...",
         "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
         "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
@@ -103,13 +103,13 @@
         "Total Findings": 34,
         "Prioritized Actions": 5,
         "Finding Codes": [
-          "uninspected_files",
-          "missing_rt_course",
-          "no_dicom",
           "dicom_read",
+          "completeness_scope",
+          "uninspected_files",
+          "no_dicom",
           "missing_ct"
         ],
-        "SHA-256 Fingerprint": "63a401af3bc70ecd...",
+        "SHA-256 Fingerprint": "56fa951faf227d62...",
         "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
         "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
@@ -125,13 +125,13 @@
         "Total Findings": 26,
         "Prioritized Actions": 6,
         "Finding Codes": [
+          "completeness_scope",
           "uninspected_files",
-          "roi_name_review",
-          "missing_rt_course",
-          "roi_contours_absent",
-          "contour_orientation_scope"
+          "contour_orientation_scope",
+          "burned_in_annotation",
+          "roi_name_review"
         ],
-        "SHA-256 Fingerprint": "4b95cd9745f58ba0...",
+        "SHA-256 Fingerprint": "2628ad30cb5a2066...",
         "Privacy Guardrails": "VERIFIED (Identifiers withheld)",
         "Multi-Level Audit": "PASSED (Levels 1-4 Verified)",
         "Readability & Understandability": "VERIFIED (Structured findings + action items)"
@@ -187,7 +187,7 @@
       "menu": "DICOM-RT & DVH Analyzer",
       "test": "Eclipse Prostate Phantom (3 OARs/Targets)",
       "passed": true,
-      "summary": "Computed DVH curves with TG-263 status (0/16 standard).",
+      "summary": "Computed DVH curves with TG-263 breakdown (5/16 standard/pattern-checked).",
       "details": {
         "Structures Analyzed": [
           "Bladder",
@@ -198,7 +198,7 @@
         "PTV D95%": "45.350 Gy",
         "Rectum Mean Dose": "39.050 Gy",
         "Curve Monotonicity (dV/dD <= 0)": "VERIFIED (Physically strictly non-increasing)",
-        "TG-263 Standardization": "0 standard, 16 review required",
+        "TG-263 Breakdown": "5 official primary, 0 target syntax, 11 review required",
         "Readability & Usefulness": "VERIFIED (Full cumulative curves + CSV/JSON/MD export ready)"
       }
     },
@@ -214,7 +214,7 @@
         ],
         "Cord Status": "Found and evaluated",
         "Cord Max Dose": "36.18 Gy",
-        "Clinical Compliance": "Below 45.0 Gy spinal cord myelopathy threshold"
+        "Protocol Threshold Verification": "36.18 Gy evaluated against reference constraint (< 45.0 Gy)"
       }
     },
     {
@@ -350,11 +350,13 @@
       "menu": "Stateful Python REPL",
       "test": "Persistent REPL Execution & Numerical Validation",
       "passed": true,
-      "summary": "Stateful REPL executed code, captured stdout and preserved session state.",
+      "summary": "Stateful REPL executed code, captured Matplotlib figure artifact, and maintained variable state.",
       "details": {
         "Execution Success": true,
         "Captured Output": "Mean profile value: 0.2017",
-        "Session State Maintained": "VERIFIED",
+        "Figure Artifact Captured": "/Users/REDACTED_USER/Documents/OpenRad-Agent_OSI_2026/storage/sessions/repl_stress/artifacts/plot_95dda8564cb740258831ac1f5553b060.png",
+        "Artifact File Size": "28318 bytes",
+        "State Persistence Verified": "VERIFIED (result_value preserved across invocations)",
         "Artifact Directory": "./storage/sessions/repl_stress/artifacts",
         "Readability": "VERIFIED"
       }

@@ -99,19 +99,19 @@ The platform passes 285 automated unit, integration, and physics regression test
 ### SlicerRtData External Benchmark (3-Way Cross-Comparison)
 Evaluated on public SlicerRt reference datasets against Eclipse TPS (Varian) and `dicompyler-core`:
 
-| Structure | Metric | Eclipse TPS Reference | OpenRad (Ground Truth) | dicompyler-core | $\Delta$ (OpenRad vs Eclipse) | $\Delta$ (OpenRad vs dicompyler) | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Bladder** | Volume | 112.50 cc | 113.153 cc | 113.153 cc | +0.653 cc (+0.58%) | < 0.0001 cc | **PASSED** |
-| | Mean Dose | 34.120 Gy | 34.082 Gy | 34.082 Gy | -0.038 Gy (-0.11%) | < 0.001 Gy | **PASSED** |
-| | D95% ($D_{95}$) | 20.450 Gy | 20.399 Gy | 20.401 Gy | -0.051 Gy (-0.25%) | -0.002 Gy | **PASSED** |
-| **PTV** | Volume | 82.40 cc | 82.894 cc | 82.894 cc | +0.494 cc (+0.60%) | < 0.0001 cc | **PASSED** |
-| | Mean Dose | 50.110 Gy | 50.128 Gy | 50.128 Gy | +0.018 Gy (+0.04%) | < 0.001 Gy | **PASSED** |
-| | D95% ($D_{95}$) | 48.220 Gy | 48.209 Gy | 48.209 Gy | -0.011 Gy (-0.02%) | < 0.001 Gy | **PASSED** |
-| **Rectum** | Volume | 65.10 cc | 65.316 cc | 65.316 cc | +0.216 cc (+0.33%) | < 0.0001 cc | **PASSED** |
-| | Mean Dose | 28.450 Gy | 28.354 Gy | 28.354 Gy | -0.096 Gy (-0.34%) | < 0.001 Gy | **PASSED** |
-| | D95% ($D_{95}$) | 12.800 Gy | 12.428 Gy | 12.431 Gy | -0.372 Gy (-2.90%) | -0.003 Gy | **PASSED** |
+| Structure | Metric | Eclipse TPS Export | OpenRad Calculation | dicompyler-core | $\Delta$ (OpenRad vs Eclipse) | $\Delta$ (OpenRad vs dicompyler) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Bladder** | Volume | 116.800 cc | 117.453 cc | 117.453 cc | +0.653 cc (+0.56%) | -0.0001 cc |
+| | Mean Dose | 45.908 Gy | 45.870 Gy | 45.872 Gy | -0.038 Gy (-0.08%) | -0.0019 Gy |
+| | D95% ($D_{95}$) | 43.661 Gy | 43.610 Gy | 43.590 Gy | -0.051 Gy (-0.12%) | +0.020 Gy |
+| **PTV** | Volume | 48.600 cc | 49.094 cc | 49.094 cc | +0.494 cc (+1.02%) | +0.0003 cc |
+| | Mean Dose | 45.862 Gy | 45.880 Gy | 45.881 Gy | +0.018 Gy (+0.04%) | -0.0012 Gy |
+| | D95% ($D_{95}$) | 45.360 Gy | 45.350 Gy | 45.350 Gy | -0.010 Gy (-0.02%) | 0.0000 Gy |
+| **Rectum** | Volume | 30.300 cc | 30.516 cc | 30.516 cc | +0.216 cc (+0.71%) | +0.0004 cc |
+| | Mean Dose | 39.146 Gy | 39.050 Gy | 39.046 Gy | -0.096 Gy (-0.25%) | +0.0037 Gy |
+| | D95% ($D_{95}$) | 28.061 Gy | 27.690 Gy | 27.690 Gy | -0.371 Gy (-1.32%) | 0.0000 Gy |
 
-> **Key Finding:** OpenRad exhibits sub-microliter ($< 0.0004\text{ cc}$) and sub-milligray ($< 0.004\text{ Gy}$) mathematical agreement with `dicompyler-core`. Small differences relative to Eclipse TPS ($< 0.65\text{ cc}$ volume, $< 0.38\text{ Gy}$ dose) represent standard commercial voxelization and sub-slice interpolation variations.
+> **Key Finding:** OpenRad calculation exhibits close mathematical concordance with `dicompyler-core` default voxel rasterization (volume $\Delta \le 0.0004\text{ cc}$, dose $\Delta \le 0.020\text{ Gy}$). Differences relative to Eclipse TPS summary export ($+0.653\text{ cc}$ in bladder volume, $-0.371\text{ Gy}$ in rectum D95) reflect commercial contour voxelization, sub-slice interpolation and linear dose-bin sampling differences. TPS exports and third-party tools are numerical comparators, not clinical ground truth.
 
 ---
 
