@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openrad"
+version = "0.1.0"
+description = "Autonomous Medical Physics & Radiotherapy Intelligence Agent"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pydicom>=2.4.0",
+    "numpy>=1.22.0",
+    "scipy>=1.9.0",
+    "pydantic>=2.0.0",
+    "matplotlib>=3.5.0",
+    "python-dotenv>=1.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["openrad*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

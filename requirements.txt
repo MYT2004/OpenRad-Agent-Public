@@ -1,9 +1,12 @@
-streamlit
-openai
-langchain
-pydicom
-pypdf
-pdfplumber
-python-dotenv
-transformers
-torch
+# OpenRad Agent Dependencies (OSI Hackathon 2026)
+pydicom>=2.4.0
+numpy>=1.22.0
+scipy>=1.9.0
+pydantic>=2.0.0
+matplotlib>=3.5.0
+pandas>=2.0.0
+streamlit>=1.30.0
+python-dotenv>=1.0.0
+pytest>=7.0.0
+pymedphys>=0.40.0
+pypdf>=3.0.0
