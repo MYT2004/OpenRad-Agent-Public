@@ -1,6 +1,6 @@
 # OpenRad-Agent — OSI Hackathon 2026
 
-[![Tests: 241 Passed](https://img.shields.io/badge/pytest-241%20passed%20(100%25)-brightgreen.svg)](validation/)
+[![Tests: 283 Passed](https://img.shields.io/badge/pytest-283%20passed%20(100%25)-brightgreen.svg)](validation/)
 [![Physics Guardrails: Enforced](https://img.shields.io/badge/physics--guardrails-strictly%20enforced-blue.svg)](openrad/validation/physics_rules.py)
 [![Standards: TG--263%20%7C%20TG--218](https://img.shields.io/badge/standards-TG--263%20%7C%20TG--218-purple.svg)](openrad/validation/nomenclature.py)
 [![Scope: Research Only](https://img.shields.io/badge/scope-research%20use%20only-orange.svg)](validation/audits/medical_physics.md)
@@ -36,7 +36,7 @@ flowchart TD
         DoseCheck["Dose Non-Negativity: D(r) >= 0.0 Gy"]
         EnergyCheck["Beam Kinetic Bounds: 0.01 <= E <= 250 MeV"]
         GeomCheck["Orthogonal Direction Cosines & Positive Spacing"]
-        CordCheck["Spinal Cord Tolerance: Dmax < 45.0 Gy"]
+        CordCheck["Reviewed protocol-specific constraints required"]
     end
 
     subgraph DeterministicTools ["Grounded Medical Physics Toolset"]
@@ -73,22 +73,22 @@ OpenRad Agent bridges safety-critical deterministic computing with modern tool-a
 * **Design Philosophy:** Zero silent failures, zero hallucinations, fail-closed triage.
 * **Deterministic Execution:** Direct, typed module execution (`src/case_verification.py`, `src/tools.py`, `src/evaluation.py`, `src/decision.py`).
 * **Three-Way Triage Decisions:** Hard rules determine `APPROVED` (per-case research candidate), `FLAGGED_FOR_REVIEW`, or `REJECTED`.
-* **Cryptographic Provenance:** Ed25519 signature verification and SHA-256 hash chaining ensure audit trail immutability.
+* **Cryptographic Provenance:** Ed25519 signature verification and SHA-256 hash chaining provide signed decisions and tamper-evident audit records.
 
 ### Mode 2: Dynamic LLM Copilot Prototype (Interactive Research Partner)
 * **Design Philosophy:** Tool-augmented reasoning via **Google GenAI / Gemini Function Calling** (`src/agent_dynamic.py`).
 * **Grounded Function Calling:** The LLM does not perform mathematical or dosimetric calculations in-text. All numbers, metrics, and plan decisions originate from deterministic tools (`tool_verify_case_intake`, `tool_compute_dvh_metrics`, `tool_evaluate_tg218_gamma`, `tool_generate_topas_deck`).
 * **Pessimistic Safety Interceptors:** Validates all parameters before execution. If negative dose arrays ($D(\vec{r}) < 0\text{ Gy}$) or out-of-bound energies are detected, the tool call is rejected before running.
-* **Hard Biological Safety Rule:** Enforces Spinal Cord $D_{\text{max}} < 45.0\text{ Gy}$ constraint to prevent radiation myelopathy. Any plan violating this is automatically flagged `REJECTED`.
-* **Step-by-Step Trajectory Recording:** Captures reasoning thoughts, tool selections, sanitized arguments, and physical observations.
-* **Offline Grounded Fallback:** When `GEMINI_API_KEY` is not supplied, seamlessly runs via local deterministic simulation, generating complete clinical reports and trajectories without internet access.
+* **Clinical limits:** Require a reviewed protocol with prescription and fractionation. No universal 45 Gy spinal cord limit or clinical approval is inferred.
+* **Tool action recording:** Captures selected tools and deterministic observations; private model reasoning is not exported.
+* **Explicit offline mode:** Without a key, performs local intake only. Provider errors stop the run without simulated measurements.
 
 ---
 
 ## 3. Verified Validation Milestones
 
-### 241 Automated Tests Passing (100% Suite Pass Rate in ~8.26s)
-The platform passes 241 automated unit, integration, and physics regression tests across all core capabilities:
+### 283 Automated Tests Passing
+The platform passes 283 automated unit, integration, and physics regression tests across all core capabilities:
 * **DICOM Intake & Spatial Geometry:** Slice spacing regularity, UID chain linkage, orthogonal direction cosines, and metadata de-identification.
 * **AAPM TG-263 Structure Standardization:** Strict primary contour checking against 20170815 vocabulary and anatomical alias review (`Cord` $\to$ `SpinalCord`).
 * **ICRU-83 Dosimetric Metrics:** Sub-millimeter DVH sampling ($D_{95\%}$, $D_{50\%}$, $D_{2\%}$, $V_{50\text{Gy}}$, $\bar{D}$, $D_{\text{max}}$).
@@ -158,7 +158,7 @@ pytest validation/tests/ -v
 streamlit run app.py
 ```
 Open `http://localhost:8501` to access:
-1. **🤖 Dynamic Agent Copilot:** Interactive Gemini function calling with step-by-step reasoning trajectory expander.
+1. **🤖 Dynamic Agent Copilot:** Interactive Gemini function calling with tool-action log expander.
 2. **Patient-file Verification:** DICOM header and voxel integrity checking.
 3. **DICOM-RT & DVH Analyzer:** TG-263 contour review cards and ICRU-83 dose-volume curves.
 4. **Gamma Index QA:** AAPM TG-218 independent dose comparison ($3\%/2\text{ mm}$).
@@ -183,12 +183,12 @@ from src.agent_dynamic import run_dynamic_agent
 
 # Dynamic Copilot with grounded function calling
 result = run_dynamic_agent(
-    "Verify dataset data/raw/HNSCC-01-0199, compute DVH for SpinalCord, and check 45 Gy tolerance."
+    "Verify intake for selected_case.", case_directory="/authorized/local/case"
 )
 
 print("Disposition:", result.disposition)
 print("Trajectory Steps:", len(result.trajectory))
-print("Clinical Report:\n", result.response)
+print("Research Assessment:\n", result.response)
 ```
 
 ---
@@ -198,5 +198,13 @@ print("Clinical Report:\n", result.response)
 1. **Read-Only Data Immutability:** `data/raw/` is strictly read-only. All runtime artifacts, processed arrays, and plots are directed to `data/processed/{patient_id}/` or `storage/sessions/{session_id}/`. Attempting to write into `data/raw/` raises a hard `PermissionError`.
 2. **Absorbed Dose Non-Negativity:** Absorbed dose must satisfy $D(\vec{r}) \ge 0.0\text{ Gy}$ everywhere. Negative values immediately abort evaluation.
 3. **Beam Kinetic Energy Bounds:** Monte Carlo simulations require $0.01\text{ MeV} \le E \le 250\text{ MeV}$.
-4. **Spinal Cord Tolerance:** Maximum cord dose must satisfy $D_{\max} < 45.0\text{ Gy}$ to avoid radiation myelopathy. Any plan exceeding this limit is marked `REJECTED`.
+4. **Organ constraints:** Supply an institutionally reviewed protocol with prescription, fractionation and endpoint definitions. Copilot results remain research observations requiring review.
 5. **Patient Privacy:** In-memory scrubbing strips 128-bit UIDs, patient names, institutions, and dates before analysis.
+
+### Copilot execution contract
+
+Gemini uses the official HTTPS generateContent API via Python's standard library; no additional GenAI package is needed. Set credentials only in process memory or enter them in the password field. Do not put credentials in files or queries. Hosted queries must be de-identified; local case paths and independent Gamma files belong in the separate local context fields. Opaque case handles and bounded tool summaries are sent to Google; raw DICOM files are not sent.
+
+Execution is bounded to six rounds and twelve tool calls. Intake must be ready before DVH; ambiguous courses, missing ROIs, unknown arguments and provider failures remain explicit. Parallel function calls receive batched responses. Model prose cannot approve a case or substitute measurements. Offline mode performs local intake only. TOPAS output is a generated template, not a verified transport simulation. Strict 2%/2mm bands are research policy, not a universal TG-218 prescription.
+
+Latest stress evidence: [full-corpus and copilot assessment](validation/evidence/stress/2026-10-21/README.md). Includes explicit provider failures, unresolved source findings and scope limitations.

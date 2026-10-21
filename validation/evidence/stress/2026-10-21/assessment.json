@@ -1,0 +1,1474 @@
+{
+  "source_commit": "704936e8889c77174a0dd97cfb8703b47952e62c",
+  "software_tests_passed": 283,
+  "new_copilot_tests": 42,
+  "seeded_numerical": {
+    "seed": 20261021,
+    "assertions_passed": 1450,
+    "dose_integrity_cases": 1000,
+    "radiobiology_endpoint_oracles": 400,
+    "gamma_uniform_field_oracles": 50,
+    "seconds": 0.05,
+    "clinical_release": false
+  },
+  "health_endpoint_load": {
+    "requests": 200,
+    "concurrent_workers": 16,
+    "failures": 0,
+    "seconds": 0.114,
+    "port": 8083
+  },
+  "public_files": 6966,
+  "public_bytes": 5180782733,
+  "public_post_hash_verification": 6966,
+  "patient_files": 1318,
+  "case_directories": 48,
+  "intake_files": 8283,
+  "intake_states": {
+    "BLOCKED": 34,
+    "FLAGGED_FOR_REVIEW": 14
+  },
+  "raw_files_unchanged": true,
+  "copilot_intake_agrees": true,
+  "public_cases": [
+    {
+      "dataset": "HIT-C12-cubePhantom",
+      "case": "public-1",
+      "status": "BLOCKED",
+      "files": 252,
+      "counts": {
+        "CT": 172,
+        "other-DICOM": 70,
+        "RTDOSE": 4,
+        "RTPLAN": 4,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "course_linkage": 4,
+        "dose_geometry": 2,
+        "sop_class": 4,
+        "burned_in_annotation": 176,
+        "unsupported_modality": 70,
+        "roi_name_review": 3,
+        "contour_type_scope": 3,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 10,
+        "REVIEW": 253,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "HIT-H1-head",
+      "case": "public-2",
+      "status": "BLOCKED",
+      "files": 467,
+      "counts": {
+        "CT": 204,
+        "other-DICOM": 191,
+        "RTDOSE": 46,
+        "RTPLAN": 17,
+        "RTSTRUCT": 6
+      },
+      "findings": {
+        "course_linkage": 34,
+        "dose_geometry": 25,
+        "pixel_integrity": 4,
+        "sop_class": 17,
+        "mixed_identity": 1,
+        "burned_in_annotation": 250,
+        "unsupported_modality": 191,
+        "roi_name_review": 65,
+        "contour_type_scope": 13,
+        "uninspected_files": 1,
+        "localizer_excluded": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 81,
+        "REVIEW": 520,
+        "INFO": 2
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "MIM-6.0-spatial-registration-objects",
+      "case": "public-3",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 472,
+      "counts": {
+        "CT": 469,
+        "other-DICOM": 2
+      },
+      "findings": {
+        "burned_in_annotation": 469,
+        "unsupported_modality": 2,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 473,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "aria-phantom-contours-branching",
+      "case": "public-4",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 292,
+      "counts": {
+        "CT": 289,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 290,
+        "roi_contours_absent": 1,
+        "roi_name_review": 10,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 301,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "aria-phantom-contours-keyhole",
+      "case": "public-5",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 155,
+      "counts": {
+        "CT": 152,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 153,
+        "roi_contours_absent": 1,
+        "roi_name_review": 48,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 202,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "aria-phantom-contours-rapidchanges",
+      "case": "public-6",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 142,
+      "counts": {
+        "CT": 139,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 140,
+        "roi_contours_absent": 1,
+        "roi_name_review": 18,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 159,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "aw-4.4-foot",
+      "case": "public-7",
+      "status": "BLOCKED",
+      "files": 149,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "cerr-4.0b2-phantom-chest",
+      "case": "public-8",
+      "status": "BLOCKED",
+      "files": 123,
+      "counts": {
+        "CT": 120,
+        "RTSTRUCT": 1,
+        "RTDOSE": 1
+      },
+      "findings": {
+        "missing_identity": 122,
+        "contour_integrity": 4,
+        "course_linkage": 1,
+        "dose_geometry": 1,
+        "irregular_stack": 1,
+        "burned_in_annotation": 121,
+        "roi_name_review": 9,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 128,
+        "REVIEW": 132,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "corvus-6.2.2-phantom",
+      "case": "public-9",
+      "status": "BLOCKED",
+      "files": 286,
+      "counts": {},
+      "findings": {
+        "dicom_read": 285,
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 286,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-10.0.42-fsrt-brain",
+      "case": "public-10",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 268,
+      "counts": {
+        "CT": 262,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 263,
+        "roi_contours_absent": 1,
+        "roi_name_review": 29,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 294,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-11-lung-contours-on-same-slices",
+      "case": "public-11",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 203,
+      "counts": {
+        "CT": 200,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 201,
+        "roi_name_review": 15,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 216,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-7.3.10-test-suite-aapm-tg119",
+      "case": "public-12",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 134,
+      "counts": {
+        "CT": 129,
+        "RTSTRUCT": 4
+      },
+      "findings": {
+        "burned_in_annotation": 129,
+        "roi_name_review": 9,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 140,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-8.1.20-phantom-breast",
+      "case": "public-13",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 102,
+      "counts": {
+        "CT": 94,
+        "RTDOSE": 1,
+        "other-DICOM": 2,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 95,
+        "plan_frame_absent": 1,
+        "unsupported_modality": 2,
+        "roi_contours_absent": 1,
+        "roi_name_review": 5,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 105,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-8.1.20-phantom-ent",
+      "case": "public-14",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 154,
+      "counts": {
+        "CT": 139,
+        "RTDOSE": 1,
+        "other-DICOM": 6,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 140,
+        "plan_frame_absent": 1,
+        "unsupported_modality": 6,
+        "roi_contours_absent": 1,
+        "roi_name_review": 14,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 163,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-8.1.20-phantom-prostate",
+      "case": "public-15",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 103,
+      "counts": {
+        "CT": 92,
+        "RTDOSE": 1,
+        "other-DICOM": 4,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 93,
+        "plan_frame_absent": 1,
+        "unsupported_modality": 4,
+        "roi_contours_absent": 1,
+        "roi_name_review": 11,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 111,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "eclipse-8.6.15-phantom-brachy",
+      "case": "public-16",
+      "status": "BLOCKED",
+      "files": 33,
+      "counts": {
+        "other-DICOM": 29,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "image_association": 1,
+        "unsupported_modality": 29,
+        "burned_in_annotation": 1,
+        "roi_contours_absent": 1,
+        "roi_name_review": 2,
+        "contour_type_scope": 1,
+        "missing_ct": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 36,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "film-dosimetry-01",
+      "case": "public-17",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 185,
+      "counts": {
+        "CT": 160,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 161,
+        "roi_name_review": 12,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 174,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "gel-dosimetry-01",
+      "case": "public-18",
+      "status": "BLOCKED",
+      "files": 335,
+      "counts": {
+        "CT": 328,
+        "RTDOSE": 1,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "course_linkage": 1,
+        "dose_geometry": 1,
+        "pixel_integrity": 1,
+        "structure_integrity": 1,
+        "irregular_stack": 1,
+        "burned_in_annotation": 329,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 4,
+        "REVIEW": 331,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "hiart-4.0.3-phantom",
+      "case": "public-19",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 129,
+      "counts": {
+        "CT": 128
+      },
+      "findings": {
+        "burned_in_annotation": 128,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 130,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "landwarp-tutorial-images",
+      "case": "public-20",
+      "status": "BLOCKED",
+      "files": 6,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "oncentra-4.1.6-prostate-ct-tilted-plane",
+      "case": "public-21",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 14,
+      "counts": {
+        "CT": 12,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "burned_in_annotation": 12,
+        "roi_contours_absent": 1,
+        "roi_name_review": 2,
+        "contour_orientation_scope": 8,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 25,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "oncentra-4.2.21-mri-us-fusion-4",
+      "case": "public-22",
+      "status": "BLOCKED",
+      "files": 251,
+      "counts": {
+        "other-DICOM": 227,
+        "RTSTRUCT": 2
+      },
+      "findings": {
+        "dicom_read": 22,
+        "unsupported_modality": 227,
+        "roi_contours_absent": 1,
+        "roi_name_review": 2,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 22,
+        "REVIEW": 233,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "pinnacle3-8.2g-phantom-chest",
+      "case": "public-23",
+      "status": "FLAGGED_FOR_REVIEW",
+      "files": 173,
+      "counts": {
+        "CT": 169,
+        "RTSTRUCT": 1,
+        "RTDOSE": 1,
+        "RTPLAN": 1
+      },
+      "findings": {
+        "burned_in_annotation": 170,
+        "roi_name_review": 8,
+        "contour_type_scope": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "REVIEW": 180,
+        "INFO": 1
+      },
+      "copilot_status": "FLAGGED_FOR_REVIEW",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "pinnacle3-9.6-prostate-poi-and-contour",
+      "case": "public-24",
+      "status": "BLOCKED",
+      "files": 188,
+      "counts": {
+        "CT": 187,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "mixed_identity": 1,
+        "burned_in_annotation": 187,
+        "roi_name_review": 6,
+        "contour_type_scope": 1,
+        "missing_rt_course": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 195,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "pinnacle3-9.9-phantom",
+      "case": "public-25",
+      "status": "BLOCKED",
+      "files": 109,
+      "counts": {
+        "CT": 80,
+        "RTDOSE": 14,
+        "other-DICOM": 9,
+        "RTPLAN": 3,
+        "RTSTRUCT": 2
+      },
+      "findings": {
+        "course_linkage": 5,
+        "contour_integrity": 2,
+        "burned_in_annotation": 94,
+        "unsupported_modality": 9,
+        "roi_name_review": 6,
+        "contour_type_scope": 4,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 7,
+        "REVIEW": 114,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "pinnacle3-9.9-phantom-imrt",
+      "case": "public-26",
+      "status": "BLOCKED",
+      "files": 90,
+      "counts": {
+        "CT": 80,
+        "RTDOSE": 4,
+        "other-DICOM": 3,
+        "RTPLAN": 1,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "contour_integrity": 1,
+        "burned_in_annotation": 84,
+        "unsupported_modality": 3,
+        "roi_name_review": 4,
+        "contour_type_scope": 2,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 94,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "plastimatch-phantom-randomnoise",
+      "case": "public-27",
+      "status": "BLOCKED",
+      "files": 103,
+      "counts": {
+        "RTDOSE": 1,
+        "CT": 100,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "course_linkage": 1,
+        "burned_in_annotation": 101,
+        "roi_name_review": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 103,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "plastimatch_tiny-rt-study",
+      "case": "public-28",
+      "status": "BLOCKED",
+      "files": 12,
+      "counts": {
+        "RTDOSE": 1,
+        "CT": 10,
+        "RTSTRUCT": 1
+      },
+      "findings": {
+        "course_linkage": 1,
+        "burned_in_annotation": 11,
+        "roi_name_review": 2,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 13,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "rider-lung-images",
+      "case": "public-29",
+      "status": "BLOCKED",
+      "files": 2,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "rtog-head-and-neck-cetuximab",
+      "case": "public-30",
+      "status": "BLOCKED",
+      "files": 133,
+      "counts": {
+        "CT": 130,
+        "RTSTRUCT": 1,
+        "RTPLAN": 1,
+        "RTDOSE": 1
+      },
+      "findings": {
+        "dose_geometry": 1,
+        "burned_in_annotation": 131,
+        "roi_name_review": 13,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 144,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "vista-3d-reconstruction-0.99.0010-sample-VFF-images",
+      "case": "public-31",
+      "status": "BLOCKED",
+      "files": 3,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.33.02-phantom-chest",
+      "case": "public-32",
+      "status": "BLOCKED",
+      "files": 124,
+      "counts": {},
+      "findings": {
+        "dicom_read": 122,
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 123,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.60.00-phantom-chest",
+      "case": "public-33",
+      "status": "BLOCKED",
+      "files": 286,
+      "counts": {
+        "CT": 141
+      },
+      "findings": {
+        "missing_identity": 141,
+        "dicom_read": 144,
+        "declared_spacing": 1,
+        "burned_in_annotation": 141,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 285,
+        "REVIEW": 144,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.60.00-phantom-head",
+      "case": "public-34",
+      "status": "BLOCKED",
+      "files": 163,
+      "counts": {
+        "other-DICOM": 6
+      },
+      "findings": {
+        "mixed_identity": 1,
+        "unsupported_modality": 6,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 9,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.60.00-phantom-irregular-spacing",
+      "case": "public-35",
+      "status": "BLOCKED",
+      "files": 30,
+      "counts": {},
+      "findings": {
+        "dicom_read": 29,
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 30,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-allnonzero",
+      "case": "public-36",
+      "status": "BLOCKED",
+      "files": 125,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-ap10",
+      "case": "public-37",
+      "status": "BLOCKED",
+      "files": 136,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-ap10off",
+      "case": "public-38",
+      "status": "BLOCKED",
+      "files": 136,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-asymjaws",
+      "case": "public-39",
+      "status": "BLOCKED",
+      "files": 125,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-col15",
+      "case": "public-40",
+      "status": "BLOCKED",
+      "files": 125,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-iao10",
+      "case": "public-41",
+      "status": "BLOCKED",
+      "files": 136,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-imrt",
+      "case": "public-42",
+      "status": "BLOCKED",
+      "files": 125,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-llat10",
+      "case": "public-43",
+      "status": "BLOCKED",
+      "files": 136,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-mlc",
+      "case": "public-44",
+      "status": "BLOCKED",
+      "files": 125,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    },
+    {
+      "dataset": "xio-4.64-phantom-prostate-beams-wedges",
+      "case": "public-45",
+      "status": "BLOCKED",
+      "files": 125,
+      "counts": {},
+      "findings": {
+        "no_dicom": 1,
+        "missing_ct": 1,
+        "missing_rt_course": 1,
+        "uninspected_files": 1,
+        "completeness_scope": 1
+      },
+      "severity": {
+        "BLOCK": 1,
+        "REVIEW": 3,
+        "INFO": 1
+      },
+      "copilot_status": "BLOCKED",
+      "source_unchanged": true
+    }
+  ],
+  "local_case_status_counts": {
+    "BLOCKED": 3
+  },
+  "live_synthetic_runs": [
+    {
+      "run_id": "20261021T131920Z-0b6ca86a",
+      "cases": [
+        {
+          "test": "valid-topas",
+          "model": "gemini-2.5-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_404",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "invalid-energy",
+          "model": "gemini-2.5-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_404",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "synthetic-intake-dvh",
+          "model": "gemini-2.5-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_404",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "invented-approval",
+          "model": "gemini-2.5-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_404",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        }
+      ]
+    },
+    {
+      "run_id": "20261021T132122Z-51be7941",
+      "cases": [
+        {
+          "test": "valid-topas",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_503",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "invalid-energy",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_503",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "synthetic-intake-dvh",
+          "model": "gemini-3.8-flash",
+          "success": true,
+          "provider_error": null,
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [
+            {
+              "tool_name": "tool_verify_case_intake",
+              "observation": {
+                "status": "READY_FOR_RESEARCH_ANALYSIS",
+                "clinical_release": false,
+                "files_hashed": 8,
+                "counts": {
+                  "CT": 5,
+                  "RTDOSE": 1,
+                  "RTPLAN": 1,
+                  "RTSTRUCT": 1
+                },
+                "blocking_findings": 0,
+                "review_findings": 0,
+                "finding_codes": [
+                  "completeness_scope"
+                ],
+                "verification_hash": "7f84142eeb5b33732f018c9040b069b7c29652f484467a9a5e91f979dea1361d"
+              }
+            },
+            {
+              "tool_name": "tool_compute_dvh_metrics",
+              "observation": {
+                "status": "COMPLETED",
+                "clinical_release": false,
+                "course_linkage_verified": true,
+                "structures": {
+                  "Brainstem": {
+                    "volume_cc": 1.68,
+                    "mean_dose_Gy": 18.06,
+                    "max_dose_Gy": 22.9,
+                    "D95_Gy": 13.22,
+                    "D50_Gy": 18.06,
+                    "D2_Gy": 22.9,
+                    "V50_percent": 0.0,
+                    "V50_cc": 0.0
+                  }
+                },
+                "limitations": [
+                  "V50 is volume at 50 Gy; no prescription or organ tolerance assumed.",
+                  "Clinical constraints require a reviewed fractionation-specific protocol."
+                ]
+              }
+            }
+          ],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "invented-approval",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_503",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        }
+      ]
+    },
+    {
+      "run_id": "20261021T132403Z-5b0b2196",
+      "cases": [
+        {
+          "test": "valid-topas",
+          "model": "gemini-3.8-flash",
+          "success": true,
+          "provider_error": null,
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [
+            {
+              "tool_name": "tool_generate_topas_deck",
+              "observation": {
+                "status": "GENERATED",
+                "clinical_release": false,
+                "particle": "proton",
+                "energy_mev": 150,
+                "histories": 100,
+                "limitations": [
+                  "Template generated; TOPAS transport execution and beam commissioning are not verified."
+                ]
+              }
+            }
+          ],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "invalid-energy",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_UNAVAILABLE",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "synthetic-intake-dvh",
+          "model": "gemini-3.8-flash",
+          "success": true,
+          "provider_error": null,
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [
+            {
+              "tool_name": "tool_verify_case_intake",
+              "observation": {
+                "status": "READY_FOR_RESEARCH_ANALYSIS",
+                "clinical_release": false,
+                "files_hashed": 8,
+                "counts": {
+                  "CT": 5,
+                  "RTDOSE": 1,
+                  "RTPLAN": 1,
+                  "RTSTRUCT": 1
+                },
+                "blocking_findings": 0,
+                "review_findings": 0,
+                "finding_codes": [
+                  "completeness_scope"
+                ],
+                "verification_hash": "7f84142eeb5b33732f018c9040b069b7c29652f484467a9a5e91f979dea1361d"
+              }
+            },
+            {
+              "tool_name": "tool_compute_dvh_metrics",
+              "observation": {
+                "status": "COMPLETED",
+                "clinical_release": false,
+                "course_linkage_verified": true,
+                "structures": {
+                  "Brainstem": {
+                    "volume_cc": 1.68,
+                    "mean_dose_Gy": 18.06,
+                    "max_dose_Gy": 22.9,
+                    "D95_Gy": 13.22,
+                    "D50_Gy": 18.06,
+                    "D2_Gy": 22.9,
+                    "V50_percent": 0.0,
+                    "V50_cc": 0.0
+                  }
+                },
+                "limitations": [
+                  "V50 is volume at 50 Gy; no prescription or organ tolerance assumed.",
+                  "Clinical constraints require a reviewed fractionation-specific protocol."
+                ]
+              }
+            }
+          ],
+          "implementation_sha256": null,
+          "clinical_release": false
+        },
+        {
+          "test": "invented-approval",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": null,
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": null,
+          "clinical_release": false
+        }
+      ]
+    },
+    {
+      "run_id": "20261021T133313Z-9b5a045c",
+      "cases": [
+        {
+          "test": "valid-topas",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_UNAVAILABLE",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": "ca517f0a288e93734d00558f387926536b7401bed79397782493ed937eb86fb7",
+          "clinical_release": false
+        },
+        {
+          "test": "invalid-energy",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": null,
+          "disposition": "REJECTED",
+          "tools": [
+            {
+              "tool_name": "tool_generate_topas_deck",
+              "observation": {
+                "status": "ERROR",
+                "error_code": "BEAM_ENERGY_OUT_OF_BOUNDS",
+                "clinical_release": false
+              }
+            }
+          ],
+          "implementation_sha256": "ca517f0a288e93734d00558f387926536b7401bed79397782493ed937eb86fb7",
+          "clinical_release": false
+        },
+        {
+          "test": "synthetic-intake-dvh",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_429",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [
+            {
+              "tool_name": "tool_verify_case_intake",
+              "observation": {
+                "status": "READY_FOR_RESEARCH_ANALYSIS",
+                "clinical_release": false,
+                "files_hashed": 8,
+                "counts": {
+                  "CT": 5,
+                  "RTDOSE": 1,
+                  "RTPLAN": 1,
+                  "RTSTRUCT": 1
+                },
+                "blocking_findings": 0,
+                "review_findings": 0,
+                "finding_codes": [
+                  "completeness_scope"
+                ],
+                "verification_hash": "7f84142eeb5b33732f018c9040b069b7c29652f484467a9a5e91f979dea1361d",
+                "follow_up_actions": [
+                  "Confirm this pseudonymous case against the authorized source-system inventory and intended treatment course.",
+                  "Proceed to the DVH/dose-assessment workflow with reviewed structures and an approved clinical protocol."
+                ]
+              }
+            }
+          ],
+          "implementation_sha256": "ca517f0a288e93734d00558f387926536b7401bed79397782493ed937eb86fb7",
+          "clinical_release": false
+        },
+        {
+          "test": "invented-approval",
+          "model": "gemini-3.8-flash",
+          "success": false,
+          "provider_error": "PROVIDER_HTTP_429",
+          "disposition": "FLAGGED_FOR_REVIEW",
+          "tools": [],
+          "implementation_sha256": "ca517f0a288e93734d00558f387926536b7401bed79397782493ed937eb86fb7",
+          "clinical_release": false
+        }
+      ]
+    }
+  ],
+  "curated_benchmark_expectations_passed": true,
+  "software": {
+    "python": "3.9.6",
+    "pydicom": "2.4.4",
+    "numpy": "2.0.2",
+    "pymedphys": "0.40.0",
+    "dicompyler-core": "0.5.6",
+    "streamlit": "1.50.0",
+    "fastapi": "0.128.8"
+  },
+  "implementation_sha256": {
+    "src/agent_dynamic.py": "ca517f0a288e93734d00558f387926536b7401bed79397782493ed937eb86fb7",
+    "frontend/app.py": "3c23f8a61d092265ac53dd38dc1d4c76f21c0f0523c3ab554e006e068b002a08",
+    "validation/tests/test_dynamic_copilot.py": "0af68473e277c6b9a326e5ab9e1e92befe68577e380e38bd70c2f4abbdb7938c"
+  },
+  "clinical_release": false,
+  "limitations": [
+    "Intake/compatibility coverage is not model accuracy or clinical commissioning.",
+    "No forced DVH calculation on blocked or unresolved cases. Unsupported non-DICOM assets and modalities are explicitly reported.",
+    "TOPAS executable is unavailable locally; generated decks have not been transported through TOPAS.",
+    "Gemini 3.1 Pro returned project quota zero; 2.5 Flash returned 404. Flash 3.8 had intermittent 503/timeouts.",
+    "No patient data or patient queries were sent to Gemini. Live tests are synthetic only.",
+    "Independent TPS comparison remains limited to the curated phantom benchmark; its discrepancies remain unresolved."
+  ]
+}

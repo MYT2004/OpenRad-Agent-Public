@@ -5,6 +5,7 @@ This is the single entry point for OpenRad benchmarks, regression tests, audit d
 ```text
 validation/
   benchmarks/
+    stress/            Full-corpus, seeded numerical and live synthetic copilot checks
     slicerrt/          Runner, reference comparison, pinned manifest and methodology
     local_datasets.py Read-only local integration comparison utility
   tests/              All offline unit, integration, API and UI regressions
@@ -44,3 +45,5 @@ Existing generated evidence formerly scattered under `data/processed/` was reloc
 ## Add another benchmark
 
 Create `benchmarks/<suite>/` with its runner, pinned source manifest and methodology. Place offline regression coverage in `tests/`. Write generated results under a new `runs/<suite>/<run-id>/`, with sources, software versions, observed values, limitations and follow-up actions. Publish only a reviewed, immutable snapshot under `evidence/<suite>/<run-id>/`, including artifact hashes and the executed implementation/CI reference. Keep patient-derived files, raw DICOM, credentials and local screenshots out of published snapshots.
+
+Latest reviewed stress summary: [2026-10-21 copilot and full corpus](evidence/stress/2026-10-21/README.md). Source inputs and detailed private case reports remain local.

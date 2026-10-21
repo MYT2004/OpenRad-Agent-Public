@@ -1,0 +1,11 @@
+{
+  "files_sha256": {
+    "assessment.json": "05e300beb51aa47884effa2ba838819b688af0e9a5ab557f1f959848b68bf66c",
+    "credential-check.json": "01164d2b8733a59ee3eceee6cb525d7b640be159e310344180cda3e78e9af10a",
+    "README.md": "3b2645e4e5894c9c8c8a6ba89d17cb8660f19d7b22343c91e51fe530596e4e92",
+    "test-inventory.txt": "eb140e5a0290d46424c6608bc40df224a44ab6699b98c5ae71aacd5ae0a8d74c",
+    "copilot-synthetic-ui.png": "19005103b7d1fe91cb17fef7471f89a96393dfed05d0ed9b5736e64c6a0fb77a"
+  },
+  "release_test_log_sha256": "5a0039fa1e28d1639c79968adcc9840f82fcc6d65b04f3b49e56b25d57b84192",
+  "clinical_release": false
+}

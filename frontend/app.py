@@ -152,7 +152,7 @@ def prepare_verified_case_dvh(root):
 if mode == '🤖 Dynamic Agent Copilot':
     from src.agent_dynamic import run_dynamic_agent
     st.subheader('🤖 Dynamic Agent Copilot (Gemini Grounded Reasoning)')
-    st.caption('Autonomous LLM medical physics partner with deterministic physical validation, pessimistic safety interceptors, and step-by-step reasoning trajectory.')
+    st.caption('Autonomous LLM medical physics partner with deterministic physical validation, pessimistic safety interceptors, and bounded local tool execution and explicit error reporting.')
 
     st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\nSingle-case research candidate evaluation only. Does not replace independent clinical commissioning or certified treatment planning system verification.")
 
@@ -161,41 +161,49 @@ if mode == '🤖 Dynamic Agent Copilot':
         **Architectural Highlights:**
         1. **Grounded Function Calling**: All dose metrics ($D_{95\%}$, $D_{50\%}$, $D_{2\%}$, $V_{50\text{Gy}}$, $\bar{D}$), gamma passing rates, and TOPAS decks originate from deterministic Python modules.
         2. **Pessimistic Safety Interceptors**: Rejects unphysical negative voxel dose distributions ($D(\vec{r}) < 0.0\text{ Gy}$), non-orthogonal geometry, and beam energies outside clinical bounds ($0.01 - 250\text{ MeV}$).
-        3. **Spinal Cord Tolerance Policy**: Hard biological safety ceiling $D_{\max} < 45.0\text{ Gy}$ to guard against myelopathy. Plans exceeding this are designated `REJECTED`.
-        4. **Offline Grounded Fallback**: Automatically falls back to deterministic local tool execution if `GEMINI_API_KEY` is not configured.
+        3. **Clinical constraints**: Organ tolerances depend on fractionation, prescription and a reviewed protocol; no universal cord limit is assumed.
+        4. **Explicit execution modes**: Without a key, only local intake is performed. Provider failures stop the run; no simulated measurements are substituted.
         """)
 
-    preset_queries = [
-        "Verify dataset data/raw/HNSCC-01-0199, compute DVH for SpinalCord, and determine if plan complies with 45 Gy cord tolerance.",
-        "Inspect case data/raw/HNSCC-01-0019, evaluate target coverage for PTV70, and generate a 150 MeV proton TOPAS deck.",
-        "Evaluate AAPM TG-218 3%/2mm Gamma QA between reference and independent evaluated dose.",
-        "Custom Clinical Directive..."
-    ]
-    selected_preset = st.selectbox("Select Pre-configured Clinical Directive or Custom", preset_queries, key='copilot_preset')
-    default_text = "" if selected_preset == "Custom Clinical Directive..." else selected_preset
-
-    query_input = st.text_area("Clinical Directive / Medical Physics Query", value=default_text, height=90, key='copilot_query_text')
+    st.caption('Keep names, identifiers, paths and clinical details out of the hosted query. Select local files separately. Only tool summaries reach Gemini; no raw files are uploaded.')
+    case_directory = st.text_input('Local case directory (stays local)', value=configured[0] if configured else '', key='copilot_case_directory')
+    query_input = st.text_area('De-identified research task', value='Verify intake for selected_case. Stop if blocked or requiring review.', height=90, key='copilot_query_text')
+    with st.expander('Independent Gamma inputs (local only)'):
+        gamma_ref = st.text_input('Reference dose file', key='copilot_gamma_ref')
+        gamma_eval = st.text_input('Evaluated dose file', key='copilot_gamma_eval')
+        gamma_spacing_text = st.text_input('Array spacing in mm, in array-axis order (both arrays)', value='1,1,1', key='copilot_gamma_spacing')
 
     col_api, col_model, col_run = st.columns([2.5, 1.5, 1])
     with col_api:
-        gemini_api_key = st.text_input("Gemini API Key (Optional — leaves empty for offline grounded mode)", type="password", value=os.getenv("GEMINI_API_KEY", ""), key='copilot_gemini_key')
+        gemini_api_key = st.text_input("Gemini API key (memory only; empty runs local intake)", type="password", value=os.getenv("GEMINI_API_KEY", ""), key='copilot_gemini_key')
     with col_model:
-        selected_model = st.selectbox("Model", ["gemini-3.1-pro-preview", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"], index=0, key='copilot_gemini_model')
+        selected_model = st.selectbox("Model", ["gemini-3.8-flash", "gemini-3.1-pro-preview", "gemini-2.5-flash"], index=0, key='copilot_gemini_model')
     with col_run:
         st.write("")
         st.write("")
         run_copilot = st.button("🚀 Run Copilot", type="primary", use_container_width=True, disabled=not query_input.strip())
 
+    context = (query_input, case_directory, gamma_ref, gamma_eval, gamma_spacing_text, selected_model, bool(gemini_api_key))
+    if st.session_state.get('copilot_context') != context:
+        st.session_state.pop('copilot_result', None)
     if run_copilot:
         with st.spinner("Executing dynamic reasoning loop, grounding deterministic tools, and verifying physical bounds..."):
-            res = run_dynamic_agent(query_input.strip(), api_key=gemini_api_key or None, model=selected_model)
-            st.session_state.copilot_result = res
+            try:
+                spacing = [float(v.strip()) for v in gamma_spacing_text.split(',')]
+                res = run_dynamic_agent(query_input.strip(), api_key=gemini_api_key or None, model=selected_model,
+                    case_directory=case_directory or None,
+                    gamma_paths=(gamma_ref, gamma_eval) if gamma_ref and gamma_eval else None,
+                    gamma_spacing=(spacing, spacing))
+                st.session_state.copilot_result = res
+                st.session_state.copilot_context = context
+            except ValueError:
+                st.error('Supply numerical array spacing in mm separated by commas.')
 
     if 'copilot_result' in st.session_state:
         res = st.session_state.copilot_result
 
         c1, c2, c3 = st.columns(3)
-        disp = getattr(res, 'disposition', 'APPROVED')
+        disp = getattr(res, 'disposition', 'FLAGGED_FOR_REVIEW')
         if disp == 'APPROVED':
             c1.success(f"**Research Triage:** {disp}")
         elif disp == 'FLAGGED_FOR_REVIEW':
@@ -204,7 +212,7 @@ if mode == '🤖 Dynamic Agent Copilot':
             c1.error(f"**Research Triage:** {disp}")
 
         c2.metric("Executed Tool Calls", len(res.trajectory))
-        c3.metric("Safety Verification", "100% Grounded")
+        c3.metric("Execution mode", res.execution_mode)
 
         with st.expander("🔍 View Agent Tool-Calling Trajectory & Safety Interceptions", expanded=True):
             if not res.trajectory:
@@ -213,7 +221,7 @@ if mode == '🤖 Dynamic Agent Copilot':
                 step_idx = step.get('step', 1)
                 tool_nm = step.get('tool_name', 'tool')
                 st.markdown(f"#### Step {step_idx}: Grounded Tool `{tool_nm}`")
-                st.info(f"**Agent Intent / Rationale:** {step.get('thought', 'Invoking grounded medical physics tool.')}")
+                st.info(f"**Recorded action:** {step.get('thought', 'Invoking grounded medical physics tool.')}")
 
                 col_args, col_obs = st.columns(2)
                 with col_args:
@@ -229,29 +237,32 @@ if mode == '🤖 Dynamic Agent Copilot':
                         st.code(obs_raw, language='text')
                 st.divider()
 
-        st.markdown("### 📋 Synthesized Clinical Physics Report")
+        st.markdown("### 📋 Deterministic Research Assessment")
         st.markdown(res.response)
 
         if getattr(res, 'artifacts', None):
             st.markdown("### 📊 Generated Session Artifacts")
             for art in res.artifacts:
                 art_p = Path(art)
+                if not art_p.is_file():
+                    st.warning('A session artifact is unavailable; rerun the assessment to regenerate it.')
+                    continue
                 if art_p.suffix.lower() in ('.png', '.jpg', '.jpeg'):
                     st.image(str(art_p), caption=art_p.name)
-                elif art_p.suffix.lower() in ('.txt', '.topas'):
+                elif art_p.suffix.lower() in ('.md', '.csv', '.json', '.txt', '.topas'):
                     with st.expander(f"View File: {art_p.name}"):
                         st.code(art_p.read_text(), language='text')
 
         d_col1, d_col2 = st.columns(2)
         d_col1.download_button(
-            "Download Clinical Report (Markdown)",
+            "Download Research Assessment (Markdown)",
             res.response,
-            file_name="openrad_copilot_clinical_report.md",
+            file_name="openrad_copilot_research_assessment.md",
             mime="text/markdown",
             key="download_copilot_md"
         )
         d_col2.download_button(
-            "Download Reasoning Trajectory (JSON)",
+            "Download Tool Actions (JSON)",
             json.dumps(res.trajectory, indent=2),
             file_name="openrad_copilot_trajectory.json",
             mime="application/json",
