@@ -4,7 +4,7 @@ import re
 import json
 import os
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 class StorageManager:
@@ -51,7 +51,13 @@ class StorageManager:
     def get_artifacts_dir(self, session_id: str) -> str:
         return os.path.join(self.get_session_dir(session_id), "artifacts")
 
-    def save_trajectory(self, session_id: str, prompt: str, response: str) -> str:
+    def save_trajectory(
+        self,
+        session_id: str,
+        prompt: str,
+        response: str,
+        extra: Optional[Dict[str, Any]] = None,
+    ) -> str:
         session_dir = self.get_session_dir(session_id)
         traj_file = os.path.join(session_dir, "trajectory.json")
 
@@ -63,13 +69,14 @@ class StorageManager:
             except Exception:
                 history = []
 
-        history.append(
-            {
-                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                "user_prompt": prompt,
-                "agent_response": response,
-            }
-        )
+        entry = {
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "user_prompt": prompt,
+            "agent_response": response,
+        }
+        if extra:
+            entry.update(extra)
+        history.append(entry)
 
         with open(traj_file, "w", encoding="utf-8") as f:
             json.dump(history, f, indent=2)

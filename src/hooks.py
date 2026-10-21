@@ -1,10 +1,22 @@
 """Enforced post-tool validation; internal arrays never enter API responses."""
 from functools import wraps
+import hashlib
+import json
+from typing import Any, Dict, Optional
 import numpy as np
 from openrad.validation.physics_rules import PhysicsValidationEngine, DoseIntegrityError
 
 
-def validate_tool_output(output):
+def compute_output_hash(data: Dict[str, Any]) -> str:
+    """Computes a deterministic SHA-256 integrity hash of structured tool output."""
+    try:
+        canonical = json.dumps(data, sort_keys=True, default=str)
+    except Exception:
+        canonical = str(sorted(data.items()))
+    return hashlib.sha256(canonical.encode('utf-8')).hexdigest()
+
+
+def validate_tool_output(output: Any, tool_name: Optional[str] = None) -> Dict[str, Any]:
     if not isinstance(output, dict):
         raise DoseIntegrityError('Tools must return structured results.')
     def inspect(value):
@@ -27,12 +39,29 @@ def validate_tool_output(output):
             for item in value:
                 inspect(item)
     inspect(output)
-    return {key: value for key, value in output.items() if key != '_physics'}
+    clean_output = {key: value for key, value in output.items() if key != '_physics'}
+    audit_hash = compute_output_hash(clean_output)
+    clean_output['audit_hash_sha256'] = audit_hash
+
+    try:
+        from src.storage import current_session
+        manager, session_id = current_session()
+        if session_id:
+            manager.save_trajectory(
+                session_id=session_id,
+                prompt=f"tool_call:{tool_name or 'tool'}",
+                response="validated",
+                extra={"audit_hash_sha256": audit_hash, "tool": tool_name or "tool"},
+            )
+    except Exception:
+        pass
+
+    return clean_output
 
 
 def post_tool_call(fn):
     """Run mandatory checks after every invocation of a decorated tool."""
     @wraps(fn)
     def checked(*args, **kwargs):
-        return validate_tool_output(fn(*args, **kwargs))
+        return validate_tool_output(fn(*args, **kwargs), tool_name=fn.__name__)
     return checked
