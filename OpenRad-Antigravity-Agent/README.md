@@ -16,40 +16,21 @@ Powered by **Google Antigravity**, **Gemini 3.5 Pro**, and a closed-loop **Physi
 
 ## 📐 System Architecture
 
-  +-----------------------+
-  |   User Prompt / API   |
-  +-----------+-----------+
-                          |
-                          v
-                      +---------------+---------------+
-                      |    Google Antigravity Runtime |
-                      |   (Gemini 3.5 Pro Core Engine)|
-                      +---------------+---------------+
-                                               |
-                      +------------------------+------------------------+
-                      |                                                 |
-                      v                                                 v
-        +-------------+-------------+                     +-------------+-------------+
-        |   Deterministic Tools     |                     |    Stateful REPL / Shell   |
-        |  (pydicom / PyMedPhys)    |                     | (Code Exec & Visualization)|
-        +-------------+-------------+                     +-------------+-------------+
-                  |                                                 |
-                  +------------------------+------------------------+
-                                |
-                                v
-                +---------------+---------------+
-                |   Physics Validation Engine   |
-                |  (Bounds & Unit Checks)       |
-                +---------------+---------------+
-                                |
-                    [Pass / Fail Guardrail]
-                          /         
-              (Pass)     /           \     (Fail: Auto-Correction)
-                        v             v
-              +-----------+---+   +-----+-------------------+
-              | JSON / Plots  |   | Re-prompt Agent with    |
-              | Artifacts     |   | Trajectory Feedback     |
-              +---------------+   +-------------------------+
+[ User Prompt / API Request ]
+│
+▼
+[ Google Antigravity Agent Core ] ─── (Gemini 3.5 Pro Orchestrator)
+│
+├──► [ Deterministic Tools ] ────► pydicom / PyMedPhys (DVH & Gamma)
+│
+├──► [ Stateful REPL Environment ] ─► Python / NumPy / Matplotlib
+│
+▼
+[ Physics Validation Engine ] ─── Enforces: D(r) >= 0 Gy | 0.01 <= E <= 250 MeV
+│
+├──► (PASS) ──► Output JSON Metrics, Plots & TOPAS Decks
+│
+└──► (FAIL) ──► Self-Correction Trajectory Loop -> Re-prompt Core
 
 ---
 
