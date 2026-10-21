@@ -97,7 +97,7 @@ def present_result(result, kind, key):
     from src.reports import build_report, markdown, metrics_csv
     report = result.get('human_report') or build_report(result, kind)
     st.markdown(report['summary'])
-    st.dataframe(report['metrics'], width='stretch')
+    st.table(report['metrics'])
     st.markdown('**Follow-up actions**')
     for index, action in enumerate(report['follow_up_actions'], 1):
         st.write(f'{index}. {action}')
