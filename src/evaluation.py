@@ -143,8 +143,11 @@ def evaluate_model(request: EvaluationRequest):
                                                  list(request.image_grid.spacing_mm), list(request.image_grid.spacing_mm))
                     metrics[label] = gamma
                     rules.append(threshold_rule(label, gamma['passing_rate'], pass_at, fail_at))
-                metrics['mae_percent_rx'] = float(np.mean(np.abs(prediction - reference)) / request.prescription_gy * 100)
-                metrics['ptv_d95_percent_rx'] = float(np.percentile(prediction[target], 5) / request.prescription_gy * 100)
+                metrics['prescription_gy'] = request.prescription_gy
+                metrics['mae_gy'] = float(np.mean(np.abs(prediction - reference)))
+                metrics['ptv_d95_gy'] = float(np.percentile(prediction[target], 5))
+                metrics['mae_percent_rx'] = metrics['mae_gy'] / request.prescription_gy * 100
+                metrics['ptv_d95_percent_rx'] = metrics['ptv_d95_gy'] / request.prescription_gy * 100
                 rules.extend([threshold_rule('mae_percent_rx', metrics['mae_percent_rx'], 1.5, 3, False),
                               threshold_rule('ptv_d95_percent_rx', metrics['ptv_d95_percent_rx'], 95, 93)])
                 metrics['oar_dmax_gy'] = {}
@@ -207,7 +210,7 @@ def evaluate_model(request: EvaluationRequest):
     artifact_dir = Path(manager.get_artifacts_dir(session_id))
     if result.hard_checks_passed and 'mae_percent_rx' in metrics:
         filename = f'decision_{uuid.uuid4().hex}.png'
-        _plot_comparison(arrays, artifact_dir / filename, result.provenance['oar_mask_roles'])
+        _plot_comparison(arrays, artifact_dir / filename, result.provenance['oar_mask_roles'], request.image_grid.spacing_mm)
         result.artifacts.append(f'/artifacts/{session_id}/artifacts/{filename}')
     # Recheck source content after computation, without modifying any source file.
     # Array hashes bind the actual bytes read; full inputs/weights are checked again.
@@ -216,23 +219,30 @@ def evaluate_model(request: EvaluationRequest):
         if role in hashes and file_hash(path) != hashes[role]:
             raise ValueError('Source changed during evaluation; no decision committed')
     record = result.model_dump(mode='json')
+    from src.reports import attach_report
+    attach_report(record, 'evaluation')
     append_record(Path(manager.get_session_dir(session_id)) / 'decisions.jsonl', {'type': 'evaluation', **record})
     return record
 
 
-def _plot_comparison(arrays, output, roi_labels):
+def _plot_comparison(arrays, output, roi_labels, spacing_mm):
     reference, prediction = arrays['reference'], arrays['prediction']
     z = int(np.argmax(np.max(np.abs(prediction - reference), axis=(1, 2))))
     figure = Figure(figsize=(12, 4)); FigureCanvasAgg(figure)
     ax = figure.add_subplot(131)
     delta = prediction[z] - reference[z]
     limit = max(float(np.abs(delta).max()), .001)
-    im = ax.imshow(delta, cmap='RdBu_r', vmin=-limit, vmax=limit)
-    ax.set(xlabel='x voxel index', ylabel='y voxel index', title=f'Dose difference (Gy), slice {z}'); figure.colorbar(im, ax=ax)
+    extent = (0, reference.shape[2]*spacing_mm[2], reference.shape[1]*spacing_mm[1], 0)
+    im = ax.imshow(delta, cmap='RdBu_r', vmin=-limit, vmax=limit, extent=extent)
+    ax.set(xlabel='Grid x (mm)', ylabel='Grid y (mm)', title=f'Model − reference (Gy), slice {z}'); figure.colorbar(im, ax=ax)
+    for role in roi_labels:
+        plane=arrays[role][z]
+        if plane.any() and not plane.all():
+            ax.contour((np.arange(plane.shape[1])+.5)*spacing_mm[2], (np.arange(plane.shape[0])+.5)*spacing_mm[1], plane, levels=[.5], linewidths=.8, colors='black')
     ax = figure.add_subplot(132)
     if 'uncertainty_std' in arrays:
-        im = ax.imshow(arrays['uncertainty_std'][z], cmap='magma', vmin=0, vmax=max(float(arrays['uncertainty_std'].max()), .001))
-        figure.colorbar(im, ax=ax); ax.set_title('Uncertainty SD (Gy)')
+        im = ax.imshow(arrays['uncertainty_std'][z], cmap='magma', vmin=0, vmax=max(float(arrays['uncertainty_std'].max()), .001), extent=extent)
+        figure.colorbar(im, ax=ax); ax.set(xlabel='Grid x (mm)', ylabel='Grid y (mm)', title='Uncertainty SD (Gy)')
     else:
         ax.text(.1, .5, 'Uncertainty unavailable'); ax.axis('off')
     ax = figure.add_subplot(133)

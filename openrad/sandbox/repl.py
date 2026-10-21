@@ -9,6 +9,7 @@ import io
 import os
 import sys
 import traceback
+from uuid import uuid4
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 import numpy as np
@@ -52,7 +53,8 @@ class StatefulPythonREPL:
             from src.storage import current_session
             manager, session_id = current_session()
             artifact_dir = manager.get_artifacts_dir(session_id)
-        self.artifact_dir = os.path.abspath(artifact_dir)
+        from src.readonly import assert_output_path
+        self.artifact_dir = str(assert_output_path(artifact_dir))
         os.makedirs(self.artifact_dir, exist_ok=True)
         self.figure_counter = 0
 
@@ -148,7 +150,7 @@ class StatefulPythonREPL:
                     self.figure_counter += 1
                     fig = plt.figure(f_num)
                     art_path = os.path.join(
-                        self.artifact_dir, f"plot_{self.figure_counter}.png"
+                        self.artifact_dir, f"plot_{uuid4().hex}.png"
                     )
                     fig.savefig(art_path, dpi=150, bbox_inches="tight")
                     artifacts.append(art_path)
@@ -157,28 +159,17 @@ class StatefulPythonREPL:
             stderr_text += f"\nWarning capturing figures: {e}"
 
         # Physics Guardrail Check: Inspect dose arrays in namespace or returned result
-        dose_candidate = None
+        candidates = [(name, value) for name, value in self.namespace.items()
+                      if 'dose' in name.lower() and isinstance(value, np.ndarray)]
         if isinstance(eval_result, np.ndarray):
-            dose_candidate = eval_result
-        else:
-            # Check namespace for variables containing 'dose'
-            for var_name, var_val in self.namespace.items():
-                if "dose" in var_name.lower() and isinstance(var_val, np.ndarray):
-                    dose_candidate = var_val
-                    break
-
-        if dose_candidate is not None:
-            v_check = PhysicsValidationEngine.validate_dose_grid(
-                dose_candidate, raise_on_fail=False
-            )
-            validation_res = v_check
-            if not v_check.passed:
-                # Flag as failed and append self-correction diagnostic
+            candidates.append(('returned_array', eval_result))
+        for name, candidate in candidates:
+            check = PhysicsValidationEngine.validate_dose_grid(candidate, raise_on_fail=False)
+            validation_res = check
+            if not check.passed:
                 success = False
-                error_msg = (
-                    f"Physics Guardrail Violation: {v_check.error_message}\n"
-                    f"Action Required: {v_check.remediation_suggestion}"
-                )
+                error_msg = f'Physics Guardrail Violation in {name}: {check.error_message}\nAction Required: {check.remediation_suggestion}'
+                break
 
         trajectory = {
             "code": code,

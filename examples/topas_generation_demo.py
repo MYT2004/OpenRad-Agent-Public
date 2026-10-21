@@ -1,7 +1,7 @@
 """End-to-End Demo: TOPAS Monte Carlo Input Deck Generation & Physics Validation.
 
-Generates production-grade TOPAS parameter decks for proton and electron radiotherapy,
-and demonstrates the autonomous self-correction loop when unphysical parameters are requested.
+Generates research TOPAS parameter templates for proton and electron radiotherapy,
+and demonstrates rejection without changing requested beam parameters.
 """
 
 import os
@@ -45,7 +45,7 @@ def run_demo():
         f.write(electron_deck)
     print(f"  [+] Saved: {e_path} ({len(electron_deck.splitlines())} lines)")
 
-    # 3. Demonstration of Physics Validation Guardrail & Self-Correction
+    # 3. Demonstration of rejection without changing the request
     print("\n3. Testing Physics Guardrail: Attempting unphysical energy (500 MeV)...")
     unphysical_energy = 500.0
     try:
@@ -57,16 +57,7 @@ def run_demo():
         print("  [-] Error: Physics engine failed to flag unphysical energy!")
     except BeamEnergyBoundsError as e:
         print(f"  [+] Guardrail Intercepted: {e}")
-        print("  [+] Self-Correction Action: Clamping energy to clinical upper bound (250 MeV)...")
-        corrected_deck = generate_topas_deck(
-            particle_type="proton",
-            energy_MeV=250.0,
-            geometry_type="water_phantom",
-        )
-        c_path = os.path.join(artifacts_dir, "proton_250MeV_corrected.txt")
-        with open(c_path, "w", encoding="utf-8") as f:
-            f.write(corrected_deck)
-        print(f"  [+] Self-Correction Succeeded: Generated {c_path}")
+        print('  [+] No deck generated for the rejected request. Review the requested energy; parameters are never clamped automatically.')
 
     print("\n" + "=" * 70)
     print("TOPAS Generation Demo Completed Successfully.")

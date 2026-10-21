@@ -18,6 +18,7 @@ from openrad.core.agent import OpenRadAgent
 from src.storage import StorageManager, session_scope
 from src.tools import parse_and_evaluate_dvh, generate_topas_file
 from src.config import skills_paths
+from src.reports import attach_report
 from src.decision import EvaluationRequest
 from src.evaluation import evaluate_model
 from src.governance import signed_review, verify_records
@@ -115,7 +116,8 @@ def run_agent(payload: AgentRunRequest):
 
     try:
         session_agent = OpenRadAgent(artifact_dir=storage_mgr.get_artifacts_dir(session_id))
-        result = session_agent.run(payload.prompt, context=payload.context)
+        with session_scope(storage_mgr, session_id):
+            result = session_agent.run(payload.prompt, context=payload.context)
         storage_mgr.save_trajectory(session_id, "[request redacted]", "completed" if result.success else "failed")
         artifacts = storage_mgr.list_artifacts(session_id)
 
@@ -155,7 +157,8 @@ def run_gamma(payload: GammaEvaluationInput):
             reference_spacing_mm=payload.reference_spacing_mm,
             evaluated_spacing_mm=payload.evaluated_spacing_mm,
         )
-        return results
+        with session_scope(storage_mgr):
+            return attach_report(results, 'gamma')
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -168,7 +171,8 @@ def run_topas(payload: TOPASRequest):
             target = str(Path(storage_mgr.get_artifacts_dir(session_id))/filename)
             result = generate_topas_file(payload.particle, payload.energy_mev, payload.histories, target)
             result.pop('output_path', None)
-            result.update(session_id=session_id, artifacts=[f'/artifacts/{session_id}/artifacts/{filename}'])
+            result.update(session_id=session_id)
+            result['artifacts'].insert(0, f'/artifacts/{session_id}/artifacts/{filename}')
             return result
     except BeamEnergyBoundsError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
@@ -185,7 +189,8 @@ def run_radiobio(payload: RadiobiologyInput):
             parameters=payload.parameters,
             dvh_type=payload.dvh_type,
         )
-        return results
+        with session_scope(storage_mgr):
+            return attach_report(results, 'radiobiology')
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -212,7 +217,7 @@ def get_session(session_id: str):
 
 @app.get('/artifacts/{session_id}/artifacts/{filename}')
 def get_artifact(session_id: str, filename: str):
-    if not re.fullmatch(r'(?:dvh|topas|decision)_[a-f0-9]{32}\.(?:png|txt)', filename):
+    if not re.fullmatch(r'(?:(?:dvh|decision|plot)_[a-f0-9]{32}\.png|topas_[a-f0-9]{32}\.txt|report_[a-f0-9]{32}\.md)', filename):
         raise HTTPException(status_code=404, detail='Artifact not found.')
     try:
         directory = Path(storage_mgr.get_artifacts_dir(session_id)).resolve()

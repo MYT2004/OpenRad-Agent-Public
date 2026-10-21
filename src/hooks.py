@@ -10,9 +10,9 @@ from openrad.validation.physics_rules import PhysicsValidationEngine, DoseIntegr
 def compute_output_hash(data: Dict[str, Any]) -> str:
     """Computes a deterministic SHA-256 integrity hash of structured tool output."""
     try:
-        canonical = json.dumps(data, sort_keys=True, default=str)
-    except Exception:
-        canonical = str(sorted(data.items()))
+        canonical = json.dumps(data, sort_keys=True, allow_nan=False)
+    except (ValueError, TypeError) as exc:
+        raise DoseIntegrityError('Tool output must contain finite JSON-serializable values.') from exc
     return hashlib.sha256(canonical.encode('utf-8')).hexdigest()
 
 
@@ -43,18 +43,13 @@ def validate_tool_output(output: Any, tool_name: Optional[str] = None) -> Dict[s
     audit_hash = compute_output_hash(clean_output)
     clean_output['audit_hash_sha256'] = audit_hash
 
-    try:
+    if tool_name:
         from src.storage import current_session
+        from src.governance import append_record
+        from pathlib import Path
         manager, session_id = current_session()
-        if session_id:
-            manager.save_trajectory(
-                session_id=session_id,
-                prompt=f"tool_call:{tool_name or 'tool'}",
-                response="validated",
-                extra={"audit_hash_sha256": audit_hash, "tool": tool_name or "tool"},
-            )
-    except Exception:
-        pass
+        append_record(Path(manager.get_session_dir(session_id)) / 'tool-audit.jsonl',
+                      {'type':'validated_tool', 'tool':tool_name, 'output_sha256':audit_hash})
 
     return clean_output
 

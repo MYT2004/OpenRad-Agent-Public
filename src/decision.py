@@ -100,6 +100,7 @@ class ModelEvaluationResult(Contract):
     decision_hash: str = ''
     artifacts: List[str] = Field(default_factory=list)
     session_id: str = ''
+    human_report: dict = Field(default_factory=dict)
 
 
 def threshold_rule(name, value, pass_at, fail_at, higher=True):

@@ -3,6 +3,7 @@
 Run as: python -m scripts.verify_local_datasets folder1 folder2 --reference
 Reports go to ignored data/processed by default.
 """
+from importlib.metadata import version
 import argparse
 import hashlib
 import json
@@ -38,7 +39,7 @@ def verify(roots, reference=False):
                     for name,r in result['structures'].items():
                         if not r.get('found'):continue
                         ref=dvhcalc.get_dvh(pair['struct_path'],pair['dose_path'],r['roi_number'])
-                        r['independent_reference']={'package':'dicompyler-core 0.5.6','volume_cc':float(ref.volume),'mean_Gy':float(ref.mean),'D95_Gy':float(ref.D95.value)}
+                        r['independent_reference']={'package':'dicompyler-core '+version('dicompyler-core'),'volume_cc':float(ref.volume),'mean_Gy':float(ref.mean),'D95_Gy':float(ref.D95.value)}
                         r['reference_discrepancy']={'volume_cc':r['volume_cc']-float(ref.volume),'mean_Gy':r['mean_dose_Gy']-float(ref.mean),'D95_Gy':r['D95_Gy']-float(ref.D95.value)}
             report['dose_pairs'].append(item)
         reports.append(report)

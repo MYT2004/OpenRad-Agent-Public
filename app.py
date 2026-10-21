@@ -6,6 +6,6 @@ defined in frontend/app.py.
 from pathlib import Path
 import runpy
 
-if __name__ == "__main__" or True:
+if __name__ == "__main__":
     app_target = Path(__file__).resolve().parent / "frontend" / "app.py"
     runpy.run_path(str(app_target), run_name="__main__")

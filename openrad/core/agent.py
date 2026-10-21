@@ -6,6 +6,7 @@ physics validation guardrails, and autonomous self-correction loops.
 
 import json
 import os
+from src.reports import build_report, markdown
 import re
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Union
@@ -59,7 +60,8 @@ class OpenRadAgent:
             from src.storage import current_session
             manager, session_id = current_session()
             artifact_dir = manager.get_artifacts_dir(session_id)
-        self.artifact_dir = os.path.abspath(artifact_dir)
+        from src.readonly import assert_output_path
+        self.artifact_dir = str(assert_output_path(artifact_dir))
         os.makedirs(self.artifact_dir, exist_ok=True)
 
         self.repl = StatefulPythonREPL(artifact_dir=self.artifact_dir)
@@ -187,9 +189,10 @@ class OpenRadAgent:
                     nom_summary = str(nom)
                 lines = [
                     "### OpenRad Agent: DVH Analysis Report",
+                    "Research only. Interpret coverage and OAR metrics against the actual prescription and protocol.",
                     f"- **Dose Grid Dimensions**: {res_dict.get('dose_grid_shape')}",
                     f"- **Maximum Plan Dose**: {res_dict.get('max_dose_Gy')} Gy",
-                    f"- **Physics Validation**: Passed (D(r) >= 0 Gy, valid geometry)",
+                    f"- **Numerical checks**: Nonnegative dose and supported geometry; clinical accuracy is unestablished.",
                     f"- **Nomenclature review**: {nom_summary}",
                     "\n#### Structure Metrics:",
                 ]
@@ -215,7 +218,7 @@ class OpenRadAgent:
             return AgentExecutionResult(task=task, response=record.error or "DVH failed.", tool_records=tool_records, success=False)
 
         # 2. Gamma Index Evaluation Intent
-        elif any(w in task_lower for w in ["gamma", "gamma index", "qa", "passing rate"]):
+        elif any(w in task_lower for w in ["gamma", "gamma index", "qa", "passing rate"]) and not any(w in task_lower for w in ["topas", "geant4", "deck", "monte carlo"]):
             # Check for parameters
             d_tol = 3.0
             dist_tol = 2.0
@@ -261,7 +264,8 @@ class OpenRadAgent:
             tool_records.append(record)
 
             if record.physics_passed and record.output:
-                deck_path = os.path.join(self.artifact_dir, "topas_simulation.txt")
+                from uuid import uuid4
+                deck_path = os.path.join(self.artifact_dir, f"topas_{uuid4().hex}.txt")
                 with open(deck_path, "w", encoding="utf-8") as f:
                     f.write(record.output)
                 artifacts.append(deck_path)
@@ -292,7 +296,7 @@ class OpenRadAgent:
             if not args:
                 return AgentExecutionResult(task=task, response="Provide an explicit DVH and model parameters in the radiobiology workflow. No synthetic patient results are substituted.", success=False)
             record = self.dispatch_tool("calculate_tcp_ntcp", args)
-            return AgentExecutionResult(task=task, response=str(record.output) if record.physics_passed else record.error, tool_records=[record], success=record.physics_passed)
+            return AgentExecutionResult(task=task, response=markdown(build_report(record.output,'radiobiology')) if record.physics_passed else record.error, tool_records=[record], success=record.physics_passed)
 
         # 5. Model Verification & Clinical Follow-Up Actions Intent
         elif any(w in task_lower for w in ["verify", "evaluation", "validation", "safety audit", "model verification", "clinical report", "follow up", "follow-up"]):
@@ -308,7 +312,7 @@ class OpenRadAgent:
             report_md = report.to_markdown()
 
             import uuid
-            report_filename = f"verification_report_{uuid.uuid4().hex[:8]}.md"
+            report_filename = f"report_{uuid.uuid4().hex}.md"
             report_path = os.path.join(self.artifact_dir, report_filename)
             with open(report_path, "w", encoding="utf-8") as f:
                 f.write(report_md)

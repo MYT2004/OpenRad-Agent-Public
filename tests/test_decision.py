@@ -67,7 +67,7 @@ def test_invalid_dose_rejects(case,dose):
     path = case[2]('bad',np.full((3,3,3),dose))
     result = run(case,prediction_path=path)
     assert result['status'] == 'REJECTED' and not result['hard_checks_passed']
-    assert not result['artifacts']
+    assert all(Path(artifact).suffix == '.md' for artifact in result['artifacts'])
 
 
 @pytest.mark.parametrize('update',[

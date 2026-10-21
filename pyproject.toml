@@ -9,7 +9,7 @@ description = "Autonomous Medical Physics & Radiotherapy Intelligence Agent"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-    "pydicom>=2.4.0",
+    "pydicom>=2.4.0,<3.0",  # dicompyler-core 0.5.x imports the removed read_file API
     "numpy>=1.22.0",
     "scipy>=1.9.0",
     "pydantic>=2.0.0",

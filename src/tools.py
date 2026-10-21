@@ -1,4 +1,5 @@
 """Canonical, deterministic OSI tools with scrubbed inputs and physics hooks."""
+from __future__ import annotations
 from pathlib import Path
 from uuid import uuid4
 import numpy as np
@@ -100,15 +101,6 @@ def resolve_save_path(target: str | Path, patient_id: str | None = None) -> Path
 
     target_path = Path(target_str)
 
-    # Absolute filesystem check against data/raw
-    try:
-        raw_dir = (Path.cwd() / 'data' / 'raw').resolve()
-        resolved = target_path.resolve()
-        if resolved == raw_dir or raw_dir in resolved.parents:
-            raise PermissionError(f"Write operations into 'data/raw/' are strictly prohibited for data safety and immutability: {target_str}")
-    except Exception:
-        pass
-
     pid = str(patient_id).strip() if patient_id else 'default'
     pid = Path(pid).name or 'default'
     processed_base = (Path.cwd() / 'data' / 'processed' / pid).resolve()
@@ -121,6 +113,11 @@ def resolve_save_path(target: str | Path, patient_id: str | None = None) -> Path
     else:
         out_path = processed_base / target_path.name
 
+    from src.readonly import assert_output_path
+    try:
+        out_path = assert_output_path(out_path)
+    except ValueError as exc:
+        raise PermissionError('Raw data is read-only; choose a separate output directory') from exc
     out_path.parent.mkdir(parents=True, exist_ok=True)
     return out_path
 
@@ -168,7 +165,6 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
         labels = []
         for index, name in enumerate(rois):
             canonical = (name_map.get(name.casefold())
-                         or BUILTIN_ROI_ALIASES.get(name.casefold())
                          or check_structure_name(name)['canonical_name'])
             labels.append(canonical or f'RequestedROI{index+1}')
         if len(set(n.casefold() for n in labels)) != len(labels):
@@ -195,15 +191,11 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
         ax.set(xlabel='Dose (Gy)', ylabel='Volume (%)', title='Cumulative DVH — research analysis', ylim=(0, 105))
         ax.legend(); ax.grid(alpha=.2)
         filename = 'dvh_' + uuid4().hex + '.png'
-        # Direct cached DVH output to data/processed/{patient_id}/
-        patient_id = getattr(dose, 'PatientID', None) or getattr(struct, 'PatientID', None) or 'anonymous'
-        processed_path = resolve_save_path(filename, patient_id=patient_id)
-        figure.savefig(processed_path, dpi=150, bbox_inches='tight')
-
         output = Path(manager.get_artifacts_dir(session_id)) / filename
         figure.savefig(output, dpi=150, bbox_inches='tight')
         result['artifacts'] = [f'/artifacts/{session_id}/artifacts/{filename}']
-        result['cached_dvh_path'] = str(processed_path)
+    from src.reports import attach_report
+    attach_report(result, 'dvh')
     result['_physics'] = {'dose_grid':grid,'expected_shape':expected,'axes_mm':axes}
     return result
 
@@ -221,9 +213,11 @@ def generate_topas_file(particle: str, energy_mev: float, histories: int, output
     target.parent.mkdir(parents=True, exist_ok=True)
     with target.open('x', encoding='utf-8') as stream:
         stream.write(deck)
-    return {'status':'generated','output_path':str(target),'particle':particle,
+    result = {'status':'generated','output_path':str(target),'particle':particle,
             'energy_mev':float(energy_mev),'histories':histories,'clinical_release':False,
             'limitations':['TOPAS execution and commissioned beam validation remain required.']}
+    from src.reports import attach_report
+    return attach_report(result, 'topas')
 
 
 def evaluate_dvh_tool(dicom_rtdose_path, dicom_rtstruct_path, roi_names,

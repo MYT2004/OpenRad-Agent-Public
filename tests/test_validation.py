@@ -57,8 +57,8 @@ def create_synthetic_dicom_dose(
     return ds
 
 
-def test_valid_dose_grid_approved():
-    """Test case 1: Valid dose grid matching reference dose -> assert APPROVED."""
+def test_valid_numerical_grid_still_requires_qualification():
+    """A matching numerical grid cannot establish registration or model qualification."""
     shape = (5, 15, 15)
     ref_dose = np.full(shape, 50.0, dtype=float)
     eval_dose = np.full(shape, 50.0, dtype=float)
@@ -85,12 +85,12 @@ def test_valid_dose_grid_approved():
     )
 
     assert isinstance(report, EvaluationReport)
-    assert report.status == DecisionStatus.APPROVED
+    assert report.status == DecisionStatus.FLAGGED_FOR_REVIEW
     assert report.hard_physics_passed is True
     assert report.gamma_3mm3pct_pass_rate >= 95.0
     assert report.gamma_2mm2pct_pass_rate >= 90.0
     assert len(report.oar_violations) == 0
-    assert len(report.rejection_reasons) == 0
+    assert any('provenance' in reason for reason in report.rejection_reasons)
     assert len(report.audit_hash_sha256) == 64
 
 
@@ -152,6 +152,7 @@ def test_spinal_cord_tolerance_breach_rejected():
         model_id="toxic_dose_model",
         dataset_id="test_cohort",
         structure_masks={"SpinalCord": cord_mask},
+        oar_tolerance_limits_gy={"SpinalCord":45.},
     )
 
     assert report.status == DecisionStatus.REJECTED
@@ -214,6 +215,7 @@ def test_clinical_summary_and_follow_up_actions_generation():
         reference_dose=np.full(shape, 40.0, dtype=float),
         spacing_mm=(3.0, 1.0, 1.0),
         structure_masks={"SpinalCord": cord_mask},
+        oar_tolerance_limits_gy={"SpinalCord":45.},
     )
 
     assert report.status == DecisionStatus.REJECTED
@@ -224,8 +226,8 @@ def test_clinical_summary_and_follow_up_actions_generation():
 
     # Test Markdown formatting
     md = report.to_markdown()
-    assert "# ❌ OpenRad Clinical Physics Verification Report" in md
-    assert "Recommended Follow-Up Actions" in md
+    assert "# OpenRad — Dose-model numerical preflight" in md
+    assert "Follow-up actions" in md
     assert "Audit Integrity Hash" in md
 
 
@@ -251,8 +253,8 @@ def test_agent_orchestration_with_follow_up_report(tmp_path):
     )
 
     assert result.success is True
-    assert "OpenRad Clinical Physics Verification Report" in result.response
-    assert "Recommended Follow-Up Actions" in result.response
+    assert "OpenRad — Dose-model numerical preflight" in result.response
+    assert "Follow-up actions" in result.response
     assert len(result.artifacts) == 1
     assert result.artifacts[0].endswith(".md")
     assert (tmp_path / "artifacts" / Path(result.artifacts[0]).name).exists()

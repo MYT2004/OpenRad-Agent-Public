@@ -1,10 +1,7 @@
-"""Strict Physics & Clinical Verification Engine for OpenRad Agent.
+"""In-memory numerical preflight, not a clinical release or model qualification.
 
-Implements high-consequence medical physics model evaluation against AAPM clinical
-QA standards (TG-218, TG-53), fail-closed deterministic boundaries, serial OAR
-tolerances, and cryptographic audit hashing.
+Use src.evaluation for file provenance, the complete evidence contract and audits.
 """
-
 from datetime import datetime, timezone
 from enum import Enum
 import hashlib
@@ -13,517 +10,216 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 import pydicom
 from pydantic import BaseModel, ConfigDict, Field
-from scipy.ndimage import binary_dilation
-
+from scipy.ndimage import distance_transform_edt
 from openrad.tools.gamma_tool import evaluate_gamma_index
 from openrad.validation.physics_rules import PhysicsValidationEngine
+from src.decision import threshold_rule
 
 
 class DecisionStatus(str, Enum):
-    """Three-state evaluation gate for radiotherapy computational models."""
-    APPROVED = "APPROVED"
-    REJECTED = "REJECTED"
-    FLAGGED_FOR_REVIEW = "FLAGGED_FOR_REVIEW"
+    APPROVED = 'APPROVED'
+    REJECTED = 'REJECTED'
+    FLAGGED_FOR_REVIEW = 'FLAGGED_FOR_REVIEW'
 
 
 class EvaluationReport(BaseModel):
-    """Cryptographically auditable clinical evaluation report contract."""
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
-
+    model_config = ConfigDict(extra='forbid', allow_inf_nan=False)
     model_id: str
     dataset_id: str
     timestamp: str
     status: DecisionStatus
     hard_physics_passed: bool
-    gamma_3mm3pct_pass_rate: float
-    gamma_2mm2pct_pass_rate: float
+    gamma_3mm3pct_pass_rate: Optional[float] = None
+    gamma_2mm2pct_pass_rate: Optional[float] = None
     oar_violations: List[str] = Field(default_factory=list)
     rejection_reasons: List[str] = Field(default_factory=list)
     audit_hash_sha256: str
     metrics: Dict[str, Any] = Field(default_factory=dict)
-    clinical_summary: str = Field(default="")
+    clinical_summary: str = ''
     follow_up_actions: List[str] = Field(default_factory=list)
+    clinical_release: bool = False
 
-    def to_markdown(self) -> str:
-        """Renders an easily interpretable, executive clinical report in GitHub markdown."""
-        verdict_icon = "✅" if self.status == DecisionStatus.APPROVED else ("⚠️" if self.status == DecisionStatus.FLAGGED_FOR_REVIEW else "❌")
-        hard_phys_icon = "✅ PASSED" if self.hard_physics_passed else "❌ FAILED"
-
-        md_lines = [
-            f"# {verdict_icon} OpenRad Clinical Physics Verification Report",
-            "",
-            f"**Model ID:** `{self.model_id}` | **Dataset ID:** `{self.dataset_id}` | **Generated:** `{self.timestamp}`",
-            "",
-            "### 1. Executive Summary & Verification Verdict",
-            f"- **Decision Status:** **`{self.status.value}`**",
-            f"- **Deterministic Physics Boundaries:** **{hard_phys_icon}**",
-            f"- **AAPM TG-218 Standard Gamma (3% / 3 mm):** **{self.gamma_3mm3pct_pass_rate:.1f}%** (Tolerance: $\\ge 95\\%$ Pass, $< 90\\%$ Reject)",
-            f"- **Tight-Margin Gamma (2% / 2 mm):** **{self.gamma_2mm2pct_pass_rate:.1f}%** (Tolerance: $\\ge 90\\%$ Pass, $< 85\\%$ Reject)",
-            f"- **Serial OAR Limit Breaches:** **{len(self.oar_violations)}**",
-            "",
-            f"> **Clinical Assessment**: {self.clinical_summary}",
-            "",
-            "### 2. Physical & Dosimetric Quality Metrics",
-            "| Parameter | Value | Clinical Tolerance / Threshold | Outcome |",
-            "| :--- | :--- | :--- | :--- |",
-            f"| Minimum Absorbed Dose | `{self.metrics.get('min_dose_gy', 'N/A')} Gy` | $D(\\vec{{r}}) \\ge 0.0$ Gy (Absorbed dose non-negativity) | {'✅ Satisfied' if self.metrics.get('min_dose_gy', 0.0) >= -1e-5 else '❌ Negative Dose'} |",
-            f"| Maximum Absorbed Dose | `{self.metrics.get('max_dose_gy', 'N/A')} Gy` | Clinical prescription bounds | ✅ Finite |",
-            f"| Standard Gamma (3%/3mm) | `{self.gamma_3mm3pct_pass_rate:.1f}%` | $\\ge 95.0\\%$ (Clinical QA Pass) | {'✅ Pass' if self.gamma_3mm3pct_pass_rate >= 95.0 else ('⚠️ Review' if self.gamma_3mm3pct_pass_rate >= 90.0 else '❌ Fail')} |",
-            f"| High-Precision Gamma (2%/2mm) | `{self.gamma_2mm2pct_pass_rate:.1f}%` | $\\ge 90.0\\%$ (High-Precision Pass) | {'✅ Pass' if self.gamma_2mm2pct_pass_rate >= 90.0 else ('⚠️ Review' if self.gamma_2mm2pct_pass_rate >= 85.0 else '❌ Fail')} |",
-        ]
-
-        if self.oar_violations:
-            md_lines.extend([
-                "",
-                "### 3. Critical Organ-At-Risk (OAR) Breaches",
-                "The following serial organs exceeded QUANTEC / AAPM tolerance thresholds:"
-            ])
-            for viol in self.oar_violations:
-                md_lines.append(f"- 🚨 **Violation**: {viol}")
-
-        if self.rejection_reasons:
-            md_lines.extend([
-                "",
-                "### 4. Safety Failures & Review Triggers",
-            ])
-            for reason in self.rejection_reasons:
-                md_lines.append(f"- ⚠️ {reason}")
-
-        md_lines.extend([
-            "",
-            "### 5. Recommended Follow-Up Actions",
-        ])
-        for idx, action in enumerate(self.follow_up_actions, 1):
-            md_lines.append(f"{idx}. {action}")
-
-        md_lines.extend([
-            "",
-            "---",
-            f"**Audit Integrity Hash (SHA-256):** `{self.audit_hash_sha256}`  ",
-            "*Report cryptographically signed and registered in OpenRad session trajectory.*"
-        ])
-        return "\n".join(md_lines)
+    def to_markdown(self):
+        from src.reports import markdown, number
+        report = dict(title='Dose-model numerical preflight', summary=self.clinical_summary,
+            metrics=[{'Measure':key.replace('_',' '), 'Result':str(value), 'Interpretation':'Computed numerical evidence; see review triggers.'}
+                     for key,value in self.metrics.items()],
+            follow_up_actions=self.follow_up_actions,
+            limitations=['Research only; no clinical release. Geometry registration and model qualification are not established.',
+                         'Missing measurements are not passes. SHA-256 is an integrity digest, not a digital signature or proof of registry entry.',
+                         'Use the full evaluation manifest workflow for model/input/output provenance and signed reviewer dispositions.'])
+        for title, value in [('Custom gamma 3%/3 mm',self.gamma_3mm3pct_pass_rate),('Custom gamma 2%/2 mm',self.gamma_2mm2pct_pass_rate)]:
+            report['metrics'].append({'Measure':title,'Result':number(value,'%'),'Interpretation':'Discrete global gamma; not the TG-218 reference criterion.'})
+        report['metrics'].append({'Measure':'Audit Integrity Hash (SHA-256)','Result':self.audit_hash_sha256,'Interpretation':'Digest of this assessment and supplied array hashes; unsigned.'})
+        text = markdown(report)
+        text += '\n## Failures and review triggers\n\n' + '\n'.join(f'- {reason}' for reason in self.rejection_reasons) + '\n'
+        return text
 
 
-# Default clinical serial organ tolerances (QUANTEC / AAPM TG-101 / ICRU 83)
-DEFAULT_SERIAL_OAR_LIMITS_GY = {
-    "spinal_cord": 45.0,
-    "cord": 45.0,
-    "spinalcord": 45.0,
-    "brainstem": 54.0,
-    "optic_chiasm": 54.0,
-    "chiasm": 54.0,
-    "optic_nerve_l": 54.0,
-    "optic_nerve_r": 54.0,
-    "optic_nerve": 54.0,
-}
+# Retained for API compatibility only. These values are never applied automatically.
+DEFAULT_SERIAL_OAR_LIMITS_GY = {'spinalcord':45.,'brainstem':54.}
 
 
-def scrub_patient_hipaa_metadata(ds: pydicom.Dataset) -> Dict[str, Any]:
-    """Verifies that patient identifiers are stripped from DICOM headers.
+def scrub_patient_hipaa_metadata(ds: pydicom.Dataset):
+    """Legacy name: read-only screening of selected tags, not de-identification or HIPAA certification."""
+    tags = ['PatientName','PatientID','PatientBirthDate','PatientSex','PatientAge','PatientAddress',
+            'InstitutionName','InstitutionalDepartmentName','ReferringPhysicianName','PerformingPhysicianName','OperatorsName']
+    found = [tag for tag in tags if str(getattr(ds,tag,'')).strip().upper() not in ('','ANON','ANONYMOUS','N/A')]
+    return dict(hipaa_compliant=not found, unscrubbed_tags=found,
+                limitation='Selected-tag screening only; no HIPAA or DICOM confidentiality-profile certification.')
 
-    Returns dict of removed/scrubbed tags and compliance verdict.
+
+def compute_fast_gamma(evaluated_dose, reference_dose, spacing_mm, dose_pct, dist_mm, threshold_pct=10.):
+    return float(evaluate_gamma_index(reference_dose,evaluated_dose,dose_pct,dist_mm,threshold_pct,
+                                     list(spacing_mm),list(spacing_mm))['passing_rate'])
+
+
+def verify_model_output(evaluated_dose: np.ndarray, reference_dose: Optional[np.ndarray]=None,
+    spacing_mm: Tuple[float,float,float]=(3.,1.,1.), model_id='dose_predictor', dataset_id='assessment',
+    energy_mev: Optional[float]=None, image_orientation: Optional[Sequence[float]]=None,
+    dicom_dataset: Optional[pydicom.Dataset]=None, prescription_dose_gy: Optional[float]=None,
+    structure_masks: Optional[Dict[str,np.ndarray]]=None, oar_tolerance_limits_gy: Optional[Dict[str,float]]=None,
+    uncertainty_grid: Optional[np.ndarray]=None):
+    """Assess explicit in-memory arrays. Incomplete provenance always requires review.
+
+    OAR limits must be explicit and exactly keyed to supplied masks. No clinical
+    limit, registration, missing gamma score or model qualification is invented.
     """
-    hipaa_tags = [
-        "PatientName",
-        "PatientID",
-        "PatientBirthDate",
-        "PatientSex",
-        "PatientAge",
-        "PatientAddress",
-        "InstitutionName",
-        "InstitutionalDepartmentName",
-        "ReferringPhysicianName",
-        "PerformingPhysicianName",
-        "OperatorsName",
-    ]
-    unscrubbed = []
-    for tag in hipaa_tags:
-        if hasattr(ds, tag):
-            val = str(getattr(ds, tag, "")).strip()
-            if val and val.upper() not in ["ANON", "ANONYMOUS", "", "N/A"]:
-                unscrubbed.append(tag)
-
-    return {
-        "hipaa_compliant": len(unscrubbed) == 0,
-        "unscrubbed_tags": unscrubbed,
-    }
-
-
-def compute_fast_gamma(
-    evaluated_dose: np.ndarray,
-    reference_dose: np.ndarray,
-    spacing_mm: Tuple[float, float, float],
-    dose_pct: float,
-    dist_mm: float,
-    threshold_pct: float = 10.0,
-) -> float:
-    """Computes Gamma Index passing rate using coordinates and dose tolerances."""
-    res = evaluate_gamma_index(
-        reference_dose_path=reference_dose,
-        evaluated_dose_path=evaluated_dose,
-        dose_tolerance_percent=dose_pct,
-        distance_tolerance_mm=dist_mm,
-        dose_threshold_percent=threshold_pct,
-        reference_spacing_mm=list(spacing_mm),
-        evaluated_spacing_mm=list(spacing_mm),
-    )
-    return float(res["passing_rate"])
-
-
-def verify_model_output(
-    evaluated_dose: np.ndarray,
-    reference_dose: Optional[np.ndarray] = None,
-    spacing_mm: Tuple[float, float, float] = (3.0, 1.0, 1.0),
-    model_id: str = "clinical_dose_predictor",
-    dataset_id: str = "hnscc_validation_set",
-    energy_mev: Optional[float] = None,
-    image_orientation: Optional[Sequence[float]] = None,
-    dicom_dataset: Optional[pydicom.Dataset] = None,
-    prescription_dose_gy: Optional[float] = None,
-    structure_masks: Optional[Dict[str, np.ndarray]] = None,
-    oar_tolerance_limits_gy: Optional[Dict[str, float]] = None,
-    uncertainty_grid: Optional[np.ndarray] = None,
-) -> EvaluationReport:
-    """Executes the High-Consequence Medical Physics & Clinical Verification Engine.
-
-    Evaluates candidate model outputs against deterministic physics boundaries,
-    AAPM TG-218 gamma criteria (3%/3mm, 2%/2mm), serial organ limits, and uncertainty zones.
-    """
-    timestamp = datetime.now(timezone.utc).isoformat()
-    hard_physics_passed = True
-    rejection_reasons: List[str] = []
-    review_reasons: List[str] = []
-    oar_violations: List[str] = []
-    metrics: Dict[str, Any] = {}
-
-    eval_arr = np.asarray(evaluated_dose, dtype=float)
-
-    # =========================================================================
-    # 1. Deterministic Physics Boundaries (Instant Rejection if Violated)
-    # =========================================================================
-
-    # 1a. Absorbed Dose Non-Negativity: D(r) >= 0.0 Gy across all voxels
-    if not np.isfinite(eval_arr).all():
-        hard_physics_passed = False
-        rejection_reasons.append("Non-finite values (NaN/Inf) detected in evaluated dose grid.")
-    else:
-        min_dose = float(np.min(eval_arr))
-        metrics["min_dose_gy"] = round(min_dose, 5)
-        metrics["max_dose_gy"] = round(float(np.max(eval_arr)), 3)
-
-        if min_dose < -1e-5:
-            hard_physics_passed = False
-            rejection_reasons.append(
-                f"Absorbed dose non-negativity violated: minimum voxel dose is {min_dose:.5f} Gy "
-                "(negative dose is physically impossible; check CT offset rescaling)."
-            )
-
-    # 1b. Beam Kinetic Energy Bounds: 0.01 MeV <= E <= 250 MeV
-    if energy_mev is not None:
-        metrics["beam_energy_mev"] = float(energy_mev)
-        v_energy = PhysicsValidationEngine.validate_beam_energy(energy_mev, raise_on_fail=False)
-        if not v_energy.passed:
-            hard_physics_passed = False
-            rejection_reasons.append(
-                f"Beam kinetic energy {energy_mev} MeV outside clinical radiotherapy bounds "
-                "[0.01 MeV - 250 MeV]."
-            )
-
-    # 1c. Coordinate Frame Orthogonality & Positive Grid Spacing
-    if any(s <= 0 for s in spacing_mm):
-        hard_physics_passed = False
-        rejection_reasons.append(f"Non-positive grid voxel spacing detected: {spacing_mm} mm.")
-    metrics["grid_spacing_mm"] = list(spacing_mm)
-
-    if image_orientation is not None:
-        if len(image_orientation) != 6:
-            hard_physics_passed = False
-            rejection_reasons.append("DICOM ImageOrientationPatient must contain exactly 6 direction cosines.")
-        else:
-            r = np.array(image_orientation[:3], dtype=float)
-            c = np.array(image_orientation[3:], dtype=float)
-            dot = float(abs(np.dot(r, c)))
-            norm_r = float(np.linalg.norm(r))
-            norm_c = float(np.linalg.norm(c))
-            metrics["orientation_dot_product"] = dot
-
-            if dot > 1e-4:
-                hard_physics_passed = False
-                rejection_reasons.append(
-                    f"Coordinate frame orthogonality violation: e_x . e_y = {dot:.6f} > 1e-4."
-                )
-            if abs(norm_r - 1.0) > 1e-2 or abs(norm_c - 1.0) > 1e-2:
-                hard_physics_passed = False
-                rejection_reasons.append(
-                    f"Orientation vectors are not unit length (|r|={norm_r:.4f}, |c|={norm_c:.4f})."
-                )
-
-    # 1d. Patient Privacy / HIPAA Compliance
-    if dicom_dataset is not None:
-        hipaa_check = scrub_patient_hipaa_metadata(dicom_dataset)
-        if not hipaa_check["hipaa_compliant"]:
-            hard_physics_passed = False
-            rejection_reasons.append(
-                f"HIPAA compliance violation: unscrubbed patient identifiers present in DICOM header "
-                f"({', '.join(hipaa_check['unscrubbed_tags'])})."
-            )
-
-    # =========================================================================
-    # 2. Dosimetric QA Tolerances & Decision Gate
-    # =========================================================================
-
-    gamma_3mm3pct = 100.0
-    gamma_2mm2pct = 100.0
-
-    if reference_dose is not None and hard_physics_passed:
-        ref_arr = np.asarray(reference_dose, dtype=float)
+    hard, rejects, reviews, violations, metrics, hashes = True, [], [], [], {}, {}
+    def invalid(message):
+        nonlocal hard
+        hard=False; rejects.append(message)
+    def dose_array(value, name):
         try:
-            # Standard Gamma (3%/3mm, 10% cutoff)
-            gamma_3mm3pct = compute_fast_gamma(eval_arr, ref_arr, spacing_mm, dose_pct=3.0, dist_mm=3.0)
-            metrics["gamma_3mm3pct"] = round(gamma_3mm3pct, 2)
-
-            if gamma_3mm3pct < 90.0:
-                rejection_reasons.append(
-                    f"AAPM TG-218 standard Gamma (3%/3mm) passing rate {gamma_3mm3pct:.2f}% "
-                    "below clinical acceptance floor (< 90.0%)."
-                )
-            elif 90.0 <= gamma_3mm3pct < 95.0:
-                review_reasons.append(
-                    f"Standard Gamma (3%/3mm) passing rate {gamma_3mm3pct:.2f}% in review zone [90.0%, 94.9%]."
-                )
-
-            # Tight Margin Gamma (2%/2mm, 10% cutoff)
-            gamma_2mm2pct = compute_fast_gamma(eval_arr, ref_arr, spacing_mm, dose_pct=2.0, dist_mm=2.0)
-            metrics["gamma_2mm2pct"] = round(gamma_2mm2pct, 2)
-
-            if gamma_2mm2pct < 85.0:
-                rejection_reasons.append(
-                    f"High-precision Gamma (2%/2mm) passing rate {gamma_2mm2pct:.2f}% below precision floor (< 85.0%)."
-                )
-            elif 85.0 <= gamma_2mm2pct < 90.0:
-                review_reasons.append(
-                    f"High-precision Gamma (2%/2mm) passing rate {gamma_2mm2pct:.2f}% in review zone [85.0%, 89.9%]."
-                )
-        except Exception as e:
-            hard_physics_passed = False
-            rejection_reasons.append(f"Gamma Index evaluation error: {str(e)}")
-
-    # 2b. Target Coverage & OAR Tolerances
-    all_oar_limits = dict(DEFAULT_SERIAL_OAR_LIMITS_GY)
-    if oar_tolerance_limits_gy:
-        all_oar_limits.update({k.lower().replace(" ", "_"): v for k, v in oar_tolerance_limits_gy.items()})
-
-    if structure_masks:
-        for roi_name, mask in structure_masks.items():
-            roi_clean = roi_name.lower().replace(" ", "_").replace("-", "_")
-            mask_arr = np.asarray(mask, dtype=bool)
-            if not mask_arr.any():
-                continue
-
-            roi_doses = eval_arr[mask_arr]
-            d_max = float(np.max(roi_doses))
-            metrics[f"{roi_clean}_dmax_gy"] = round(d_max, 2)
-
-            # Check PTV Coverage: D95 >= 95% of prescription
-            if "ptv" in roi_clean and prescription_dose_gy is not None and prescription_dose_gy > 0:
-                d95 = float(np.percentile(roi_doses, 5.0))
-                metrics[f"{roi_clean}_d95_gy"] = round(d95, 2)
-                target_d95 = 0.95 * prescription_dose_gy
-
-                if d95 < target_d95:
-                    deficit_pct = 100.0 * (target_d95 - d95) / target_d95
-                    if d95 < 0.90 * prescription_dose_gy:
-                        rejection_reasons.append(
-                            f"Target underdosage: {roi_name} D95% ({d95:.2f} Gy) is < 90% of prescription "
-                            f"({prescription_dose_gy:.2f} Gy)."
-                        )
-                    else:
-                        review_reasons.append(
-                            f"Target sub-optimal coverage: {roi_name} D95% ({d95:.2f} Gy) below 95% prescription "
-                            f"({prescription_dose_gy:.2f} Gy) by {deficit_pct:.1f}%."
-                        )
-
-            # Check Serial Organ Max Dose
-            matched_limit = None
-            for oar_key, limit_val in all_oar_limits.items():
-                if oar_key in roi_clean or roi_clean in oar_key:
-                    matched_limit = limit_val
-                    break
-
-            if matched_limit is not None:
-                if d_max > matched_limit:
-                    viol_msg = (
-                        f"Serial OAR limit breach: {roi_name} Dmax ({d_max:.2f} Gy) "
-                        f"exceeds tolerance limit ({matched_limit:.2f} Gy)."
-                    )
-                    oar_violations.append(viol_msg)
-                    rejection_reasons.append(viol_msg)
-
-    # 2c. Uncertainty Bounds in Steep Gradient Zones near OARs
-    if uncertainty_grid is not None and structure_masks:
-        unc_arr = np.asarray(uncertainty_grid, dtype=float)
-        # Compute 3D gradient magnitude
-        grads = np.gradient(eval_arr, *spacing_mm)
-        grad_mag = np.sqrt(sum(g**2 for g in grads))
-        high_unc_threshold = 2.0  # Gy
-        steep_grad_threshold = 1.0  # Gy/mm
-
-        # Check critical OAR proximity (dilated by 3mm)
-        for roi_name, mask in structure_masks.items():
-            roi_clean = roi_name.lower().replace(" ", "_")
-            if any(k in roi_clean for k in ["cord", "brainstem", "chiasm"]):
-                mask_arr = np.asarray(mask, dtype=bool)
-                dilated = binary_dilation(mask_arr, iterations=2)
-                critical_zone = (unc_arr > high_unc_threshold) & (grad_mag > steep_grad_threshold) & dilated
-                if critical_zone.any():
-                    review_reasons.append(
-                        f"High prediction uncertainty (> {high_unc_threshold} Gy) overlapping steep gradient "
-                        f"(> {steep_grad_threshold} Gy/mm) in proximity to serial OAR '{roi_name}'."
-                    )
-
-    # =========================================================================
-    # 3. Decision Gate Synthesis
-    # =========================================================================
-
-    if not hard_physics_passed or len(rejection_reasons) > 0 or len(oar_violations) > 0:
-        status = DecisionStatus.REJECTED
-    elif len(review_reasons) > 0:
-        status = DecisionStatus.FLAGGED_FOR_REVIEW
+            array=np.asarray(value,dtype=float)
+        except (ValueError,TypeError):
+            invalid(f'{name} must be a numeric 3D dose array.');return None
+        if array.ndim!=3 or not array.size:
+            invalid(f'{name} must be a nonempty 3D array.');return None
+        if not np.isfinite(array).all():
+            invalid(f'Non-finite values detected in {name}.');return None
+        hashes[name]=hashlib.sha256(np.ascontiguousarray(array,dtype='<f8').tobytes()).hexdigest()
+        if (array<0).any():
+            invalid(f'Absorbed dose non-negativity violated in {name}; minimum {float(array.min()):.8g} Gy. Do not clip values to obtain a pass.')
+        return array
+    evaluated=dose_array(evaluated_dose,'evaluated_dose')
+    reference=dose_array(reference_dose,'reference_dose') if reference_dose is not None else None
+    if evaluated is not None:
+        metrics.update(min_dose_gy=float(evaluated.min()),max_dose_gy=float(evaluated.max()))
+    if reference is None:
+        reviews.append('Independent reference dose missing or invalid; gamma and MAE are not evaluated.')
+    elif evaluated is not None and reference.shape!=evaluated.shape:
+        invalid('Reference and evaluated matrix shapes differ; explicit validated registration/resampling is required.')
+    if len(spacing_mm)!=3 or not np.isfinite(spacing_mm).all() or any(v<=0 for v in spacing_mm):
+        invalid('Voxel spacing must contain three finite positive mm values.')
     else:
-        status = DecisionStatus.APPROVED
+        metrics['grid_spacing_mm']=list(spacing_mm)
+    if energy_mev is not None and not PhysicsValidationEngine.validate_beam_energy(energy_mev,raise_on_fail=False).passed:
+        invalid('Beam energy outside supported application range 0.01–250 MeV.')
+    if image_orientation is not None:
+        orientation=np.asarray(image_orientation,dtype=float)
+        if orientation.shape!=(6,) or not np.isfinite(orientation).all():
+            invalid('Orientation must contain six finite direction cosines.')
+        elif not (abs(np.dot(orientation[:3],orientation[3:]))<=1e-4 and np.allclose([np.linalg.norm(orientation[:3]),np.linalg.norm(orientation[3:])],1,atol=1e-4,rtol=0)):
+            invalid('Coordinate frame orthogonality or unit-vector condition failed.')
+    else:
+        reviews.append('Image orientation not provided; orientation was not verified.')
+    if dicom_dataset is not None and not scrub_patient_hipaa_metadata(dicom_dataset)['hipaa_compliant']:
+        invalid('Patient identifiers detected by limited metadata screening; HIPAA compliance is not certified. Create a separate scrubbed analysis copy.')
+    masks={}
+    limits=oar_tolerance_limits_gy or {}
+    if any(not np.isfinite(v) or v<=0 for v in limits.values()):
+        invalid('OAR dose limits must be finite positive Gy values.')
+    for name, value in (structure_masks or {}).items():
+        mask=np.asarray(value)
+        if evaluated is None or mask.shape!=evaluated.shape or mask.dtype.kind not in 'bufi' or not np.isfinite(mask).all() or not np.isin(mask,[0,1]).all() or not mask.any():
+            invalid(f'Mask for {name} must be finite, binary, nonempty and match the dose grid.');continue
+        masks[name]=mask.astype(bool)
+        hashes['mask_'+name]=hashlib.sha256(np.ascontiguousarray(mask,dtype='u1').tobytes()).hexdigest()
+    if uncertainty_grid is not None:
+        uncertainty=np.asarray(uncertainty_grid,dtype=float)
+        if evaluated is None or uncertainty.shape!=evaluated.shape or not np.isfinite(uncertainty).all() or (uncertainty<0).any():
+            invalid('Uncertainty SD must be finite, nonnegative Gy and match the dose grid.')
+        else:
+            hashes['uncertainty_std']=hashlib.sha256(np.ascontiguousarray(uncertainty,dtype='<f8').tobytes()).hexdigest()
+            metrics['max_uncertainty_gy']=float(uncertainty.max())
+            if uncertainty.max()>=2:
+                reviews.append('Maximum uncertainty SD reaches the 2 Gy research review threshold.')
+    else:
+        uncertainty=None
+        reviews.append('Uncertainty SD map not provided.')
+    if prescription_dose_gy is None:
+        reviews.append('Prescription not provided; target coverage and MAE / prescription are not evaluated.')
+    elif not np.isfinite(prescription_dose_gy) or prescription_dose_gy<=0:
+        invalid('Prescription must be finite and >0 Gy.')
+    if set(limits)-set(masks):
+        reviews.append('One or more specified OAR limits have no matching valid mask.')
+    if hard:
+        if reference is not None:
+            if np.prod(evaluated.shape)>1000000:
+                reviews.append('Grid exceeds the 1,000,000 voxel research gamma budget; gamma not evaluated.')
+            else:
+                for key,percent,distance,p,f in [('gamma_3mm3pct',3,3,95,90),('gamma_2mm2pct',2,2,90,85),('gamma_tg218_3pct2mm',3,2,95,90)]:
+                    try:
+                        value=compute_fast_gamma(evaluated,reference,spacing_mm,percent,distance)
+                        metrics[key]=value
+                        entry=threshold_rule(key,value,p,f)
+                        message=f'{key}: {value:.3f}%; candidate ≥{p:.1f}%, reject < {f:.1f}%; otherwise review.'
+                        if entry.outcome=='REJECT':rejects.append(message)
+                        elif entry.outcome=='REVIEW':reviews.append(message)
+                    except ValueError:
+                        invalid('Gamma computation failed; review reference normalization and grid validity.')
+            if prescription_dose_gy is not None:
+                value=float(np.mean(np.abs(evaluated-reference))/prescription_dose_gy*100)
+                metrics['mae_percent_rx']=value
+                entry=threshold_rule('mae',value,1.5,3,False)
+                if entry.outcome=='REJECT':rejects.append('MAE exceeds 3% of prescription.')
+                elif entry.outcome=='REVIEW':reviews.append('MAE is within the 1.5–3% prescription review band.')
+        for name,mask in masks.items():
+            dmax=float(evaluated[mask].max());metrics[name+'_dmax_gy']=dmax
+            if name.startswith('PTV'):
+                if prescription_dose_gy is not None:
+                    value=float(np.percentile(evaluated[mask],5)/prescription_dose_gy*100)
+                    metrics[name+'_d95_percent_rx']=value
+                    entry=threshold_rule('coverage',value,95,93)
+                    if entry.outcome=='REJECT':rejects.append(f'{name} D95 is <93% of prescription.')
+                    elif entry.outcome=='REVIEW':reviews.append(f'{name} D95 is ≥93% and <95% of prescription.')
+            elif name not in limits:
+                reviews.append(f'{name}: no explicit OAR tolerance supplied; not assessed against a clinical limit.')
+            elif dmax>limits[name]:
+                message=f'Serial OAR limit breach: {name} Dmax {dmax:.2f} Gy exceeds supplied {limits[name]:.2f} Gy limit.'
+                violations.append(message);rejects.append(message)
+            elif dmax>=.98*limits[name]:
+                reviews.append(f'{name}: Dmax within the 98–100% limit review band.')
+        if uncertainty is not None and masks:
+            grad_sq=np.zeros(evaluated.shape)
+            for axis,step in enumerate(spacing_mm):
+                if evaluated.shape[axis]>1:grad_sq+=np.gradient(evaluated,step,axis=axis)**2
+            oars=[mask for name,mask in masks.items() if not name.startswith('PTV')]
+            if oars:
+                proximity=distance_transform_edt(~np.logical_or.reduce(oars),sampling=spacing_mm)<=3
+                count=int(((uncertainty>=2)&(np.sqrt(grad_sq)>=1)&proximity).sum())
+                metrics['critical_uncertainty_voxels']=count
+                if count:reviews.append('High uncertainty overlaps a steep gradient within 3 mm of an OAR.')
+    # The convenience preflight cannot establish the full typed qualification contract.
+    reviews.append('In-memory preflight lacks verified registration, model/source provenance, OOD and calibration records. Complete the evaluation manifest and independent review.')
+    status=DecisionStatus.REJECTED if rejects or not hard else DecisionStatus.FLAGGED_FOR_REVIEW
+    summary,actions=generate_clinical_summary_and_actions(status,hard,rejects,reviews,violations,
+        metrics.get('gamma_3mm3pct'),metrics.get('gamma_2mm2pct'))
+    metrics['input_array_sha256']=hashes
+    payload=dict(model_id=model_id,dataset_id=dataset_id,status=status.value,hard_physics_passed=hard,
+                 metrics=metrics,reasons=rejects+reviews,explicit_oar_limits_gy={k:v for k,v in limits.items() if np.isfinite(v)})
+    audit=hashlib.sha256(json.dumps(payload,sort_keys=True,allow_nan=False).encode()).hexdigest()
+    return EvaluationReport(model_id=model_id,dataset_id=dataset_id,timestamp=datetime.now(timezone.utc).isoformat(),status=status,
+        hard_physics_passed=hard,gamma_3mm3pct_pass_rate=metrics.get('gamma_3mm3pct'),gamma_2mm2pct_pass_rate=metrics.get('gamma_2mm2pct'),
+        oar_violations=violations,rejection_reasons=rejects+reviews,audit_hash_sha256=audit,metrics=metrics,
+        clinical_summary=summary,follow_up_actions=actions)
 
-    # =========================================================================
-    # 4. Clinical Summary & Prioritized Action Plan
-    # =========================================================================
 
-    all_reported_reasons = rejection_reasons + review_reasons if status != DecisionStatus.APPROVED else []
-    summary, actions = generate_clinical_summary_and_actions(
-        status=status,
-        hard_physics_passed=hard_physics_passed,
-        rejection_reasons=rejection_reasons,
-        review_reasons=review_reasons,
-        oar_violations=oar_violations,
-        gamma_3mm3pct=gamma_3mm3pct,
-        gamma_2mm2pct=gamma_2mm2pct,
-    )
-
-    # =========================================================================
-    # 5. Cryptographic Audit Hash (SHA-256)
-    # =========================================================================
-
-    canonical_payload = json.dumps(
-        {
-            "model_id": model_id,
-            "dataset_id": dataset_id,
-            "status": status.value,
-            "hard_physics_passed": hard_physics_passed,
-            "gamma_3mm3pct": round(gamma_3mm3pct, 4),
-            "gamma_2mm2pct": round(gamma_2mm2pct, 4),
-            "oar_violations": sorted(oar_violations),
-            "rejection_reasons": sorted(rejection_reasons),
-            "review_reasons": sorted(review_reasons),
-            "metrics": metrics,
-            "follow_up_actions": actions,
-        },
-        sort_keys=True,
-    )
-    audit_hash = hashlib.sha256(canonical_payload.encode("utf-8")).hexdigest()
-
-    return EvaluationReport(
-        model_id=model_id,
-        dataset_id=dataset_id,
-        timestamp=timestamp,
-        status=status,
-        hard_physics_passed=hard_physics_passed,
-        gamma_3mm3pct_pass_rate=round(gamma_3mm3pct, 2),
-        gamma_2mm2pct_pass_rate=round(gamma_2mm2pct, 2),
-        oar_violations=oar_violations,
-        rejection_reasons=all_reported_reasons,
-        audit_hash_sha256=audit_hash,
-        metrics=metrics,
-        clinical_summary=summary,
-        follow_up_actions=actions,
-    )
-
-
-def generate_clinical_summary_and_actions(
-    status: DecisionStatus,
-    hard_physics_passed: bool,
-    rejection_reasons: List[str],
-    review_reasons: List[str],
-    oar_violations: List[str],
-    gamma_3mm3pct: float,
-    gamma_2mm2pct: float,
-) -> Tuple[str, List[str]]:
-    """Synthesizes an easily interpretable clinical summary and prioritized action plan."""
-    if status == DecisionStatus.APPROVED:
-        summary = (
-            "Model output successfully verified. All hard deterministic physics boundaries "
-            "(absorbed dose non-negativity, coordinate frame orthogonality, and HIPAA privacy) are satisfied. "
-            f"Dosimetric QA exceeds AAPM TG-218 clinical acceptance criteria (3%/3mm pass rate: {gamma_3mm3pct:.1f}%, "
-            f"2%/2mm pass rate: {gamma_2mm2pct:.1f}%), and all critical organ doses remain within tolerance limits."
-        )
-        actions = [
-            "[Clinical QA Sign-off] Model meets AAPM TG-218 and TG-53 criteria. Archive evaluation certificate and SHA-256 audit hash into the clinical QA registry.",
-            "[Delivery QA] Proceed with scheduled phantom delivery measurement and record independent ionization chamber check.",
-            "[Patient Plan Verification] Ensure patient-specific secondary monitor unit (MU) calculation matches before first fraction delivery.",
-        ]
-    elif status == DecisionStatus.FLAGGED_FOR_REVIEW:
-        summary = (
-            "Model output is flagged for multidisciplinary clinical review. While hard deterministic physical boundaries passed, "
-            "one or more quality metrics fall within marginal clinical tolerance bands (e.g., standard gamma passing rate between "
-            "90.0% and 94.9%, tight margin gamma between 85.0% and 89.9%, or elevated prediction uncertainty near critical organ boundaries)."
-        )
-        actions = [
-            "[Physics Peer Review] Convene secondary peer review by board-certified Medical Physicist to evaluate dose gradient conformity.",
-            "[Measurement-Based QA] Perform high-density 2D diode array or EBT3 radiochromic film measurement in flagged gradient zones.",
-            "[Structure Review] Re-evaluate contour boundaries and PTV coverage margins with attending radiation oncologist.",
-        ]
-    else:  # REJECTED
-        primary = rejection_reasons[0] if rejection_reasons else "Deterministic clinical boundary failure."
-        summary = (
-            f"Model output has been REJECTED by the High-Consequence Verification Engine. Critical safety violations "
-            f"were detected that could lead to lethal normal tissue toxicity or tumor under-dosage. Primary grounds: {primary}"
-        )
-        actions = []
-        any_reasons_text = " ".join(rejection_reasons).lower()
-        if "non-negativity" in any_reasons_text or "negative" in any_reasons_text:
-            actions.append(
-                "[Data Pipeline] Audit CT HU-to-ED calibration table and DICOM intercept rescaling (RescaleIntercept/RescaleSlope) to eliminate negative voxel artifacts."
-            )
-            actions.append(
-                "[Model Architecture] Enforce physical non-negativity constraint (e.g., ReLU activation on final layer or zero-floor post-processing) in dose prediction model."
-            )
-        if "energy" in any_reasons_text:
-            actions.append(
-                "[Physics Guardrails] Restrict beam kinetic energy input strictly within clinical bounds: 0.01 MeV <= E <= 250 MeV."
-            )
-        if "orthogonality" in any_reasons_text or "orientation" in any_reasons_text:
-            actions.append(
-                "[DICOM Geometry] Recompute ImageOrientationPatient unit direction cosines; ensure mutual orthogonality (dot product <= 1e-4)."
-            )
-        if "hipaa" in any_reasons_text or "privacy" in any_reasons_text:
-            actions.append(
-                "[Privacy Governance] Re-run automated PHI scrubber to purge all patient names, IDs, dates of birth, and institution metadata before archiving."
-            )
-        if oar_violations or "oar" in any_reasons_text or "breach" in any_reasons_text:
-            actions.append(
-                "[TPS Optimization] Lock serial OAR Dmax <= tolerance limit in treatment planning optimizer and review PRV margin expansions."
-            )
-            actions.append(
-                "[Safety Verification] Perform secondary independent dose verification and review contour boundaries with attending radiation oncologist."
-            )
-        if "gamma" in any_reasons_text or gamma_3mm3pct < 90.0:
-            actions.append(
-                "[Dosimetric QA] Inspect spatial registration and affine grid shifts between evaluated and reference dose distributions."
-            )
-            actions.append(
-                "[Monte Carlo QA] If evaluating Monte Carlo simulation, increase particle history count (N >= 10^7) to decrease Poisson statistical uncertainty."
-            )
-        if not actions:
-            actions.append(
-                "[Root Cause Diagnosis] Investigate identified safety violations, inspect input CT/RTDOSE/RTSTRUCT files, and re-run validation."
-            )
-
-    return summary, actions
+def generate_clinical_summary_and_actions(status,hard_physics_passed,rejection_reasons,review_reasons,oar_violations,gamma_3mm3pct,gamma_2mm2pct):
+    summary=('Numerical assessment rejected: '+(rejection_reasons[0] if rejection_reasons else 'Input integrity failure.')) if status==DecisionStatus.REJECTED else 'Numerical preflight requires review. Passed numerical checks do not establish a clinically acceptable plan or a qualified computational model.'
+    actions=['Review every failure and missing-evidence item; retain raw inputs unchanged and correct only separately tracked derived outputs.',
+             'Verify reference provenance, grid registration, units and dose calibration before interpreting dosimetric differences.',
+             'Complete the full evaluation manifest with uncertainty/OOD calibration and model/source hashes; obtain qualified review.']
+    if oar_violations:actions.append('[TPS Optimization] Review the supplied endpoint/fractionation-specific OAR limit, contour and PRV with the treating team before considering plan changes.')
+    return summary,actions

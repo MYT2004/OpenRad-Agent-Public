@@ -21,6 +21,10 @@ flowchart TD
     ErrorFeedback --> AgentCore
 ```
 
+## Physicist-facing assessments
+
+DVH, gamma, radiobiology, TOPAS and model-assessment views provide readable summaries, measurements with units, criteria, limitations and follow-up actions. Download Markdown reports, CSV metrics and technical JSON; TOPAS also exports its parameter file. Reports show unperformed checks explicitly and preserve incomplete/blocked outcomes. See the [workflow audit and verification boundaries](docs/PHYSICIST_WORKFLOW_AUDIT.md).
+
 ## Repository layout
 
 ```text
