@@ -80,7 +80,7 @@ BUILTIN_ROI_ALIASES: dict[str, str] = {
 }
 
 
-def resolve_save_path(target: str | Path, patient_id: str | None = None) -> Path:
+def resolve_save_path(target: str | Path, patient_id: str | None = None, filename: str | None = None) -> Path:
     """Strict path resolver enforcing raw data immutability.
 
     Raises a hard PermissionError if any save or export operation attempts to write
@@ -98,7 +98,13 @@ def resolve_save_path(target: str | Path, patient_id: str | None = None) -> Path
     if any(pat in norm_str for pat in raw_patterns) or norm_str.startswith('data/raw') or norm_str.startswith('raw/'):
         raise PermissionError(f"Write operations into 'data/raw/' are strictly prohibited for data safety and immutability: {target_str}")
 
-    target_path = Path(target_str)
+    if filename:
+        fn_str = str(filename).replace('\\', '/')
+        if any(pat in fn_str for pat in raw_patterns) or fn_str.startswith('data/raw') or fn_str.startswith('raw/'):
+            raise PermissionError(f"Write operations into 'data/raw/' are strictly prohibited for data safety and immutability: {fn_str}")
+        target_path = Path(target_str) / Path(fn_str).name
+    else:
+        target_path = Path(target_str)
 
     pid = str(patient_id).strip() if patient_id else 'default'
     pid = Path(pid).name or 'default'
