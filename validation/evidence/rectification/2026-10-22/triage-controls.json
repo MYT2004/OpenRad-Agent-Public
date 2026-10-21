@@ -1,0 +1,1630 @@
+{
+  "scope": "raw-derived numerical engineering controls; no true model inference or independently certified evidence",
+  "cases": 21,
+  "all_expected": true,
+  "results": [
+    {
+      "case": "baseline",
+      "expected": "APPROVED",
+      "actual": "APPROVED",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "missing_uncertainty",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_map",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "confidence_equal",
+      "expected": "APPROVED",
+      "actual": "APPROVED",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "confidence_below",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [
+        "confidence"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "ood_equal",
+      "expected": "APPROVED",
+      "actual": "APPROVED",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "ood_above",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "ood_anatomy_flag",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "wrong_seed",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "absent_qualification",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "segmentation_model",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "REVIEW"
+        }
+      ]
+    },
+    {
+      "case": "monte_carlo_without_density",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "beam_energy",
+          "outcome": "PASS"
+        },
+        {
+          "name": "monte_carlo_density",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "PASS"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "energy_too_high",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "beam_energy"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "beam_energy",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "probability_negative",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "radiobiology_probability_0"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "radiobiology_probability_0",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "negative_fluence",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "fluence_nonnegative"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "fluence_nonnegative",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "fluence_limit",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "shifted_grid",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "registered_grid_integrity"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "uncertainty_negative",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "uncertainty_nonnegative"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "custom_gamma_3pct_3mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "strict_gamma_2pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "tg218_reference_gamma_3pct_2mm",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mae_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ptv_d95_percent_rx",
+          "outcome": "PASS"
+        },
+        {
+          "name": "oar_Brainstem",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_nonnegative",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "critical_uncertainty_overlap",
+          "outcome": "PASS"
+        },
+        {
+          "name": "global_uncertainty",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "prediction_shape_bad",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "prediction_shape",
+        "input_integrity"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "prediction_shape",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "input_integrity",
+          "outcome": "REJECT"
+        }
+      ]
+    },
+    {
+      "case": "prediction_negative",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "nonnegative_dose"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "density_too_high",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "mass_density"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "mass_density",
+          "outcome": "REJECT"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "case": "mask_empty",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "passed": true,
+      "hard_checks_passed": false,
+      "rejections": [
+        "input_integrity"
+      ],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "PASS"
+        },
+        {
+          "name": "nonnegative_dose",
+          "outcome": "PASS"
+        },
+        {
+          "name": "reference_normalization",
+          "outcome": "PASS"
+        },
+        {
+          "name": "input_integrity",
+          "outcome": "REJECT"
+        }
+      ]
+    },
+    {
+      "case": "resource_limit",
+      "expected": "FLAGGED_FOR_REVIEW",
+      "actual": "FLAGGED_FOR_REVIEW",
+      "passed": true,
+      "hard_checks_passed": true,
+      "rejections": [],
+      "rules": [
+        {
+          "name": "source_provenance",
+          "outcome": "PASS"
+        },
+        {
+          "name": "registered_grid_integrity",
+          "outcome": "PASS"
+        },
+        {
+          "name": "resource_limit",
+          "outcome": "REVIEW"
+        },
+        {
+          "name": "confidence",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood",
+          "outcome": "PASS"
+        },
+        {
+          "name": "qualification",
+          "outcome": "PASS"
+        },
+        {
+          "name": "uncertainty_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "ood_calibration",
+          "outcome": "PASS"
+        },
+        {
+          "name": "inference_seed",
+          "outcome": "PASS"
+        },
+        {
+          "name": "model_scope",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ]
+}

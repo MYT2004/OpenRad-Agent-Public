@@ -55,7 +55,7 @@ class EvaluationRequest(Contract):
     oar_limits_gy: Dict[str, float] = Field(min_length=1)
     uncertainty_std_path: Optional[str] = None
     mass_density_path: Optional[str] = None
-    energy_mev: Optional[float] = None
+    energy_mev: Optional[float] = Field(default=None, strict=True)
     fluence_per_mm2: Optional[float] = None
     probabilities: Dict[str, float] = Field(default_factory=dict)
     confidence: Optional[float] = Field(default=None, ge=0, le=1)

@@ -18,7 +18,8 @@ from pydantic import BaseModel, Field, AliasChoices, field_validator
 from openrad.core.agent import OpenRadAgent
 from src.storage import StorageManager, session_scope
 from src.tools import parse_and_evaluate_dvh, generate_topas_file
-from src.config import skills_paths
+from src.config import skills_paths, load_skill_policies
+from src.runtime import JobAdmission, research_readiness, validate_deployment_profile
 from src.reports import attach_report
 from src.case_verification import CaseVerificationRequest, verify_patient_case, ensure_case_output_separation
 from src.decision import EvaluationRequest
@@ -34,6 +35,10 @@ from openrad.validation.physics_rules import PhysicsValidationEngine, BeamEnergy
 # Application Initialization & Setup
 # =====================================================================
 
+# Apply the profile/resource check to direct ASGI imports as well as main().
+validate_deployment_profile()
+load_skill_policies()
+
 app = FastAPI(
     title="OpenRad Agent API",
     description="REST & Streaming Gateway for OpenRad Autonomous Medical Physics Agent (OSI Hackathon 2026)",
@@ -48,6 +53,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+job_admission = JobAdmission(int(os.getenv('OPENRAD_MAX_CONCURRENT_JOBS', '1')))
+
 STORAGE_BASE = os.getenv("STORAGE_DIR", "./storage/sessions")
 storage_mgr = StorageManager(base_dir=STORAGE_BASE)
 
@@ -59,10 +66,19 @@ class AgentRunRequest(BaseModel):
     prompt: str = Field(..., description="Explicit tool request; document content is not an instruction.")
     session_id: Optional[str] = Field(default=None, description="Optional existing session ID to resume trajectory.")
     context: Optional[Dict[str, Any]] = None
-    model: str = Field(default="gemini-3.5-pro", description="Model identifier.")
+    model: Optional[str] = Field(default=None, deprecated=True,
+        description="Unsupported for this deterministic endpoint; dynamic provider use is separate.")
+
+    @field_validator('model')
+    @classmethod
+    def no_ignored_model_selection(cls, value):
+        if value is not None:
+            raise ValueError('REST agent execution is deterministic; hosted model selection is not supported here.')
+        return value
 
 
 class AgentRunResponse(BaseModel):
+    execution_mode: str = 'deterministic_research'
     session_id: str
     status: str
     response_text: str
@@ -118,10 +134,13 @@ def health_check():
         "version": "1.0.0",
         "skills_paths": skills_paths,
         "clinical_release": False,
+        "policy_resources_available": len(load_skill_policies()) == 2,
+        "readiness": research_readiness(),
     }
 
 
 @app.post("/api/v1/agent/run", response_model=AgentRunResponse)
+@job_admission.bounded
 def run_agent(payload: AgentRunRequest):
     session_id = payload.session_id or str(uuid.uuid4())
     try:
@@ -146,11 +165,12 @@ def run_agent(payload: AgentRunRequest):
             artifacts=all_artifacts,
             trajectory_log="",
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail='Agent execution could not be committed.')
 
 
 @app.post("/api/v1/dvh/analyze")
+@job_admission.bounded
 def run_dvh(payload: DVHRequest):
     try:
         with session_scope(storage_mgr, payload.session_id):
@@ -162,18 +182,19 @@ def run_dvh(payload: DVHRequest):
 
 
 @app.post("/api/v1/gamma/evaluate")
+@job_admission.bounded
 def run_gamma(payload: GammaEvaluationInput):
     try:
-        results = evaluate_gamma_index(
-            reference_dose_path=payload.reference_dose_path,
-            evaluated_dose_path=payload.evaluated_dose_path,
-            dose_tolerance_percent=payload.dose_tolerance_percent,
-            distance_tolerance_mm=payload.distance_tolerance_mm,
-            dose_threshold_percent=payload.dose_threshold_percent,
-            reference_spacing_mm=payload.reference_spacing_mm,
-            evaluated_spacing_mm=payload.evaluated_spacing_mm,
-        )
         with session_scope(storage_mgr):
+            results = evaluate_gamma_index(
+                reference_dose_path=payload.reference_dose_path,
+                evaluated_dose_path=payload.evaluated_dose_path,
+                dose_tolerance_percent=payload.dose_tolerance_percent,
+                distance_tolerance_mm=payload.distance_tolerance_mm,
+                dose_threshold_percent=payload.dose_threshold_percent,
+                reference_spacing_mm=payload.reference_spacing_mm,
+                evaluated_spacing_mm=payload.evaluated_spacing_mm,
+            )
             return attach_report(results, 'gamma')
     except (GammaEvaluationError, DoseIntegrityError, ValueError, FileNotFoundError) as e:
         clean_msg = re.sub(r'(/[^:\s\'"\n]+/)', '[redacted_path]/', str(e))
@@ -183,6 +204,7 @@ def run_gamma(payload: GammaEvaluationInput):
 
 
 @app.post("/api/v1/topas/generate")
+@job_admission.bounded
 def run_topas(payload: TOPASRequest):
     try:
         with session_scope(storage_mgr, payload.session_id) as session_id:
@@ -200,15 +222,16 @@ def run_topas(payload: TOPASRequest):
 
 
 @app.post("/api/v1/radiobio/calculate")
+@job_admission.bounded
 def run_radiobio(payload: RadiobiologyInput):
     try:
-        results = calculate_tcp_ntcp(
-            dvh_data=payload.dvh_data,
-            model_type=payload.model_type,
-            parameters=payload.parameters,
-            dvh_type=payload.dvh_type,
-        )
         with session_scope(storage_mgr):
+            results = calculate_tcp_ntcp(
+                dvh_data=payload.dvh_data,
+                model_type=payload.model_type,
+                parameters=payload.parameters,
+                dvh_type=payload.dvh_type,
+            )
             return attach_report(results, 'radiobiology')
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -249,6 +272,7 @@ def get_artifact(session_id: str, filename: str):
 
 
 @app.post('/api/v1/cases/verify')
+@job_admission.bounded
 def verify_case(payload: CaseVerificationRequest):
     try:
         ensure_case_output_separation(payload.root,storage_mgr.base_dir)
@@ -259,6 +283,7 @@ def verify_case(payload: CaseVerificationRequest):
 
 
 @app.post('/api/v1/evaluations')
+@job_admission.bounded
 def run_evaluation(payload: EvaluationRequest):
     try:
         with session_scope(storage_mgr):
@@ -289,6 +314,8 @@ def review_evaluation(session_id: str, request: SignedReviewRequest):
 
 
 def main():
+    validate_deployment_profile()
+    load_skill_policies()  # Fail at startup if packaged policies are missing.
     import uvicorn
     port = int(os.getenv("PORT", 8080))
     uvicorn.run("server:app", host="0.0.0.0", port=port, reload=False)

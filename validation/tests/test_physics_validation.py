@@ -115,7 +115,7 @@ def test_topas_generator_tool():
         number_of_histories=10000,
     )
     assert "s:So/Beam/BeamParticle = \"proton\"" in deck
-    assert "d:So/Beam/BeamEnergy = 200.0000 MeV" in deck
+    assert float(next(line.split("=")[1].split()[0] for line in deck.splitlines() if line.startswith("d:So/Beam/BeamEnergy"))) == 200.0
     assert "s:Ge/Phantom/Material = \"G4_WATER\"" in deck
     assert "s:Sc/DoseScorer/Quantity = \"DoseToMedium\"" in deck
 

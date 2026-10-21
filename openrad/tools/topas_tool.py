@@ -5,7 +5,10 @@ configured for radiation transport, dosimetry scoring, and Bragg peak analysis.
 Includes beam energy bounds guardrails (0.01 - 250 MeV).
 """
 
+from src.operations import audited_operation
+
 import math
+from numbers import Real
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -17,7 +20,7 @@ from openrad.validation.physics_rules import (
 
 class TOPASGeneratorInput(BaseModel):
     particle_type: str = Field(description="Particle species: 'proton', 'e-', 'gamma', or 'neutron'.")
-    energy_MeV: float = Field(description="Beam energy in MeV.")
+    energy_MeV: float = Field(strict=True, description="Explicit numeric beam energy in MeV, excluding booleans.")
     geometry_type: str = Field(
         default="water_phantom",
         description="'water_phantom', 'slab_heterogeneity', or 'ct_patient'.",
@@ -32,6 +35,7 @@ class TOPASGeneratorInput(BaseModel):
     )
 
 
+@audited_operation
 def generate_topas_deck(
     particle_type: str,
     energy_MeV: float,
@@ -76,7 +80,7 @@ def generate_topas_deck(
     )
 
     # Validate geometry dimensions
-    if len(phantom_dimensions_cm) != 3 or any(not math.isfinite(d) or d <= 0 for d in phantom_dimensions_cm):
+    if len(phantom_dimensions_cm) != 3 or any(isinstance(d, bool) or not isinstance(d, Real) or not math.isfinite(d) or d <= 0 for d in phantom_dimensions_cm):
         raise ValueError(f"Phantom dimensions must be 3 positive floats [x, y, z] in cm. Got: {phantom_dimensions_cm}")
 
     if isinstance(number_of_histories, bool) or not isinstance(number_of_histories, int) or number_of_histories <= 0:
@@ -87,6 +91,8 @@ def generate_topas_deck(
     hlx = phantom_dimensions_cm[0] / 2.0
     hly = phantom_dimensions_cm[1] / 2.0
     hlz = phantom_dimensions_cm[2] / 2.0
+    if min(hlx, hly, hlz, hlz/4.0) <= 0:
+        raise ValueError('Phantom half-lengths/layers are too small to represent as positive floats.')
 
     world_hlx = max(hlx * 1.5, 40.0)
     world_hly = max(hly * 1.5, 40.0)
@@ -113,9 +119,9 @@ def generate_topas_deck(
         "# --- World Volume ---",
         "s:Ge/World/Type = \"TsBox\"",
         "s:Ge/World/Material = \"Air\"",
-        f"d:Ge/World/HLX = {world_hlx:.2f} cm",
-        f"d:Ge/World/HLY = {world_hly:.2f} cm",
-        f"d:Ge/World/HLZ = {world_hlz:.2f} cm",
+        f"d:Ge/World/HLX = {world_hlx:.17g} cm",
+        f"d:Ge/World/HLY = {world_hly:.17g} cm",
+        f"d:Ge/World/HLZ = {world_hlz:.17g} cm",
         "b:Ge/World/Invisible = \"True\"",
         "",
     ]
@@ -128,9 +134,9 @@ def generate_topas_deck(
             "s:Ge/Phantom/Type = \"TsBox\"",
             "s:Ge/Phantom/Parent = \"World\"",
             "s:Ge/Phantom/Material = \"G4_WATER\"",
-            f"d:Ge/Phantom/HLX = {hlx:.2f} cm",
-            f"d:Ge/Phantom/HLY = {hly:.2f} cm",
-            f"d:Ge/Phantom/HLZ = {hlz:.2f} cm",
+            f"d:Ge/Phantom/HLX = {hlx:.17g} cm",
+            f"d:Ge/Phantom/HLY = {hly:.17g} cm",
+            f"d:Ge/Phantom/HLZ = {hlz:.17g} cm",
             "d:Ge/Phantom/TransX = 0.0 cm",
             "d:Ge/Phantom/TransY = 0.0 cm",
             "d:Ge/Phantom/TransZ = 0.0 cm",
@@ -145,45 +151,45 @@ def generate_topas_deck(
             "s:Ge/Phantom/Type = \"TsBox\"",
             "s:Ge/Phantom/Parent = \"World\"",
             "s:Ge/Phantom/Material = \"Air\"",
-            f"d:Ge/Phantom/HLX = {hlx:.2f} cm",
-            f"d:Ge/Phantom/HLY = {hly:.2f} cm",
-            f"d:Ge/Phantom/HLZ = {hlz:.2f} cm",
+            f"d:Ge/Phantom/HLX = {hlx:.17g} cm",
+            f"d:Ge/Phantom/HLY = {hly:.17g} cm",
+            f"d:Ge/Phantom/HLZ = {hlz:.17g} cm",
             "",
             "# Layer 1: Soft Tissue",
             "s:Ge/Layer1/Type = \"TsBox\"",
             "s:Ge/Layer1/Parent = \"Phantom\"",
             "s:Ge/Layer1/Material = \"G4_TISSUE_SOFT_ICRP\"",
-            f"d:Ge/Layer1/HLX = {hlx:.2f} cm",
-            f"d:Ge/Layer1/HLY = {hly:.2f} cm",
-            f"d:Ge/Layer1/HLZ = {slab_thick/2.0:.2f} cm",
-            f"d:Ge/Layer1/TransZ = {-hlz + slab_thick*0.5:.2f} cm",
+            f"d:Ge/Layer1/HLX = {hlx:.17g} cm",
+            f"d:Ge/Layer1/HLY = {hly:.17g} cm",
+            f"d:Ge/Layer1/HLZ = {slab_thick/2.0:.17g} cm",
+            f"d:Ge/Layer1/TransZ = {-hlz + slab_thick*0.5:.17g} cm",
             "",
             "# Layer 2: Cortical Bone",
             "s:Ge/Layer2/Type = \"TsBox\"",
             "s:Ge/Layer2/Parent = \"Phantom\"",
             "s:Ge/Layer2/Material = \"G4_BONE_CORTICAL_ICRP\"",
-            f"d:Ge/Layer2/HLX = {hlx:.2f} cm",
-            f"d:Ge/Layer2/HLY = {hly:.2f} cm",
-            f"d:Ge/Layer2/HLZ = {slab_thick/2.0:.2f} cm",
-            f"d:Ge/Layer2/TransZ = {-hlz + slab_thick*1.5:.2f} cm",
+            f"d:Ge/Layer2/HLX = {hlx:.17g} cm",
+            f"d:Ge/Layer2/HLY = {hly:.17g} cm",
+            f"d:Ge/Layer2/HLZ = {slab_thick/2.0:.17g} cm",
+            f"d:Ge/Layer2/TransZ = {-hlz + slab_thick*1.5:.17g} cm",
             "",
             "# Layer 3: Lung (Inhale)",
             "s:Ge/Layer3/Type = \"TsBox\"",
             "s:Ge/Layer3/Parent = \"Phantom\"",
             "s:Ge/Layer3/Material = \"G4_LUNG_ICRP\"",
-            f"d:Ge/Layer3/HLX = {hlx:.2f} cm",
-            f"d:Ge/Layer3/HLY = {hly:.2f} cm",
-            f"d:Ge/Layer3/HLZ = {slab_thick/2.0:.2f} cm",
-            f"d:Ge/Layer3/TransZ = {-hlz + slab_thick*2.5:.2f} cm",
+            f"d:Ge/Layer3/HLX = {hlx:.17g} cm",
+            f"d:Ge/Layer3/HLY = {hly:.17g} cm",
+            f"d:Ge/Layer3/HLZ = {slab_thick/2.0:.17g} cm",
+            f"d:Ge/Layer3/TransZ = {-hlz + slab_thick*2.5:.17g} cm",
             "",
             "# Layer 4: Water",
             "s:Ge/Layer4/Type = \"TsBox\"",
             "s:Ge/Layer4/Parent = \"Phantom\"",
             "s:Ge/Layer4/Material = \"G4_WATER\"",
-            f"d:Ge/Layer4/HLX = {hlx:.2f} cm",
-            f"d:Ge/Layer4/HLY = {hly:.2f} cm",
-            f"d:Ge/Layer4/HLZ = {slab_thick/2.0:.2f} cm",
-            f"d:Ge/Layer4/TransZ = {-hlz + slab_thick*3.5:.2f} cm",
+            f"d:Ge/Layer4/HLX = {hlx:.17g} cm",
+            f"d:Ge/Layer4/HLY = {hly:.17g} cm",
+            f"d:Ge/Layer4/HLZ = {slab_thick/2.0:.17g} cm",
+            f"d:Ge/Layer4/TransZ = {-hlz + slab_thick*3.5:.17g} cm",
             "",
         ])
         scorer_component = "Phantom"
@@ -208,13 +214,13 @@ def generate_topas_deck(
         "s:So/Beam/Type = \"Beam\"",
         "s:So/Beam/Component = \"BeamPosition\"",
         f"s:So/Beam/BeamParticle = \"{actual_particle}\"",
-        f"d:So/Beam/BeamEnergy = {energy_MeV:.4f} MeV",
+        f"d:So/Beam/BeamEnergy = {energy_MeV:.17g} MeV",
         "u:So/Beam/BeamEnergySpread = 0.5  # 0.5% energy spread",
         "s:So/Beam/BeamPositionDistribution = \"Gaussian\"",
         "d:So/Beam/BeamPositionCutoffX = 10.0 mm",
         "d:So/Beam/BeamPositionCutoffY = 10.0 mm",
         "s:So/Beam/BeamAngularDistribution = \"None\"",
-        f"d:Ge/BeamPosition/TransZ = {source_z:.2f} cm",
+        f"d:Ge/BeamPosition/TransZ = {source_z:.17g} cm",
         "d:Ge/BeamPosition/RotX = 0.0 deg",
         "",
         "# --- Physics List ---",

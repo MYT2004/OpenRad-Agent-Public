@@ -21,6 +21,13 @@ def validate_tool_output(output: Any, tool_name: Optional[str] = None) -> Dict[s
         raise DoseIntegrityError('Tools must return structured results.')
     def inspect(value):
         if isinstance(value, dict):
+            if 'dvh_curve' in value and value.get('found', True):
+                curve = value['dvh_curve']
+                if not isinstance(curve, dict):
+                    raise DoseIntegrityError('DVH curves must be structured Gy/percent arrays.')
+                PhysicsValidationEngine.validate_dvh_curve(
+                    curve.get('dose_bins_Gy'), curve.get('volume_percent'),
+                    raise_on_fail=True, require_complete=True)
             for key, item in value.items():
                 if key in ('dose_grid', 'dose_array', 'dose_values'):
                     arr = np.asarray(item, dtype=float)

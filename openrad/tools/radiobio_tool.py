@@ -4,6 +4,8 @@ Implements Lyman-Kutcher-Burman (LKB) NTCP and Poisson-LQ / Logistic TCP modelin
 with generalized Equivalent Uniform Dose (EUD) and biological parameter guardrails.
 """
 
+from src.operations import audited_operation
+
 import math
 from typing import Dict, List, Optional, Tuple
 import numpy as np
@@ -58,6 +60,7 @@ def _eud(doses,fracs,power):
     return float(np.exp(logsumexp(np.log(v[positive])+power*np.log(d[positive]))/power))
 
 
+@audited_operation
 def calculate_tcp_ntcp(
     dvh_data: Dict[str, List[float]],
     model_type: str,

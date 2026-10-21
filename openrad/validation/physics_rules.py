@@ -9,6 +9,7 @@ Enforces hardcoded sanity checks and domain guardrails:
 """
 
 from dataclasses import dataclass
+from numbers import Real
 from typing import Any, Dict, List, Optional, Sequence, Union
 import numpy as np
 
@@ -84,8 +85,8 @@ class PhysicsValidationEngine:
 
         Action on Violation: Reject output; prompt agent to re-check array calibration or background subtraction.
         """
-        if not np.isfinite(tolerance) or tolerance > 0:
-            raise ValueError("Dose tolerance must be finite and <= 0 Gy.")
+        if not isinstance(tolerance, Real) or not np.isfinite(tolerance) or tolerance != 0:
+            raise ValueError("Physical dose tolerance must be exactly 0 Gy; negative dose cannot be accepted.")
         arr = np.asarray(dose_array, dtype=float)
         if arr.size == 0:
             res = ValidationResult(
@@ -152,8 +153,10 @@ class PhysicsValidationEngine:
         Action on Violation: Abort Monte Carlo execution; inform agent of unphysical energy parameter.
         """
         try:
+            if isinstance(energy_MeV, (bool, np.bool_)) or not isinstance(energy_MeV, Real):
+                raise ValueError("Explicit numeric energy required")
             energy = float(energy_MeV)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, OverflowError):
             res = ValidationResult(
                 passed=False,
                 rule_name="Beam Energy Bounds",
@@ -360,119 +363,45 @@ class PhysicsValidationEngine:
         )
 
     @classmethod
-    def validate_dvh_curve(
-        cls,
-        dose_bins_Gy: Union[np.ndarray, Sequence],
-        volume_percent: Union[np.ndarray, Sequence],
-        raise_on_fail: bool = False,
-    ) -> ValidationResult:
-        """Rule: Cumulative DVH curve must have >=2 points, finite values, strictly increasing nonnegative dose,
-        volume in [0, 100]%, and non-increasing monotonicity (dV/dD <= 0).
+    def validate_dvh_curve(cls, dose_bins_Gy, volume_percent, raise_on_fail=False,
+                           *, require_complete=False) -> ValidationResult:
+        """Validate cumulative Gy/percent data; complete exports span 0 Gy/100% to 0%.
+
+        Volume comparisons allow 1e-4 percentage points of numerical rounding.
+        This is not a clinical uncertainty margin or permission for negative dose.
+        Public diagnostics never include untrusted array contents.
         """
+        def fail(message, action, diagnostics=None):
+            result = ValidationResult(False, "Cumulative DVH Curve Physics", message,
+                                      action, diagnostics)
+            if raise_on_fail:
+                raise DVHCurveError(message)
+            return result
         try:
             d = np.asarray(dose_bins_Gy, dtype=float)
             v = np.asarray(volume_percent, dtype=float)
-        except (ValueError, TypeError) as exc:
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message=f"DVH curve points could not be converted to float arrays: {exc}",
-                remediation_suggestion="Ensure dose_bins_Gy and volume_percent are numeric sequences.",
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        if d.ndim != 1 or v.ndim != 1 or len(d) != len(v):
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message=f"DVH curve requires 1D arrays of equal length (dose points: {d.shape}, volume points: {v.shape}).",
-                remediation_suggestion="Ensure dose_bins_Gy and volume_percent have matching 1D dimensions.",
-                diagnostics={"dose_len": len(d), "vol_len": len(v)},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        if len(d) < 2:
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message=f"DVH curve requires at least 2 points for bin differential validation, found {len(d)}.",
-                remediation_suggestion="A valid DVH curve must contain at least 2 dose bins spanning a dose interval.",
-                diagnostics={"points_count": len(d)},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
+        except (ValueError, TypeError, OverflowError):
+            return fail("DVH curve requires numeric float arrays.", "Supply finite one-dimensional numeric arrays.")
+        if d.ndim != 1 or v.ndim != 1 or d.shape != v.shape:
+            return fail("DVH curve requires 1D arrays of equal length.",
+                        "Supply matching one-dimensional dose/volume arrays.",
+                        {"dose_shape": list(d.shape), "volume_shape": list(v.shape)})
+        if d.size < 2:
+            return fail("DVH curve requires at least 2 points.", "Supply at least two paired dose/volume bins.")
         if not np.isfinite(d).all() or not np.isfinite(v).all():
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message="DVH curve contains NaN or infinite values.",
-                remediation_suggestion="Inspect dose grid or DVH sampling for non-finite voxel values.",
-                diagnostics={"finite_dose": bool(np.isfinite(d).all()), "finite_vol": bool(np.isfinite(v).all())},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        if (d < 0.0).any():
-            min_d = float(d.min())
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message=f"Negative dose bin detected ({min_d:.4f} Gy). Absorbed dose must be non-negative.",
-                remediation_suggestion="Recalibrate dose array or check background subtraction.",
-                diagnostics={"min_dose_Gy": min_d},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        d_diffs = np.diff(d)
-        if (d_diffs <= 0.0).any():
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message="Dose bins are not strictly increasing (descending or duplicate dose bins detected).",
-                remediation_suggestion="Ensure dose bins are strictly monotonically increasing (d[i+1] > d[i]).",
-                diagnostics={"min_dose_diff": float(d_diffs.min())},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        if (v < -1e-4).any() or (v > 100.0 + 1e-4).any():
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message=f"Volume percentage outside physical range [0, 100]%: min={v.min():.2f}%, max={v.max():.2f}%.",
-                remediation_suggestion="Ensure volume percentages are normalized within [0, 100]%.",
-                diagnostics={"min_vol_pct": float(v.min()), "max_vol_pct": float(v.max())},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        v_diffs = np.diff(v)
-        if (v_diffs > 1e-4).any():
-            max_inc = float(v_diffs.max())
-            res = ValidationResult(
-                passed=False,
-                rule_name="Cumulative DVH Curve Physics",
-                error_message=f"Cumulative DVH violates physical monotonicity: volume increases with dose (max step increase: +{max_inc:.4f}%).",
-                remediation_suggestion="Cumulative DVH must be non-increasing (dV/dD <= 0). Check differential-to-cumulative integration.",
-                diagnostics={"max_step_increase": max_inc},
-            )
-            if raise_on_fail:
-                raise DVHCurveError(res.error_message)
-            return res
-
-        return ValidationResult(
-            passed=True,
-            rule_name="Cumulative DVH Curve Physics",
-            diagnostics={"num_points": len(d), "max_dose_Gy": float(d.max()), "min_vol_pct": float(v.min()), "max_vol_pct": float(v.max())},
-        )
+            return fail("DVH curve contains NaN or infinite values.", "Inspect dose and volume sampling.")
+        if (d < 0).any():
+            return fail("Negative dose bin detected.", "Reject negative physical dose; inspect source scaling.")
+        if (np.diff(d) <= 0).any():
+            return fail("Dose bins are not strictly increasing.", "Reject duplicate or descending dose bins.")
+        if (v < -1e-4).any() or (v > 100.0001).any():
+            return fail("Volume percentage outside physical range [0, 100]%.", "Check volume normalization.")
+        if (np.diff(v) > 1e-4).any():
+            return fail("Cumulative DVH violates physical monotonicity.", "Volume must be non-increasing with dose.")
+        if require_complete and (d[0] != 0 or abs(v[0]-100) > 1e-4 or abs(v[-1]) > 1e-4):
+            return fail("Complete cumulative DVH must start at 0 Gy/100% and end at zero volume.",
+                        "Export the complete curve; label partial curves separately.")
+        return ValidationResult(True, "Cumulative DVH Curve Physics", diagnostics={
+            "num_points": int(d.size), "max_dose_Gy": float(d[-1]),
+            "min_vol_pct": float(v.min()), "max_vol_pct": float(v.max()),
+            "complete_required": require_complete})

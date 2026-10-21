@@ -1,0 +1,82 @@
+{
+  "assessment_date": "2026-10-22",
+  "timezone": "Asia/Singapore",
+  "baseline_revision": "63822e9b9d777abb6075e91403a5415fe89fb89b",
+  "tested_source_tree_sha256": "161f49e82aa4c9b644c3729b831b12caf4e3534e6282e93a5f2a981e5187244a",
+  "regression_tests_passed": 341,
+  "runtime": "3.13.13",
+  "platform": "Darwin-arm64",
+  "additional_checks": [
+    {
+      "check": "full-raw-corpus",
+      "exit": 0,
+      "seconds": 67.84
+    },
+    {
+      "check": "independent-reference-and-core-probes",
+      "exit": 0,
+      "seconds": 2.07
+    },
+    {
+      "check": "expanded-96-gamma-21-triage",
+      "exit": 0,
+      "seconds": 2.22
+    },
+    {
+      "check": "dicom-mutations",
+      "exit": 0,
+      "seconds": 15.35
+    },
+    {
+      "check": "frontend-nine-menus",
+      "exit": 0,
+      "seconds": 4.43
+    },
+    {
+      "check": "numerical-1450",
+      "exit": 0,
+      "seconds": 1.4
+    },
+    {
+      "check": "upstream-28-strict",
+      "exit": 0,
+      "seconds": 13.34
+    },
+    {
+      "check": "installed-wheel",
+      "exit": 0,
+      "seconds": 1.74
+    },
+    {
+      "check": "pip-check",
+      "exit": 0,
+      "seconds": 0.18
+    }
+  ],
+  "strict_menu_scenarios": {
+    "executed": 28,
+    "passed": 28,
+    "skipped": 0
+  },
+  "gamma_oracle_comparisons": 96,
+  "gamma_all_agree": true,
+  "triage_controls": 21,
+  "triage_all_expected": true,
+  "dicom_controls": 11,
+  "dicom_all_expected": true,
+  "seeded_numerical_checks": 1450,
+  "frontend_menu_entrypoints": 9,
+  "frontend_scope": "Selected meaningful actions plus all menu loads; not a human usability study",
+  "raw_source_collections": 48,
+  "raw_intake_states": {
+    "BLOCKED": 34,
+    "FLAGGED_FOR_REVIEW": 14
+  },
+  "raw_entries_verified_unchanged": 8599,
+  "wheel_import_and_packaged_policies": "PASS; two resources",
+  "live_gemini_tested": false,
+  "local_container_runtime_tested": false,
+  "clinical_release": false,
+  "production_ready": false,
+  "interpretation": "No failing checks in this reported verification scope. Not a guarantee of no possible defects, clinical commissioning or universal standards conformity."
+}

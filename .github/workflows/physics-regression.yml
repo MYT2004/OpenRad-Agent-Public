@@ -3,14 +3,24 @@ on: [push, pull_request]
 jobs:
   regression:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.13']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
       - run: pip install ".[app,api,test]"
       - run: python -m pytest validation/tests -q
       - run: python agent_main.py --help
+      - name: Installed wheel policy resources
+        run: |
+          python -m pip wheel . --no-deps -w /tmp/openrad-wheels
+          python -m pip install --no-deps --target /tmp/openrad-installed /tmp/openrad-wheels/*.whl
+          cd /tmp
+          PYTHONPATH=/tmp/openrad-installed python -c "from src.config import load_skill_policies; assert len(load_skill_policies()) == 2"
+      - run: python -m pip check
 
   container-build:
     runs-on: ubuntu-latest

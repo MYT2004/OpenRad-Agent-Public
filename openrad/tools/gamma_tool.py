@@ -4,6 +4,8 @@ Computes 2D/3D Gamma Index (Low et al., AAPM TG-218 standard) comparing referenc
 and evaluated dose distributions with physics validation guardrails.
 """
 
+from src.operations import audited_operation
+
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -14,6 +16,7 @@ from scipy.spatial import cKDTree
 
 from openrad.validation.physics_rules import (
     PhysicsValidationEngine,
+    PhysicsValidationError,
     DoseIntegrityError,
     GammaEvaluationError,
 )
@@ -40,64 +43,52 @@ def _load_dose_and_coords(
     spacing_mm: Optional[List[float]] = None,
 ) -> Tuple[np.ndarray, Tuple[np.ndarray, ...]]:
     """Loads dose distribution and spatial coordinates (in mm) from DICOM RTDOSE, NPY, or array."""
+    from src.resources import (check_dose_shape, check_input_file, preflight_npy,
+                               preflight_dicom_dose, InputBudgetError)
+    malformed = "Unsupported or malformed dose data: file could not be parsed as a numerical dose grid."
     if isinstance(path_or_array, np.ndarray):
+        check_dose_shape(path_or_array.shape)
+        if path_or_array.dtype.kind not in 'ufi':
+            raise GammaEvaluationError(malformed)
         arr = path_or_array.astype(float)
-        coords = _array_coords(arr, spacing_mm)
-        return arr, coords
-
-    if not isinstance(path_or_array, str) or not os.path.exists(path_or_array):
-        clean_name = os.path.basename(str(path_or_array))
-        raise FileNotFoundError(f"Dose file not found: {clean_name}")
-
-    lower_path = path_or_array.lower()
-    if lower_path.endswith(".dcm") or lower_path.endswith(".dicom"):
-        ds = pydicom.dcmread(path_or_array)
-        from openrad.tools.dose_geometry import validate_axial_dose
-        validate_axial_dose(ds)
-        scaling = float(ds.DoseGridScaling)
-        dose = ds.pixel_array.astype(float) * scaling
-
-        spacing = [float(v) for v in getattr(ds, "PixelSpacing", [1.0, 1.0])]
-        dy, dx = spacing[0], spacing[1]
-        ipp = [float(v) for v in getattr(ds, "ImagePositionPatient", [0.0, 0.0, 0.0])]
-        x0, y0, z0 = ipp[0], ipp[1], ipp[2]
-
-        offsets = getattr(ds, "GridFrameOffsetVector", None)
-        if offsets is not None and len(offsets) == dose.shape[0]:
-            z_coords = z0 + np.array([float(v) for v in offsets])
-        else:
-            dz = float(getattr(ds, "SliceThickness", 3.0))
-            z_coords = z0 + np.arange(dose.shape[0]) * dz
-
-        y_coords = y0 + np.arange(dose.shape[1]) * dy
-        x_coords = x0 + np.arange(dose.shape[2]) * dx
-        return dose, (z_coords, y_coords, x_coords)
-
-    elif lower_path.endswith(".npy"):
-        loaded = np.load(path_or_array, allow_pickle=False)
-        if isinstance(loaded, np.ndarray):
-            arr = loaded.astype(float)
-            coords = _array_coords(arr, spacing_mm)
-            return arr, coords
-        elif isinstance(loaded, dict) or hasattr(loaded, "item"):
-            data = loaded.item() if hasattr(loaded, "item") else loaded
-            dose = np.asarray(data["dose"], dtype=float)
-            coords = tuple(np.asarray(c, dtype=float) for c in data.get("coords", ()))
+        return arr, _array_coords(arr, spacing_mm)
+    if not isinstance(path_or_array, (str, Path)) or not Path(path_or_array).is_file():
+        raise FileNotFoundError("Dose input is unavailable.")
+    path = Path(path_or_array)
+    try:
+        check_input_file(path)
+        if path.suffix.lower() in ('.dcm', '.dicom'):
+            preflight_dicom_dose(path)
+            ds = pydicom.dcmread(path)
+            from openrad.tools.dose_geometry import validate_axial_dose
+            validate_axial_dose(ds)
+            dose = ds.pixel_array.astype(float) * float(ds.DoseGridScaling)
+            ipp = np.asarray(ds.ImagePositionPatient, dtype=float)
+            dy, dx = map(float, ds.PixelSpacing)
+            coords = (ipp[2] + np.asarray(ds.GridFrameOffsetVector, dtype=float),
+                      ipp[1] + np.arange(dose.shape[1])*dy,
+                      ipp[0] + np.arange(dose.shape[2])*dx)
             return dose, coords
+        if path.suffix.lower() == '.npy':
+            preflight_npy(path)
+            arr = np.load(path, allow_pickle=False, mmap_mode='r')
+            # Recheck after load to catch a replaced header; never convert text to float.
+            if not isinstance(arr, np.ndarray) or arr.dtype.kind not in 'ufi':
+                raise GammaEvaluationError(malformed)
         else:
-            arr = np.asarray(loaded, dtype=float)
-            coords = _array_coords(arr, spacing_mm)
-            return arr, coords
-    else:
-        # Default text/csv or general loader fallback with sanitized exceptions
-        try:
-            arr = np.loadtxt(path_or_array, delimiter=",").astype(float)
-            coords = _array_coords(arr, spacing_mm)
-            return arr, coords
-        except Exception:
-            raise GammaEvaluationError("Unsupported or malformed dose data: file could not be parsed as a numerical dose grid.")
+            if path.stat().st_size > 8 * 1024 * 1024:
+                raise InputBudgetError('Text dose input exceeds the 8 MiB parsing budget.')
+            arr = np.loadtxt(path, delimiter=',')
+        check_dose_shape(arr.shape)
+        arr = arr.astype(float)
+    except (InputBudgetError, PhysicsValidationError):
+        raise
+    except Exception:
+        raise GammaEvaluationError(malformed) from None
+    return arr, _array_coords(arr, spacing_mm)
 
 
+@audited_operation
 def evaluate_gamma_index(
     reference_dose_path: str,
     evaluated_dose_path: str,
@@ -127,8 +118,13 @@ def evaluate_gamma_index(
                 pass
         if is_same:
             raise GammaEvaluationError("INDEPENDENT_REFERENCE_REQUIRED: Evaluation and reference dose distributions must be independent files; self-comparison cannot serve as QA verification.")
-    if all(isinstance(p,str) and p.lower().endswith(('.dcm','.dicom')) for p in (reference_dose_path,evaluated_dose_path)):
-        headers=[pydicom.dcmread(p,stop_before_pixels=True) for p in (reference_dose_path,evaluated_dose_path)]
+    if all(isinstance(p, (str, Path)) and Path(p).suffix.lower() in ('.dcm', '.dicom')
+           for p in (reference_dose_path, evaluated_dose_path)):
+        from src.resources import preflight_dicom_dose
+        try:
+            headers=[preflight_dicom_dose(p) for p in (reference_dose_path,evaluated_dose_path)]
+        except Exception:
+            raise GammaEvaluationError('DICOM dose inputs could not be validated.') from None
         for tag in ('PatientID','FrameOfReferenceUID'):
             if not getattr(headers[0],tag,None) or getattr(headers[0],tag,None)!=getattr(headers[1],tag,None):
                 raise GammaEvaluationError('DICOM gamma inputs require matching explicit patient and frame identifiers.')
@@ -147,7 +143,7 @@ def evaluate_gamma_index(
         raise DoseIntegrityError(f"Maximum reference dose is {max_ref_dose} Gy (must be > 0).")
 
     dose_cutoff_val = (dose_threshold_percent / 100.0) * max_ref_dose
-    delta_dose = (dose_tolerance_percent / 100.0) * max_ref_dose
+    delta_dose = max_ref_dose * dose_tolerance_percent / 100.0
     delta_dist = float(distance_tolerance_mm)
 
     # Construct spatial meshgrid points
@@ -173,7 +169,12 @@ def evaluate_gamma_index(
     # This is discrete gamma: interpolation and commissioning remain required.
     candidates = np.column_stack((eval_pts / delta_dist, eval_d / delta_dose))
     queries = np.column_stack((sub_ref_pts / delta_dist, sub_ref_d / delta_dose))
-    gamma_values, _ = cKDTree(candidates).query(queries)
+    _, nearest = cKDTree(candidates).query(queries)
+    # Compute the reported distance from direct physical differences. Subtracting
+    # normalized absolute doses first can round a strict gamma>1 tie to exactly 1.
+    spatial_delta = (sub_ref_pts - eval_pts[nearest]) / delta_dist
+    dose_delta = (sub_ref_d - eval_d[nearest]) / delta_dose
+    gamma_values = np.sqrt(np.sum(spatial_delta**2, axis=1) + dose_delta**2)
 
     passed_points = int(np.sum(gamma_values <= 1.0))
     pass_rate = float(100.0 * passed_points / eval_count)
@@ -193,6 +194,10 @@ def evaluate_gamma_index(
         "method": "discrete_global_gamma",
         "criteria": {"dose_percent": dose_tolerance_percent, "distance_mm": distance_tolerance_mm, "cutoff_percent": dose_threshold_percent},
         "limitations": ["No interpolation or measurement uncertainty model; not commissioned for clinical QA.", "Array/NPY/CSV inputs require explicit mm spacing and assume Gy with zero origin; DICOM supports canonical axial geometry only."],
+        "threshold_policy": "direct_difference_float64_le_1",
+        "numerical_tolerance": 0.0,
+        "average_gamma_unrounded": avg_gamma,
+        "max_gamma_unrounded": max_gamma,
         "passing_rate": pass_rate,
         "average_gamma": round(avg_gamma, 3),
         "max_gamma": round(max_gamma, 3),
