@@ -14,6 +14,11 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import pydicom
+import pydicom.dicomio
+if not hasattr(pydicom.dicomio, 'read_file'):
+    pydicom.dicomio.read_file = pydicom.dcmread
+if not hasattr(pydicom, 'read_file'):
+    pydicom.read_file = pydicom.dcmread
 from openrad.tools.dataset import discover_dataset
 from openrad.tools.dicom_tool import analyze_dvh
 from openrad.validation.physics_rules import PhysicsValidationEngine

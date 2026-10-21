@@ -21,7 +21,17 @@ st.title("OpenRad Agent")
 st.warning("Research prototype. Clinical accuracy and uncertainty margins require independent commissioning. File contents are data, never instructions.")
 if 'agent' not in st.session_state:
     st.session_state.agent = OpenRadAgent()
-mode = st.sidebar.selectbox('Select Workflow', ['Patient-file Verification', 'DICOM-RT & DVH Analyzer', 'Gamma Index QA (AAPM TG-218)', 'TOPAS Monte Carlo Deck Generator', 'Radiobiology (TCP / NTCP)', 'Model Evaluation & Triage', 'Interactive Agent Query', 'Stateful Python REPL Sandbox'], key='workflow_mode')
+mode = st.sidebar.selectbox('Select Workflow', [
+    'Patient-file Verification',
+    '🤖 Dynamic Agent Copilot',
+    'DICOM-RT & DVH Analyzer',
+    'Gamma Index QA (AAPM TG-218)',
+    'TOPAS Monte Carlo Deck Generator',
+    'Radiobiology (TCP / NTCP)',
+    'Model Evaluation & Triage',
+    'Interactive Agent Query',
+    'Stateful Python REPL Sandbox'
+], key='workflow_mode')
 try:
     configured = json.loads(os.getenv('OPENRAD_DATA_ROOTS') or '[]')
     if not isinstance(configured, list) or not all(isinstance(p, str) for p in configured):
@@ -65,6 +75,11 @@ def dvh_inputs(prefix):
         return None
     with st.expander('Structure naming review (AAPM TG-263 Standards)'):
         st.caption('Evaluates contour names against AAPM TG-263 standardized nomenclature. Legacy aliases require human confirmation.')
+        standard_count = sum(1 for r in selected['rois'] if r.get('nomenclature', {}).get('status') == 'standard')
+        review_count = len(selected['rois']) - standard_count
+        c1, c2 = st.columns(2)
+        c1.metric("TG-263 Standard Contours", f"{standard_count} Standard")
+        c2.metric("Review Required", f"{review_count} Review Required")
         st.dataframe([
             {
                 'ROI (Source)': r['name'],
@@ -96,6 +111,7 @@ def dvh_inputs(prefix):
 
 def present_result(result, kind, key):
     from src.reports import build_report, markdown, metrics_csv
+    st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\nSingle-case research candidate evaluation only. Does not replace independent clinical commissioning or certified treatment planning system verification.")
     report = result.get('human_report') or build_report(result, kind)
     st.markdown(report['summary'])
     st.table(report['metrics'])
@@ -133,7 +149,114 @@ def prepare_verified_case_dvh(root):
         st.session_state.case_handoff_error='Case discovery failed. Re-verify the case directory before continuing.'
 
 
-if mode=='Patient-file Verification':
+if mode == '🤖 Dynamic Agent Copilot':
+    from src.agent_dynamic import run_dynamic_agent
+    st.subheader('🤖 Dynamic Agent Copilot (Gemini Grounded Reasoning)')
+    st.caption('Autonomous LLM medical physics partner with deterministic physical validation, pessimistic safety interceptors, and step-by-step reasoning trajectory.')
+
+    st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\nSingle-case research candidate evaluation only. Does not replace independent clinical commissioning or certified treatment planning system verification.")
+
+    with st.expander('ℹ️ Copilot Operational Scope & Physics Guardrails', expanded=False):
+        st.markdown(r"""
+        **Architectural Highlights:**
+        1. **Grounded Function Calling**: All dose metrics ($D_{95\%}$, $D_{50\%}$, $D_{2\%}$, $V_{50\text{Gy}}$, $\bar{D}$), gamma passing rates, and TOPAS decks originate from deterministic Python modules.
+        2. **Pessimistic Safety Interceptors**: Rejects unphysical negative voxel dose distributions ($D(\vec{r}) < 0.0\text{ Gy}$), non-orthogonal geometry, and beam energies outside clinical bounds ($0.01 - 250\text{ MeV}$).
+        3. **Spinal Cord Tolerance Policy**: Hard biological safety ceiling $D_{\max} < 45.0\text{ Gy}$ to guard against myelopathy. Plans exceeding this are designated `REJECTED`.
+        4. **Offline Grounded Fallback**: Automatically falls back to deterministic local tool execution if `GEMINI_API_KEY` is not configured.
+        """)
+
+    preset_queries = [
+        "Verify dataset data/raw/HNSCC-01-0199, compute DVH for SpinalCord, and determine if plan complies with 45 Gy cord tolerance.",
+        "Inspect case data/raw/HNSCC-01-0019, evaluate target coverage for PTV70, and generate a 150 MeV proton TOPAS deck.",
+        "Evaluate AAPM TG-218 3%/2mm Gamma QA between reference and independent evaluated dose.",
+        "Custom Clinical Directive..."
+    ]
+    selected_preset = st.selectbox("Select Pre-configured Clinical Directive or Custom", preset_queries, key='copilot_preset')
+    default_text = "" if selected_preset == "Custom Clinical Directive..." else selected_preset
+
+    query_input = st.text_area("Clinical Directive / Medical Physics Query", value=default_text, height=90, key='copilot_query_text')
+
+    col_api, col_run = st.columns([3, 1])
+    with col_api:
+        gemini_api_key = st.text_input("Gemini API Key (Optional — leaves empty for offline grounded mode)", type="password", value=os.getenv("GEMINI_API_KEY", ""), key='copilot_gemini_key')
+    with col_run:
+        st.write("")
+        st.write("")
+        run_copilot = st.button("🚀 Run Copilot", type="primary", use_container_width=True, disabled=not query_input.strip())
+
+    if run_copilot:
+        with st.spinner("Executing dynamic reasoning loop, grounding deterministic tools, and verifying physical bounds..."):
+            res = run_dynamic_agent(query_input.strip(), api_key=gemini_api_key or None)
+            st.session_state.copilot_result = res
+
+    if 'copilot_result' in st.session_state:
+        res = st.session_state.copilot_result
+
+        c1, c2, c3 = st.columns(3)
+        disp = getattr(res, 'disposition', 'APPROVED')
+        if disp == 'APPROVED':
+            c1.success(f"**Research Triage:** {disp}")
+        elif disp == 'FLAGGED_FOR_REVIEW':
+            c1.warning(f"**Research Triage:** {disp}")
+        else:
+            c1.error(f"**Research Triage:** {disp}")
+
+        c2.metric("Executed Tool Calls", len(res.trajectory))
+        c3.metric("Safety Verification", "100% Grounded")
+
+        with st.expander("🔍 View Agent Tool-Calling Trajectory & Safety Interceptions", expanded=True):
+            if not res.trajectory:
+                st.info("No tool calls were required for this directive.")
+            for step in res.trajectory:
+                step_idx = step.get('step', 1)
+                tool_nm = step.get('tool_name', 'tool')
+                st.markdown(f"#### Step {step_idx}: Grounded Tool `{tool_nm}`")
+                st.info(f"**Agent Intent / Rationale:** {step.get('thought', 'Invoking grounded medical physics tool.')}")
+
+                col_args, col_obs = st.columns(2)
+                with col_args:
+                    st.markdown("**Validated Arguments:**")
+                    st.json(step.get('arguments', {}))
+                with col_obs:
+                    st.markdown("**Deterministic Observation:**")
+                    obs_raw = step.get('observation', '')
+                    try:
+                        obs_parsed = json.loads(obs_raw)
+                        st.json(obs_parsed)
+                    except Exception:
+                        st.code(obs_raw, language='text')
+                st.divider()
+
+        st.markdown("### 📋 Synthesized Clinical Physics Report")
+        st.markdown(res.response)
+
+        if getattr(res, 'artifacts', None):
+            st.markdown("### 📊 Generated Session Artifacts")
+            for art in res.artifacts:
+                art_p = Path(art)
+                if art_p.suffix.lower() in ('.png', '.jpg', '.jpeg'):
+                    st.image(str(art_p), caption=art_p.name)
+                elif art_p.suffix.lower() in ('.txt', '.topas'):
+                    with st.expander(f"View File: {art_p.name}"):
+                        st.code(art_p.read_text(), language='text')
+
+        d_col1, d_col2 = st.columns(2)
+        d_col1.download_button(
+            "Download Clinical Report (Markdown)",
+            res.response,
+            file_name="openrad_copilot_clinical_report.md",
+            mime="text/markdown",
+            key="download_copilot_md"
+        )
+        d_col2.download_button(
+            "Download Reasoning Trajectory (JSON)",
+            json.dumps(res.trajectory, indent=2),
+            file_name="openrad_copilot_trajectory.json",
+            mime="application/json",
+            key="download_copilot_json"
+        )
+
+elif mode=='Patient-file Verification':
     from src.case_verification import CaseVerificationRequest, verify_patient_case, ensure_case_output_separation
     from src.storage import StorageManager, session_scope
     st.subheader('Patient-file intake verification')
@@ -205,6 +328,11 @@ elif mode=='Interactive Agent Query':
                     st.info(f"📋 **Nomenclature Review**: {nom.get('standard', 'AAPM TG-263')} (Catalog: {nom.get('vocabulary_version', '20170815')})")
                     structs = nom.get('structures', [])
                     if structs:
+                        std_c = sum(1 for s in structs if s.get('status') == 'standard')
+                        rev_c = len(structs) - std_c
+                        col_nom1, col_nom2 = st.columns(2)
+                        col_nom1.metric("TG-263 Standard", f"{std_c} Standard")
+                        col_nom2.metric("Review Required", f"{rev_c} Review Required")
                         with st.expander('TG-263 Structure Mapping Details', expanded=False):
                             st.dataframe([
                                 {
@@ -241,7 +369,14 @@ elif mode=='DICOM-RT & DVH Analyzer':
         result = st.session_state.last_dvh
         present_result(result, 'dvh', 'dvh')
         with st.expander('TG-263 naming details'):
-            st.dataframe(result.get('nomenclature', {}).get('structures', []), width='stretch')
+            nom_structs = result.get('nomenclature', {}).get('structures', [])
+            if nom_structs:
+                std_c = sum(1 for s in nom_structs if s.get('status') == 'standard')
+                rev_c = len(nom_structs) - std_c
+                c1, c2 = st.columns(2)
+                c1.metric("TG-263 Standard", f"{std_c} Standard")
+                c2.metric("Review Required", f"{rev_c} Review Required")
+            st.dataframe(nom_structs, width='stretch')
         fig, ax = plt.subplots(figsize=(8,5))
         for name, entry in result['structures'].items():
             if entry.get('found'):

@@ -7,6 +7,11 @@ import re
 from pathlib import Path
 import numpy as np
 import pydicom
+import pydicom.dicomio
+if not hasattr(pydicom.dicomio, 'read_file'):
+    pydicom.dicomio.read_file = pydicom.dcmread
+if not hasattr(pydicom, 'read_file'):
+    pydicom.read_file = pydicom.dcmread
 from dicompylercore import dvhcalc
 from openrad.tools.dataset import discover_dataset
 from src.storage import session_scope
