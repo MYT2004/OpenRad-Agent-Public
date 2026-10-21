@@ -177,12 +177,20 @@ class OpenRadAgent:
 
             if record.physics_passed and record.output:
                 res_dict = record.output
+                nom = res_dict.get('nomenclature') or {}
+                if isinstance(nom, dict):
+                    std = nom.get('standard', 'AAPM TG-263')
+                    ver = nom.get('vocabulary_version', '20170815')
+                    n_eval = len(nom.get('structures', []))
+                    nom_summary = f"{std} (v{ver}) — {n_eval} structure(s) evaluated"
+                else:
+                    nom_summary = str(nom)
                 lines = [
                     "### OpenRad Agent: DVH Analysis Report",
                     f"- **Dose Grid Dimensions**: {res_dict.get('dose_grid_shape')}",
                     f"- **Maximum Plan Dose**: {res_dict.get('max_dose_Gy')} Gy",
                     f"- **Physics Validation**: Passed (D(r) >= 0 Gy, valid geometry)",
-                    f"- **Nomenclature review**: {res_dict.get('nomenclature')}",
+                    f"- **Nomenclature review**: {nom_summary}",
                     "\n#### Structure Metrics:",
                 ]
                 for s_name, s_data in res_dict.get("structures", {}).items():

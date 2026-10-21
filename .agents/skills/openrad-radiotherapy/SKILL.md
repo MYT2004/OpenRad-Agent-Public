@@ -33,16 +33,33 @@ This skill defines domain-specific physical rules, mathematical formulas, unit g
 * **$D_{2\%}$**: Near-maximum absorbed dose delivered to 2% of the volume.
 * **$V_{50\text{Gy}}$**: Volume receiving at least 50 Gy (or $V_{50\%}$ percentage of prescribed dose).
 * **Equivalent Uniform Dose (gEUD)**:
-  $$\text{gEUD} = \left( \sum_{i} v_i D_i^{1/n} \right)^n$$
-  where $v_i$ is the fractional voxel volume, $D_i$ is voxel dose, and $n$ is the organ-specific volume effect parameter.
+
+$$
+\text{gEUD} = \left( \sum_{i} v_i D_i^{1/n} \right)^n
+$$
+
+where $v_i$ is the fractional voxel volume, $D_i$ is voxel dose, and $n$ is the organ-specific volume effect parameter.
 
 ### Lyman-Kutcher-Burman (LKB) NTCP Model
-$$t = \frac{\text{gEUD} - TD_{50}}{m \cdot TD_{50}}$$
-$$\text{NTCP} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^t e^{-u^2/2} du = \frac{1}{2} \left[ 1 + \text{erf}\left( \frac{t}{\sqrt{2}} \right) \right]$$
+
+$$
+t = \frac{\text{gEUD} - TD_{50}}{m \cdot TD_{50}}
+$$
+
+$$
+\text{NTCP} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^t e^{-u^2/2} du = \frac{1}{2} \left[ 1 + \text{erf}\left( \frac{t}{\sqrt{2}} \right) \right]
+$$
 
 ### Gamma Index Criteria (AAPM TG-218)
-$$\Gamma(\vec{r}_e, \vec{r}_r) = \sqrt{ \left(\frac{\|\vec{r}_e - \vec{r}_r\|}{\delta r}\right)^2 + \left(\frac{D_e(\vec{r}_e) - D_r(\vec{r}_r)}{\delta D}\right)^2 }$$
-$$\gamma(\vec{r}_e) = \min_{\vec{r}_r} \Gamma(\vec{r}_e, \vec{r}_r)$$
+
+$$
+\Gamma(\vec{r}_e, \vec{r}_r) = \sqrt{ \left(\frac{\|\vec{r}_e - \vec{r}_r\|}{\delta r}\right)^2 + \left(\frac{D_e(\vec{r}_e) - D_r(\vec{r}_r)}{\delta D}\right)^2 }
+$$
+
+$$
+\gamma(\vec{r}_e) = \min_{\vec{r}_r} \Gamma(\vec{r}_e, \vec{r}_r)
+$$
+
 Passing rate is the percentage of evaluated voxels (above low-dose threshold $10\% \times D_{\max}$) satisfying $\gamma \le 1.0$.
 
 ---

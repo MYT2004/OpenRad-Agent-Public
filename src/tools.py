@@ -18,6 +18,112 @@ from openrad.tools.multimodal_readers import (
     parse_clinical_notes_text, parse_patient_csv,
 )
 
+# Built-in aliases for common non-standard ROI names to minimize manual JSON mapping
+BUILTIN_ROI_ALIASES: dict[str, str] = {
+    'cord': 'SpinalCord',
+    'spinal cord': 'SpinalCord',
+    'spinal_cord': 'SpinalCord',
+    'rt parotid': 'Parotid_R',
+    'parotid rt': 'Parotid_R',
+    'right parotid': 'Parotid_R',
+    'parotid_r': 'Parotid_R',
+    'r parotid': 'Parotid_R',
+    'lt parotid': 'Parotid_L',
+    'parotid lt': 'Parotid_L',
+    'left parotid': 'Parotid_L',
+    'parotid_l': 'Parotid_L',
+    'l parotid': 'Parotid_L',
+    'brain stem': 'Brainstem',
+    'brain_stem': 'Brainstem',
+    'stem': 'Brainstem',
+    'chiasm': 'OpticChiasm',
+    'optic chiasm': 'OpticChiasm',
+    'opt chiasm': 'OpticChiasm',
+    'l optic nerve': 'OpticNerve_L',
+    'lt optic nerve': 'OpticNerve_L',
+    'optic nerve l': 'OpticNerve_L',
+    'r optic nerve': 'OpticNerve_R',
+    'rt optic nerve': 'OpticNerve_R',
+    'optic nerve r': 'OpticNerve_R',
+    'l lens': 'Lens_L',
+    'lt lens': 'Lens_L',
+    'lens l': 'Lens_L',
+    'r lens': 'Lens_R',
+    'rt lens': 'Lens_R',
+    'lens r': 'Lens_R',
+    'l eye': 'Eye_L',
+    'lt eye': 'Eye_L',
+    'eye l': 'Eye_L',
+    'r eye': 'Eye_R',
+    'rt eye': 'Eye_R',
+    'eye r': 'Eye_R',
+    'l cochlea': 'Cochlea_L',
+    'lt cochlea': 'Cochlea_L',
+    'cochlea l': 'Cochlea_L',
+    'r cochlea': 'Cochlea_R',
+    'rt cochlea': 'Cochlea_R',
+    'cochlea r': 'Cochlea_R',
+    'l submandibular': 'Submandibular_L',
+    'lt submandibular': 'Submandibular_L',
+    'submandibular l': 'Submandibular_L',
+    'r submandibular': 'Submandibular_R',
+    'rt submandibular': 'Submandibular_R',
+    'submandibular r': 'Submandibular_R',
+    'l brachial plexus': 'BrachialPlexus_L',
+    'lt brachial plexus': 'BrachialPlexus_L',
+    'r brachial plexus': 'BrachialPlexus_R',
+    'rt brachial plexus': 'BrachialPlexus_R',
+    'ptv': 'PTV_High',
+    'ptv_high': 'PTV_High',
+    'rectum': 'Rectum',
+    'bladder': 'Bladder',
+}
+
+
+def resolve_save_path(target: str | Path, patient_id: str | None = None) -> Path:
+    """Strict path resolver enforcing raw data immutability.
+
+    Raises a hard PermissionError if any save or export operation attempts to write
+    into 'data/raw/'. Directs all processed files, modified DICOMs, and cached DVH
+    outputs to 'data/processed/{patient_id}/'.
+    """
+    if not target:
+        raise ValueError("Target path must be a non-empty string or Path.")
+
+    target_str = str(target).strip()
+    norm_str = target_str.replace('\\', '/')
+
+    # Check normalized string representation for any data/raw patterns
+    raw_patterns = ['data/raw', '/raw/', 'data/raw/', './data/raw']
+    if any(pat in norm_str for pat in raw_patterns) or norm_str.startswith('data/raw') or norm_str.startswith('raw/'):
+        raise PermissionError(f"Write operations into 'data/raw/' are strictly prohibited for data safety and immutability: {target_str}")
+
+    target_path = Path(target_str)
+
+    # Absolute filesystem check against data/raw
+    try:
+        raw_dir = (Path.cwd() / 'data' / 'raw').resolve()
+        resolved = target_path.resolve()
+        if resolved == raw_dir or raw_dir in resolved.parents:
+            raise PermissionError(f"Write operations into 'data/raw/' are strictly prohibited for data safety and immutability: {target_str}")
+    except Exception:
+        pass
+
+    pid = str(patient_id).strip() if patient_id else 'default'
+    pid = Path(pid).name or 'default'
+    processed_base = (Path.cwd() / 'data' / 'processed' / pid).resolve()
+
+    # Route processed files
+    if target_path.is_absolute():
+        out_path = target_path
+    elif 'data/processed' in norm_str:
+        out_path = (Path.cwd() / target_path).resolve()
+    else:
+        out_path = processed_base / target_path.name
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    return out_path
+
 
 @post_tool_call
 def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str], *,
@@ -61,7 +167,9 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
         validate_tool_output({'_physics':{'dose_grid':grid,'expected_shape':expected,'axes_mm':axes}})
         labels = []
         for index, name in enumerate(rois):
-            canonical = name_map.get(name.casefold()) or check_structure_name(name)['canonical_name']
+            canonical = (name_map.get(name.casefold())
+                         or BUILTIN_ROI_ALIASES.get(name.casefold())
+                         or check_structure_name(name)['canonical_name'])
             labels.append(canonical or f'RequestedROI{index+1}')
         if len(set(n.casefold() for n in labels)) != len(labels):
             raise ValueError('Requested ROI names resolve to duplicates.')
@@ -87,9 +195,15 @@ def parse_and_evaluate_dvh(rtdose_path: str, rtstruct_path: str, rois: list[str]
         ax.set(xlabel='Dose (Gy)', ylabel='Volume (%)', title='Cumulative DVH — research analysis', ylim=(0, 105))
         ax.legend(); ax.grid(alpha=.2)
         filename = 'dvh_' + uuid4().hex + '.png'
+        # Direct cached DVH output to data/processed/{patient_id}/
+        patient_id = getattr(dose, 'PatientID', None) or getattr(struct, 'PatientID', None) or 'anonymous'
+        processed_path = resolve_save_path(filename, patient_id=patient_id)
+        figure.savefig(processed_path, dpi=150, bbox_inches='tight')
+
         output = Path(manager.get_artifacts_dir(session_id)) / filename
         figure.savefig(output, dpi=150, bbox_inches='tight')
         result['artifacts'] = [f'/artifacts/{session_id}/artifacts/{filename}']
+        result['cached_dvh_path'] = str(processed_path)
     result['_physics'] = {'dose_grid':grid,'expected_shape':expected,'axes_mm':axes}
     return result
 
@@ -100,7 +214,8 @@ def generate_topas_file(particle: str, energy_mev: float, histories: int, output
     PhysicsValidationEngine.validate_beam_energy(energy_mev, particle, raise_on_fail=True)
     deck = generate_topas_deck(particle, energy_mev, number_of_histories=histories)
     from src.readonly import assert_output_path
-    target = assert_output_path(output_path)
+    target = resolve_save_path(output_path)
+    assert_output_path(target)
     if target.suffix.lower() != '.txt':
         raise ValueError('TOPAS output must use a .txt extension.')
     target.parent.mkdir(parents=True, exist_ok=True)

@@ -75,14 +75,17 @@ def dvh_inputs(prefix):
     options=[r['name'] for r in selected['rois']]
     defaults=[n for n in options if n.casefold()=='brainstem']
     names=st.multiselect('Exact source ROI names', options, default=defaults, key=prefix+'_names')
-    raw=st.text_area('Human-reviewed legacy ROI mapping (JSON)', value='{}', key=prefix+'_map', help='Example after anatomical review: {"Cord":"SpinalCord"}. Nothing is automatically renamed.')
+    from src.tools import BUILTIN_ROI_ALIASES
+    raw=st.text_area('Human-reviewed legacy ROI mapping (JSON)', value='{}', key=prefix+'_map', help='Example after anatomical review: {"Cord":"SpinalCord"}. Built-in aliases (Cord->SpinalCord, RT Parotid->Parotid_R) are applied automatically.')
     try:
         mappings=json.loads(raw)
         if not isinstance(mappings, dict) or not all(isinstance(k,str) and isinstance(v,str) for k,v in mappings.items()):
             raise ValueError('Mappings must be name-to-name JSON strings.')
+        effective_mappings = dict(BUILTIN_ROI_ALIASES)
+        effective_mappings.update(mappings)
     except ValueError as exc:
         st.error(str(exc));return None
-    return dict(dicom_rtstruct_path=selected['struct_path'],dicom_rtdose_path=selected['dose_path'],roi_names=names,reviewed_name_map=mappings,dicom_rtplan_path=selected['plan_path'])
+    return dict(dicom_rtstruct_path=selected['struct_path'],dicom_rtdose_path=selected['dose_path'],roi_names=names,reviewed_name_map=effective_mappings,dicom_rtplan_path=selected['plan_path'])
 
 
 if mode=='Interactive Agent Query':
@@ -107,7 +110,28 @@ if mode=='Interactive Agent Query':
         (st.success if result.success else st.error)(result.response)
         for rec in result.tool_records:
             if rec.error: st.error(rec.error)
-            if isinstance(rec.output,dict):st.json(rec.output)
+            if isinstance(rec.output,dict):
+                out = rec.output
+                if 'clinical_release' in out or 'limitations' in out:
+                    st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\n" +
+                               "\n".join(f"- {lim}" for lim in out.get('limitations', [])))
+                if 'nomenclature' in out and isinstance(out['nomenclature'], dict):
+                    nom = out['nomenclature']
+                    st.info(f"📋 **Nomenclature Review**: {nom.get('standard', 'AAPM TG-263')} (Catalog: {nom.get('vocabulary_version', '20170815')})")
+                    structs = nom.get('structures', [])
+                    if structs:
+                        with st.expander('TG-263 Structure Mapping Details', expanded=False):
+                            st.dataframe([
+                                {
+                                    'Original Name': s.get('original_name'),
+                                    'Canonical Name': s.get('canonical_name') or 'Non-standard',
+                                    'Status': s.get('status'),
+                                    'Notes': s.get('warning') or s.get('error') or 'Standard compliant'
+                                }
+                                for s in structs
+                            ], use_container_width=True)
+                with st.expander('Technical Tool Record', expanded=False):
+                    st.json({k: v for k, v in out.items() if k not in ('clinical_release', 'limitations', 'nomenclature')})
 
 elif mode=='DICOM-RT & DVH Analyzer':
     st.subheader('DVH Analysis with AAPM TG-263 & TG-53 QA Standards')
@@ -123,8 +147,20 @@ elif mode=='DICOM-RT & DVH Analyzer':
     if st.button('Compute DVH', disabled=not args or not args['roi_names']):
         try:
             result=analyze_dvh(**args)
-            with st.expander('Detailed TG-263 Nomenclature Compliance'):
-                st.json(result['nomenclature'])
+            nom = result.get('nomenclature', {})
+            structs = nom.get('structures', [])
+            compliant_count = sum(1 for s in structs if s.get('status') == 'standard_primary')
+            st.info(f"📋 **TG-263 Nomenclature Compliance**: {nom.get('standard', 'AAPM TG-263')} | Catalog: {nom.get('vocabulary_version', '20170815')} | Compliant: {compliant_count}/{len(structs)} structures")
+            with st.expander('TG-263 Structure Mapping Details', expanded=False):
+                st.dataframe([
+                    {
+                        'Original Name': s.get('original_name'),
+                        'Canonical Name': s.get('canonical_name') or 'Non-standard',
+                        'Status': s.get('status'),
+                        'Notes': s.get('warning') or s.get('error') or 'Standard compliant'
+                    }
+                    for s in structs
+                ], use_container_width=True)
             fig,ax=plt.subplots(figsize=(8,5));plotted=False
             for name, entry in result['structures'].items():
                 if not entry.get('found'):
@@ -136,7 +172,7 @@ elif mode=='DICOM-RT & DVH Analyzer':
                 ax.set(xlabel='Dose (Gy)',ylabel='Volume (%)');ax.legend();st.pyplot(fig)
                 st.session_state.last_dvh=result
             plt.close(fig)
-            st.info('; '.join(result['limitations']))
+            st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\n" + "\n".join(f"- {lim}" for lim in result.get('limitations', [])))
         except (ValueError, OSError, AttributeError) as exc:
             st.error(str(exc))
 
@@ -167,7 +203,13 @@ elif mode=='Gamma Index QA (AAPM TG-218)':
             if not reference or not evaluated or Path(reference).resolve()==Path(evaluated).resolve():
                 raise ValueError('Provide two independent dose files; a self-comparison cannot verify patient QA.')
             result=evaluate_gamma_index(reference,evaluated,dt,dr,cutoff,reference_spacing_mm=json.loads(spacing),evaluated_spacing_mm=json.loads(spacing))
-            st.json(result)
+            st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\n" + "\n".join(f"- {lim}" for lim in result.get('limitations', [])))
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Passing Rate", f"{result.get('passing_rate', 0.0):.2f}%")
+            c2.metric("Mean Gamma", f"{result.get('average_gamma', 0.0):.3f}")
+            c3.metric("Max Gamma", f"{result.get('max_gamma', 0.0):.3f}")
+            with st.expander("Detailed QA Evaluation Data", expanded=False):
+                st.json({k: v for k, v in result.items() if k not in ('clinical_release', 'limitations')})
         except (ValueError, OSError, AttributeError) as exc:
             st.error(str(exc))
 
@@ -250,7 +292,9 @@ elif mode=='Model Evaluation & Triage':
         result = st.session_state.model_evaluation
         st.metric('Research triage', result['status'])
         st.dataframe(result['rules'], use_container_width=True)
-        st.json(result)
+        st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\n" + "\n".join(f"- {lim}" for lim in result.get('limitations', [])))
+        with st.expander("Evaluation Provenance & Audit Payload", expanded=False):
+            st.json({k: v for k, v in result.items() if k not in ('rules', 'limitations', 'clinical_release', 'status')})
         manager = StorageManager(os.getenv('STORAGE_DIR', './storage/sessions'))
         for artifact in result['artifacts']:
             st.image(str(Path(manager.get_artifacts_dir(result['session_id'])) / Path(artifact).name))
@@ -280,8 +324,13 @@ elif mode=='Radiobiology (TCP / NTCP)':
     params=st.text_area('Model parameters JSON (endpoint-specific, with literature review required)',value='{}')
     st.info('No default patient curve or clinical parameters are substituted. This model does not apply fractionation corrections.')
     if st.button('Calculate TCP / NTCP'):
-        try:st.json(calculate_tcp_ntcp(json.loads(raw),model,json.loads(params),dvh_type=histogram_type))
-        except (ValueError,TypeError,KeyError) as exc:st.error(str(exc))
+        try:
+            res = calculate_tcp_ntcp(json.loads(raw),model,json.loads(params),dvh_type=histogram_type)
+            st.warning("⚠️ **RESEARCH USE ONLY — NOT FOR CLINICAL RELEASE**\n\n" + "\n".join(f"- {lim}" for lim in res.get('limitations', [])))
+            with st.expander("Radiobiology Modeling Metrics", expanded=True):
+                st.json({k: v for k, v in res.items() if k not in ('clinical_release', 'limitations')})
+        except (ValueError,TypeError,KeyError) as exc:
+            st.error(str(exc))
 
 else:
     st.subheader('Trusted local Python REPL Sandbox')

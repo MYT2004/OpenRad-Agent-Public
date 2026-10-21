@@ -2,6 +2,25 @@
 
 A deterministic research proof of concept for DICOM-RT dose-volume analysis and TOPAS input generation. The FastAPI server and CLI share real tools, session storage, metadata scrubbing and mandatory physics checks. Clinical commissioning and regulatory conformity are not established; see [the physics audit](MEDICAL_PHYSICS_AUDIT.md).
 
+## System Architecture
+
+```mermaid
+flowchart TD
+    UserQuery["User Query / Clinical Task"] --> AgentCore["Orchestrator / Agent Core<br/>(LLM Reasoning & Strategy)"]
+    
+    AgentCore --> DeterministicTools["Deterministic Tools<br/>(Structured Schema API)"]
+    AgentCore --> PythonREPL["Stateful Python REPL<br/>(Dynamic Execution)"]
+    
+    DeterministicTools --> PhysicsEngine["Physics Validation Engine<br/>(Constraints & Boundary Checks)"]
+    PythonREPL --> PhysicsEngine
+    
+    PhysicsEngine --> PassFail{"Pass / Fail?"}
+    
+    PassFail -- Pass --> Artifacts["Output / Artifacts<br/>(DVH Plots, Audited Results)"]
+    PassFail -- "Fail: Self-Correction Loop" --> ErrorFeedback["Return Error + Trajectory<br/>Back to Agent Core"]
+    ErrorFeedback --> AgentCore
+```
+
 ## Repository layout
 
 ```text

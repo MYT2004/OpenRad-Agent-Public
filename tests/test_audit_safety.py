@@ -84,3 +84,30 @@ def test_agent_does_not_substitute_gamma_self_comparison(tmp_path):
     result = OpenRadAgent(artifact_dir=str(tmp_path)).run('Evaluate gamma QA')
     assert not result.success
     assert not result.tool_records
+
+
+def test_resolve_save_path_blocks_raw_writes():
+    from src.tools import resolve_save_path
+    from pathlib import Path
+    with pytest.raises(PermissionError):
+        resolve_save_path('data/raw/modified.dcm')
+    with pytest.raises(PermissionError):
+        resolve_save_path('./data/raw/test/sample.txt')
+    raw_abs = (Path.cwd() / 'data' / 'raw' / 'forbidden.npy').resolve()
+    with pytest.raises(PermissionError):
+        resolve_save_path(str(raw_abs))
+
+
+def test_resolve_save_path_directs_to_processed():
+    from src.tools import resolve_save_path
+    out = resolve_save_path('dvh_test.png', patient_id='PT_123')
+    assert 'data/processed/PT_123/dvh_test.png' in str(out).replace('\\', '/')
+    assert out.parent.exists()
+
+
+def test_builtin_roi_aliases():
+    from src.tools import BUILTIN_ROI_ALIASES
+    assert BUILTIN_ROI_ALIASES['cord'] == 'SpinalCord'
+    assert BUILTIN_ROI_ALIASES['rt parotid'] == 'Parotid_R'
+    assert BUILTIN_ROI_ALIASES['lt parotid'] == 'Parotid_L'
+
