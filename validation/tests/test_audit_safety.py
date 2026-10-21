@@ -189,12 +189,32 @@ def test_api_rejects_boolean_beam_energy(tmp_path, monkeypatch):
 
 
 def test_gamma_rejects_same_path_self_comparison(tmp_path):
+    import os
     from openrad.tools.gamma_tool import evaluate_gamma_index, GammaEvaluationError
     dose_file = tmp_path / "dose.npy"
     np.save(dose_file, np.ones((5, 5)))
 
+    # 1. Exact path
     with pytest.raises(GammaEvaluationError, match="INDEPENDENT_REFERENCE_REQUIRED"):
         evaluate_gamma_index(str(dose_file), str(dose_file), reference_spacing_mm=[1,1], evaluated_spacing_mm=[1,1])
+
+    # 2. Symlink alias
+    symlink_file = tmp_path / "dose_symlink.npy"
+    try:
+        symlink_file.symlink_to(dose_file)
+        with pytest.raises(GammaEvaluationError, match="INDEPENDENT_REFERENCE_REQUIRED"):
+            evaluate_gamma_index(str(dose_file), str(symlink_file), reference_spacing_mm=[1,1], evaluated_spacing_mm=[1,1])
+    except (OSError, NotImplementedError):
+        pass
+
+    # 3. Hardlink alias
+    hardlink_file = tmp_path / "dose_hardlink.npy"
+    try:
+        os.link(str(dose_file), str(hardlink_file))
+        with pytest.raises(GammaEvaluationError, match="INDEPENDENT_REFERENCE_REQUIRED"):
+            evaluate_gamma_index(str(dose_file), str(hardlink_file), reference_spacing_mm=[1,1], evaluated_spacing_mm=[1,1])
+    except (OSError, NotImplementedError):
+        pass
 
 
 def test_api_gamma_sanitizes_errors_and_redacts_paths(tmp_path, monkeypatch):
@@ -208,14 +228,86 @@ def test_api_gamma_sanitizes_errors_and_redacts_paths(tmp_path, monkeypatch):
     bad_file = tmp_path / "secret_patient_data.csv"
     bad_file.write_text("INTERNAL_SECRET_DIAGNOSTIC_DATA,123", encoding="utf-8")
 
+    # Distinct valid evaluated file so it genuinely reaches the parser without short-circuiting on self-comparison guard
+    valid_file = tmp_path / "valid_eval.npy"
+    np.save(valid_file, np.ones((5, 5), dtype=np.float32) * 50.0)
+
     response = client.post('/api/v1/gamma/evaluate', json={
         'reference_dose_path': str(bad_file),
-        'evaluated_dose_path': str(bad_file),
+        'evaluated_dose_path': str(valid_file),
         'reference_spacing_mm': [1.0, 1.0],
         'evaluated_spacing_mm': [1.0, 1.0],
     })
     assert response.status_code == 400
-    # Must NOT echo the file content or internal data
+    assert response.json()["detail"] == "Unsupported or malformed dose data: file could not be parsed as a numerical dose grid."
+    # Must NOT echo the file content or internal data or full sensitive paths
     assert 'INTERNAL_SECRET_DIAGNOSTIC_DATA' not in response.text
+    assert str(bad_file) not in response.text
+    assert 'INDEPENDENT_REFERENCE_REQUIRED' not in response.text
+
+
+def test_dvh_curve_physics_guardrails():
+    from openrad.validation.physics_rules import PhysicsValidationEngine as PV, DVHCurveError
+
+    # 1. Valid curve passes
+    res_valid = PV.validate_dvh_curve([0, 10, 20, 30], [100, 90, 40, 0])
+    assert res_valid.passed is True
+
+    # 2. One-bin curve rejected
+    res_1bin = PV.validate_dvh_curve([10], [100])
+    assert res_1bin.passed is False
+    assert "at least 2 points" in res_1bin.error_message
+    with pytest.raises(DVHCurveError):
+        PV.validate_dvh_curve([10], [100], raise_on_fail=True)
+
+    # 3. Negative volume percentage rejected
+    res_neg_v = PV.validate_dvh_curve([0, 10, 20], [100, -2, 0])
+    assert res_neg_v.passed is False
+    assert "outside physical range" in res_neg_v.error_message
+
+    # 4. Descending dose bins rejected
+    res_desc_d = PV.validate_dvh_curve([0, 20, 15], [100, 50, 0])
+    assert res_desc_d.passed is False
+    assert "strictly increasing" in res_desc_d.error_message
+
+    # 5. Non-finite values rejected
+    res_nan = PV.validate_dvh_curve([0, float('nan'), 20], [100, 50, 0])
+    assert res_nan.passed is False
+    assert "NaN or infinite" in res_nan.error_message
+
+    # 6. Non-monotonic volume increase rejected
+    res_non_mono = PV.validate_dvh_curve([0, 10, 20, 30], [100, 70, 85, 0])
+    assert res_non_mono.passed is False
+    assert "violates physical monotonicity" in res_non_mono.error_message
+
+
+def test_trajectory_quarantines_empty_or_malformed_entries(tmp_path):
+    from src.storage import StorageManager, CorruptedSessionError
+    mgr = StorageManager(str(tmp_path / "sessions"))
+    session_id = "test_quarantine_session"
+    sess_dir = tmp_path / "sessions" / session_id
+    sess_dir.mkdir(parents=True, exist_ok=True)
+    traj_file = sess_dir / "trajectory.json"
+
+    # Case A: 0-byte existing file must be quarantined as corrupted, not treated as new empty session
+    traj_file.write_text("", encoding="utf-8")
+    with pytest.raises(CorruptedSessionError):
+        mgr.load_trajectory(session_id)
+    assert len(list(sess_dir.glob("trajectory.json.corrupt.*"))) >= 1
+
+    # Case B: Whitespace-only existing file must be quarantined
+    traj_file.write_text("   \n\t  ", encoding="utf-8")
+    with pytest.raises(CorruptedSessionError):
+        mgr.load_trajectory(session_id)
+
+    # Case C: JSON list containing invalid non-dict items (e.g. [1, 2])
+    traj_file.write_text("[1, 2]", encoding="utf-8")
+    with pytest.raises(CorruptedSessionError):
+        mgr.load_trajectory(session_id)
+
+    # Case D: JSON list containing dicts with missing mandatory schema keys
+    traj_file.write_text('[{"missing_prompt": "val"}]', encoding="utf-8")
+    with pytest.raises(CorruptedSessionError):
+        mgr.load_trajectory(session_id)
 
 

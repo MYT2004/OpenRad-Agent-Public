@@ -5,6 +5,7 @@ and evaluated dose distributions with physics validation guardrails.
 """
 
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pydicom
@@ -113,10 +114,18 @@ def evaluate_gamma_index(
     """
     if not np.isfinite([dose_tolerance_percent, distance_tolerance_mm, dose_threshold_percent]).all() or dose_tolerance_percent <= 0 or distance_tolerance_mm <= 0 or not 0 <= dose_threshold_percent <= 100:
         raise GammaEvaluationError("Gamma tolerances must be finite and positive; cutoff must be in [0,100].")
-    if isinstance(reference_dose_path, str) and isinstance(evaluated_dose_path, str):
-        ref_resolved = os.path.abspath(os.path.expanduser(reference_dose_path))
-        eval_resolved = os.path.abspath(os.path.expanduser(evaluated_dose_path))
-        if ref_resolved == eval_resolved:
+    if isinstance(reference_dose_path, (str, Path)) and isinstance(evaluated_dose_path, (str, Path)):
+        ref_str = str(reference_dose_path)
+        eval_str = str(evaluated_dose_path)
+        ref_real = os.path.realpath(os.path.expanduser(ref_str))
+        eval_real = os.path.realpath(os.path.expanduser(eval_str))
+        is_same = (ref_real == eval_real)
+        if not is_same and os.path.exists(ref_real) and os.path.exists(eval_real):
+            try:
+                is_same = os.path.samefile(ref_real, eval_real)
+            except (OSError, ValueError):
+                pass
+        if is_same:
             raise GammaEvaluationError("INDEPENDENT_REFERENCE_REQUIRED: Evaluation and reference dose distributions must be independent files; self-comparison cannot serve as QA verification.")
     if all(isinstance(p,str) and p.lower().endswith(('.dcm','.dicom')) for p in (reference_dose_path,evaluated_dose_path)):
         headers=[pydicom.dcmread(p,stop_before_pixels=True) for p in (reference_dose_path,evaluated_dose_path)]

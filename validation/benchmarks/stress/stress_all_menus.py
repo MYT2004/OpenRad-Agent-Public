@@ -43,7 +43,8 @@ from openrad.tools.dataset import discover_dataset
 from openrad.tools.gamma_tool import evaluate_gamma_index
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp
 from openrad.tools.topas_tool import generate_topas_deck
-from openrad.validation.physics_rules import PhysicsValidationEngine, PhysicsValidationError
+from openrad.validation.physics_rules import PhysicsValidationEngine, PhysicsValidationError, DVHCurveError
+from validation.paths import new_run_directory
 
 
 def banner(title: str):
@@ -52,28 +53,86 @@ def banner(title: str):
     print("=" * 80)
 
 
-def report_assessment(menu_name: str, test_name: str, passed: bool, summary: str, details: dict):
-    status = "✅ PASS" if passed else "❌ FAIL"
-    print(f"\n[{status}] {menu_name} :: {test_name}")
+def report_assessment(
+    menu_name: str,
+    test_name: str,
+    status: str | bool = None,
+    summary: str = "",
+    details: dict = None,
+    *,
+    passed: bool | None = None,
+) -> dict:
+    if passed is not None:
+        status_val = passed
+    elif status is not None:
+        status_val = status
+    else:
+        status_val = False
+
+    if isinstance(status_val, bool):
+        st = "PASS" if status_val else "FAIL"
+    else:
+        st = str(status_val).upper()
+
+    icon_map = {
+        "PASS": "✅ PASS",
+        "FAIL": "❌ FAIL",
+        "SKIP": "⚠️ SKIP",
+        "ERROR": "🚨 ERROR",
+    }
+    icon = icon_map.get(st, f"[{st}]")
+    print(f"\n{icon} {menu_name} :: {test_name}")
     print(f"  Summary: {summary}")
-    for k, v in details.items():
+    for k, v in (details or {}).items():
         print(f"  - {k}: {v}")
-    return {"menu": menu_name, "test": test_name, "passed": passed, "summary": summary, "details": details}
+
+    passed_bool = (st == "PASS")
+    return {
+        "menu": menu_name,
+        "test": test_name,
+        "status": st,
+        "passed": passed_bool,
+        "summary": summary,
+        "details": details or {},
+    }
 
 
 def resolve_raw_case_path(target_path: str | Path) -> Path | None:
     p = Path(target_path)
     if p.exists():
-        return p
+        return p.resolve()
+
+    target_str = str(target_path)
+    rel_str = target_str.replace("data/raw/", "")
+    target_name = Path(target_str).name
+
     try:
         roots = json.loads(os.getenv("OPENRAD_DATA_ROOTS", "[]"))
         for r in roots:
-            cand = Path(r) / str(target_path).replace("data/raw/", "")
+            r_path = Path(r)
+            if not r_path.exists():
+                continue
+
+            # 1. Exact root identity: root itself is the target case directory
+            if r_path.name == target_name:
+                return r_path.resolve()
+
+            # 2. Descendant matching rel_str
+            cand = r_path / rel_str
             if cand.exists():
-                return cand
-            cand2 = Path(r) / Path(target_path).name
+                return cand.resolve()
+
+            # 3. Direct child matching target_name
+            cand2 = r_path / target_name
             if cand2.exists():
-                return cand2
+                return cand2.resolve()
+
+            # 4. Search subpath matching parts of rel_str
+            parts = Path(rel_str).parts
+            if len(parts) > 1:
+                cand3 = r_path.joinpath(*parts)
+                if cand3.exists():
+                    return cand3.resolve()
     except Exception:
         pass
     return None
@@ -100,7 +159,7 @@ def stress_test_menu_1_patient_verification(results_list):
             results_list.append(report_assessment(
                 "Patient-File Intake Verification",
                 label,
-                passed=True,
+                status="SKIP",
                 summary=f"External case directory {raw_loc} not found in checkout or OPENRAD_DATA_ROOTS (SKIPPED).",
                 details={"Status": "SKIPPED", "Reason": "External case root not configured"}
             ))
@@ -151,7 +210,7 @@ def stress_test_menu_1_patient_verification(results_list):
             results_list.append(report_assessment(
                 "Patient-file Verification",
                 label,
-                passed=case_passed,
+                status="PASS" if case_passed else "FAIL",
                 summary=f"Case intake evaluated to {status} with {len(findings)} findings.",
                 details={
                     "Status": status,
@@ -177,7 +236,7 @@ def stress_test_menu_2_dynamic_copilot(results_list):
         results_list.append(report_assessment(
             "Dynamic Agent Copilot",
             "Clinical Intake Verification (Local Case Execution)",
-            passed=pass_q1,
+            status="PASS" if pass_q1 else "FAIL",
             summary="Dynamic copilot routed intake audit to deterministic verifier.",
             details={
                 "Disposition": r1.disposition,
@@ -191,7 +250,7 @@ def stress_test_menu_2_dynamic_copilot(results_list):
         results_list.append(report_assessment(
             "Dynamic Agent Copilot",
             "Clinical Intake Verification (Local Case Execution)",
-            passed=True,
+            status="SKIP",
             summary="Clinical cohort HNSCC-01-0199 not available in checkout or OPENRAD_DATA_ROOTS (SKIPPED).",
             details={"Status": "SKIPPED", "Reason": "External case root not configured"}
         ))
@@ -204,7 +263,7 @@ def stress_test_menu_2_dynamic_copilot(results_list):
         results_list.append(report_assessment(
             "Dynamic Agent Copilot",
             "SlicerRT Prostate Phantom Copilot Audit",
-            passed=pass_q2,
+            status="PASS" if pass_q2 else "FAIL",
             summary="Dynamic copilot audited external reference phantom.",
             details={
                 "Disposition": r2.disposition,
@@ -216,8 +275,8 @@ def stress_test_menu_2_dynamic_copilot(results_list):
         results_list.append(report_assessment(
             "Dynamic Agent Copilot",
             "SlicerRT Prostate Phantom Copilot Audit",
-            passed=True,
-            summary="SlicerRT prostate phantom not available (SKIPPED).",
+            status="SKIP",
+            summary="SlicerRT prostate phantom not available in checkout or OPENRAD_DATA_ROOTS (SKIPPED).",
             details={"Status": "SKIPPED", "Reason": "External case root not configured"}
         ))
 
@@ -227,7 +286,7 @@ def stress_test_menu_2_dynamic_copilot(results_list):
     results_list.append(report_assessment(
         "Dynamic Agent Copilot",
         "Pessimistic Safety Interceptor: Energy Bound (350 MeV)",
-        passed=pass_q3,
+        status="PASS" if pass_q3 else "FAIL",
         summary="Correctly intercepted unphysical beam energy before code execution.",
         details={
             "Safety Interceptor Status": obs3.get("status"),
@@ -237,22 +296,39 @@ def stress_test_menu_2_dynamic_copilot(results_list):
     ))
 
     # Test 4: Pessimistic interceptor: DVH Tool with Linked Dose & Structure Pair
-    if slicerrt_eclipse.exists():
+    if slicerrt_eclipse and slicerrt_eclipse.exists():
         scan = discover_dataset(str(slicerrt_eclipse))
-        pair = scan["dose_cases"][0]
-        obs4_raw = tool_compute_dvh_metrics(pair["dose_path"], pair["struct_path"], ["Bladder"])
-        obs4 = json.loads(obs4_raw)
-        pass_q4 = obs4.get("status") == "COMPLETED" and obs4.get("structures", {}).get("Bladder", {}).get("volume_cc", 0) > 100
+        if scan.get("dose_cases"):
+            pair = scan["dose_cases"][0]
+            obs4_raw = tool_compute_dvh_metrics(pair["dose_path"], pair["struct_path"], ["Bladder"])
+            obs4 = json.loads(obs4_raw)
+            pass_q4 = obs4.get("status") == "COMPLETED" and obs4.get("structures", {}).get("Bladder", {}).get("volume_cc", 0) > 100
+            results_list.append(report_assessment(
+                "Dynamic Agent Copilot",
+                "Deterministic Grounded Tool: DVH Metric Calculation",
+                status="PASS" if pass_q4 else "FAIL",
+                summary="Computed exact dosimetric metrics for Bladder via grounded tool.",
+                details={
+                    "Evaluation Status": obs4.get("status"),
+                    "Bladder Volume": f"{obs4.get('structures', {}).get('Bladder', {}).get('volume_cc', 0):.2f} cc",
+                    "Bladder Mean Dose": f"{obs4.get('structures', {}).get('Bladder', {}).get('mean_dose_Gy', 0):.2f} Gy",
+                }
+            ))
+        else:
+            results_list.append(report_assessment(
+                "Dynamic Agent Copilot",
+                "Deterministic Grounded Tool: DVH Metric Calculation",
+                status="SKIP",
+                summary="No paired dose/struct cases found in SlicerRT dataset (SKIPPED).",
+                details={"Status": "SKIPPED", "Reason": "No dose cases in dataset"}
+            ))
+    else:
         results_list.append(report_assessment(
             "Dynamic Agent Copilot",
             "Deterministic Grounded Tool: DVH Metric Calculation",
-            passed=pass_q4,
-            summary="Computed exact dosimetric metrics for Bladder via grounded tool.",
-            details={
-                "Evaluation Status": obs4.get("status"),
-                "Bladder Volume": f"{obs4.get('structures', {}).get('Bladder', {}).get('volume_cc', 0):.2f} cc",
-                "Bladder Mean Dose": f"{obs4.get('structures', {}).get('Bladder', {}).get('mean_dose_Gy', 0):.2f} Gy",
-            }
+            status="SKIP",
+            summary="SlicerRT prostate phantom not available in checkout or OPENRAD_DATA_ROOTS (SKIPPED).",
+            details={"Status": "SKIPPED", "Reason": "External case root not configured"}
         ))
 
 
@@ -261,10 +337,10 @@ def stress_test_menu_3_dvh_analyzer(results_list):
     manager = StorageManager("./storage/sessions")
 
     # Test on SlicerRT Eclipse Prostate Phantom
-    slicerrt_eclipse = Path("data/raw/slicerrt/704936e8889c77174a0dd97cfb8703b47952e62c/eclipse-8.1.20-phantom-prostate/Original")
-    if slicerrt_eclipse.exists():
+    slicerrt_eclipse = resolve_raw_case_path("data/raw/slicerrt/704936e8889c77174a0dd97cfb8703b47952e62c/eclipse-8.1.20-phantom-prostate/Original")
+    if slicerrt_eclipse and slicerrt_eclipse.exists():
         scan = discover_dataset(str(slicerrt_eclipse))
-        if scan["dose_cases"]:
+        if scan.get("dose_cases"):
             pair = scan["dose_cases"][0]
             with session_scope(manager):
                 dvh_res = parse_and_evaluate_dvh(
@@ -303,16 +379,14 @@ def stress_test_menu_3_dvh_analyzer(results_list):
                     and np.isfinite([b_vol, b_mean, ptv_d95, r_vol, r_mean]).all()
                 )
 
-                # Level 3: Non-empty paired arrays and physical monotonicity of cumulative DVH curves (dV/dD <= 0)
+                # Level 3: Physics guardrail validation via PhysicsValidationEngine.validate_dvh_curve
                 curves_valid = True
                 for s_name in ("Bladder", "PTV", "Rectum"):
                     curve = structs[s_name].get("dvh_curve", {})
                     d_bins = curve.get("dose_bins_Gy", [])
-                    curve_v = np.array(curve.get("volume_percent", []))
-                    if len(d_bins) == 0 or len(curve_v) == 0 or len(d_bins) != len(curve_v):
-                        curves_valid = False
-                        break
-                    if not (np.diff(curve_v) <= 1e-4).all():
+                    v_pct = curve.get("volume_percent", [])
+                    val_check = PhysicsValidationEngine.validate_dvh_curve(d_bins, v_pct)
+                    if not val_check.passed:
                         curves_valid = False
                         break
 
@@ -321,24 +395,65 @@ def stress_test_menu_3_dvh_analyzer(results_list):
                 results_list.append(report_assessment(
                     "DICOM-RT & DVH Analyzer",
                     "Eclipse Prostate Phantom (3 OARs/Targets)",
-                    passed=pass_dvh,
+                    status="PASS" if pass_dvh else "FAIL",
                     summary=f"Computed DVH curves with TG-263 breakdown ({std_c}/{len(nom_structs)} standard/pattern-checked).",
                     details={
                         "Structures Analyzed": list(structs.keys()),
                         "Bladder Mean Dose": f"{b_mean:.3f} Gy",
                         "PTV D95%": f"{ptv_d95:.3f} Gy",
                         "Rectum Mean Dose": f"{r_mean:.3f} Gy",
-                        "Curve Monotonicity (dV/dD <= 0)": "VERIFIED (Physically strictly non-increasing)",
+                        "Curve Monotonicity & Physics (dV/dD <= 0)": "VERIFIED (Validated non-increasing cumulative DVH)" if curves_valid else "FAILED",
                         "TG-263 Breakdown": f"{primary_c} official primary, {target_c} target syntax, {len(nom_structs)-std_c} review required",
                         "Readability & Usefulness": "VERIFIED (Full cumulative curves + CSV/JSON/MD export ready)",
                     }
                 ))
+        else:
+            results_list.append(report_assessment(
+                "DICOM-RT & DVH Analyzer",
+                "Eclipse Prostate Phantom (3 OARs/Targets)",
+                status="SKIP",
+                summary="No paired dose/struct cases found in SlicerRT dataset (SKIPPED).",
+                details={"Status": "SKIPPED", "Reason": "No dose cases in dataset"}
+            ))
+    else:
+        results_list.append(report_assessment(
+            "DICOM-RT & DVH Analyzer",
+            "Eclipse Prostate Phantom (3 OARs/Targets)",
+            status="SKIP",
+            summary="SlicerRT Eclipse prostate phantom not found in checkout or OPENRAD_DATA_ROOTS (SKIPPED).",
+            details={"Status": "SKIPPED", "Reason": "External case root not configured"}
+        ))
+
+    # Synthetic Stress Payloads: Ensure PhysicsValidationEngine rejects unphysical DVH curves (R04)
+    synthetic_payloads = [
+        ("One-Bin Curve (N < 2)", [10.0], [100.0], "at least 2 points"),
+        ("Negative Volume Percentage", [0.0, 10.0, 20.0], [100.0, -5.0, 0.0], "outside physical range [0, 100]%"),
+        ("Descending Dose Bins", [0.0, 20.0, 10.0], [100.0, 50.0, 0.0], "strictly increasing"),
+        ("NaN/Infinity in Dose Bins", [0.0, float("nan"), 20.0], [100.0, 50.0, 0.0], "NaN or infinite values"),
+        ("Non-Monotonic Cumulative Volume (dV/dD > 0)", [0.0, 10.0, 20.0, 30.0], [100.0, 80.0, 95.0, 0.0], "violates physical monotonicity"),
+    ]
+
+    for test_title, test_d, test_v, expected_reason_frag in synthetic_payloads:
+        val_res = PhysicsValidationEngine.validate_dvh_curve(test_d, test_v)
+        rejected_correctly = (not val_res.passed) and (expected_reason_frag in (val_res.error_message or ""))
+        results_list.append(report_assessment(
+            "DICOM-RT & DVH Analyzer",
+            f"Physics Guardrail: {test_title}",
+            status="PASS" if rejected_correctly else "FAIL",
+            summary=f"Physics validation engine rejected unphysical DVH payload: {val_res.error_message}",
+            details={
+                "Payload Passed Validation": val_res.passed,
+                "Error Message": val_res.error_message,
+                "Remediation Suggestion": val_res.remediation_suggestion,
+                "Rejection Actionable": "VERIFIED" if rejected_correctly else "FAILED",
+            }
+        ))
 
     # Test on HNSCC-01-0199
     hnscc_path = resolve_raw_case_path("data/raw/HNSCC-01-0199")
     if hnscc_path and hnscc_path.exists():
         scan = discover_dataset(str(hnscc_path))
-        if scan["dose_cases"]:
+        if scan.get("dose_cases"):
             pair = scan["dose_cases"][0]
             with session_scope(manager):
                 dvh_hnscc = parse_and_evaluate_dvh(
@@ -356,7 +471,7 @@ def stress_test_menu_3_dvh_analyzer(results_list):
                 results_list.append(report_assessment(
                     "DICOM-RT & DVH Analyzer",
                     "HNSCC-01-0199 with Reviewed Alias Mapping",
-                    passed=pass_cord,
+                    status="PASS" if pass_cord else "FAIL",
                     summary="Mapped legacy contour 'Cord' -> 'SpinalCord' via human-reviewed mapping.",
                     details={
                         "Mapped ROIs": list(structs.keys()),
@@ -365,12 +480,20 @@ def stress_test_menu_3_dvh_analyzer(results_list):
                         "Protocol Threshold Verification": f"{cord_max:.2f} Gy evaluated against reference constraint (< 45.0 Gy)" if cord_max is not None else "Not evaluated",
                     }
                 ))
+        else:
+            results_list.append(report_assessment(
+                "DICOM-RT & DVH Analyzer",
+                "HNSCC-01-0199 with Reviewed Alias Mapping",
+                status="SKIP",
+                summary="No paired dose/struct cases found in HNSCC-01-0199 (SKIPPED).",
+                details={"Status": "SKIPPED", "Reason": "No dose cases in dataset"}
+            ))
     else:
         results_list.append(report_assessment(
             "DICOM-RT & DVH Analyzer",
             "HNSCC-01-0199 with Reviewed Alias Mapping",
-            passed=True,
-            summary="Clinical cohort HNSCC-01-0199 not available (SKIPPED).",
+            status="SKIP",
+            summary="Clinical cohort HNSCC-01-0199 not available in checkout or OPENRAD_DATA_ROOTS (SKIPPED).",
             details={"Status": "SKIPPED", "Reason": "External case root not configured"}
         ))
 
@@ -754,8 +877,11 @@ def stress_test_menu_8_repl_and_artifacts(results_list):
 
 def main():
     import argparse
+    import subprocess
+
     parser = argparse.ArgumentParser(description="OpenRad Agent: System-Wide Multi-Menu Stress Test Suite")
-    parser.add_argument("--output-dir", type=str, default=None, help="Custom directory to store run evidence (defaults to validation/runs/stress_eval/<timestamp>)")
+    parser.add_argument("--output-dir", type=str, default=None, help="Custom directory to store run evidence")
+    parser.add_argument("--force-overwrite", action="store_true", help="Allow overwriting existing evidence files in specified output directory")
     parser.add_argument("--publish-evidence", action="store_true", help="Explicitly update the canonical reviewed snapshot under validation/evidence/")
     args = parser.parse_args()
 
@@ -775,29 +901,53 @@ def main():
     stress_test_menu_8_repl_and_artifacts(results)
 
     total_time = round(time.monotonic() - start_time, 2)
-    total_tests = len(results)
-    passed_tests = sum(1 for r in results if r["passed"])
-    failed_tests = total_tests - passed_tests
+    total_scenarios = len(results)
+    executed_tests = [r for r in results if r.get("status") in ("PASS", "FAIL", "ERROR")]
+    skipped_tests = [r for r in results if r.get("status") == "SKIP"]
+    passed_tests = [r for r in executed_tests if r.get("status") == "PASS"]
+    failed_tests = [r for r in executed_tests if r.get("status") in ("FAIL", "ERROR")]
+
+    completeness_status = "COMPLETE" if len(skipped_tests) == 0 else f"PARTIAL ({len(executed_tests)}/{total_scenarios} executed; {len(skipped_tests)} optional external datasets skipped)"
 
     banner("Comprehensive Stress Test Summary & Readability Audit")
-    print(f"Total Features / Stress Scenarios Tested : {total_tests}")
-    print(f"Passed Scenarios                         : {passed_tests} ({passed_tests/total_tests*100:.1f}%)")
-    print(f"Failed Scenarios                         : {failed_tests}")
+    print(f"Total Scenarios Defined                  : {total_scenarios}")
+    print(f"Executed Scenarios                       : {len(executed_tests)}")
+    if executed_tests:
+        print(f"Passed Scenarios                         : {len(passed_tests)} ({len(passed_tests)/len(executed_tests)*100:.1f}% of executed)")
+    else:
+        print(f"Passed Scenarios                         : 0 (0.0% of executed)")
+    print(f"Failed Scenarios                         : {len(failed_tests)}")
+    print(f"Skipped Scenarios                        : {len(skipped_tests)}")
+    print(f"Completeness Gate                        : {completeness_status}")
     print(f"Total Execution Time                     : {total_time}s")
 
-    run_timestamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+    # Determine source git revision
+    try:
+        rev = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        rev = "unversioned"
+
     if args.output_dir:
         evidence_dir = Path(args.output_dir)
+        evidence_dir.mkdir(parents=True, exist_ok=True)
     else:
-        evidence_dir = Path(f"validation/runs/stress_eval/{run_timestamp}")
-    evidence_dir.mkdir(parents=True, exist_ok=True)
+        evidence_dir = new_run_directory("stress-eval")
+        evidence_dir.mkdir(parents=True, exist_ok=False)
+
     evidence_file = evidence_dir / "comprehensive_stress_assessment.json"
+    if evidence_file.exists() and not args.force_overwrite and args.output_dir:
+        print(f"❌ Error: Evidence file already exists at {evidence_file}. Use --force-overwrite to replace.")
+        sys.exit(1)
 
     evidence_payload = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "total_scenarios": total_tests,
-        "passed": passed_tests,
-        "failed": failed_tests,
+        "source_revision": rev,
+        "completeness": completeness_status,
+        "total_scenarios": total_scenarios,
+        "executed": len(executed_tests),
+        "passed": len(passed_tests),
+        "failed": len(failed_tests),
+        "skipped": len(skipped_tests),
         "execution_seconds": total_time,
         "results": results,
     }
@@ -811,13 +961,14 @@ def main():
         canonical_file.write_text(json.dumps(evidence_payload, indent=2))
         print(f"Updated canonical reviewed evidence snapshot at: {canonical_file}")
     else:
-        print(f"Preserving historical canonical snapshot (use --publish-evidence to update).")
+        print("Preserving historical canonical snapshot (use --publish-evidence to update).")
 
-    if failed_tests > 0:
+    if len(failed_tests) > 0:
         print("\n❌ SOME STRESS TESTS FAILED. CHECK LOGS ABOVE.")
         sys.exit(1)
     else:
-        print("\n🎉 ALL MENUS AND FEATURES PASSED COMPREHENSIVE STRESS TESTING WITH 100% CLINICAL READABILITY.")
+        print(f"\n🎉 ALL {len(passed_tests)} EXECUTED SCENARIOS PASSED AUTOMATED STRESS VERIFICATION.")
+        print("   Note: Readability verified via structured schema and follow-up checklist inspection (clinical usability study pending independent human review).")
 
 
 if __name__ == "__main__":

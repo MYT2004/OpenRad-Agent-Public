@@ -71,6 +71,9 @@ class StorageManager:
         response: str,
         extra: Optional[Dict[str, Any]] = None,
     ) -> str:
+        if fcntl is None:
+            raise RuntimeError("POSIX file locking (fcntl) is required for safe concurrent storage operations.")
+
         session_dir = self.get_session_dir(session_id)
         os.makedirs(session_dir, exist_ok=True)
         traj_file = os.path.join(session_dir, "trajectory.json")
@@ -78,27 +81,31 @@ class StorageManager:
 
         # Serialized atomic append via file locking
         with open(lock_file, "a", encoding="utf-8") as lock_f:
-            if fcntl:
-                fcntl.flock(lock_f, fcntl.LOCK_EX)
+            fcntl.flock(lock_f, fcntl.LOCK_EX)
             try:
                 history = []
                 if os.path.exists(traj_file):
-                    with open(traj_file, "r", encoding="utf-8") as f:
-                        content = f.read()
-                    if content.strip():
+                    try:
+                        with open(traj_file, "r", encoding="utf-8") as f:
+                            content = f.read()
+                        if not content.strip():
+                            raise ValueError("Trajectory file exists but is empty or whitespace-only")
+                        parsed = json.loads(content)
+                        if not isinstance(parsed, list):
+                            raise ValueError("Trajectory content must be a JSON list")
+                        for idx, ev in enumerate(parsed):
+                            if not isinstance(ev, dict) or not all(k in ev for k in ("timestamp", "user_prompt", "agent_response")):
+                                raise ValueError(f"Trajectory entry at index {idx} is invalid or missing required schema fields")
+                        history = parsed
+                    except Exception as exc:
+                        corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
                         try:
-                            history = json.loads(content)
-                            if not isinstance(history, list):
-                                raise ValueError("Trajectory content is not a list")
-                        except Exception as exc:
-                            corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
-                            try:
-                                shutil.copy2(traj_file, corrupt_backup)
-                            except Exception:
-                                pass
-                            raise CorruptedSessionError(
-                                f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
-                            ) from exc
+                            shutil.copy2(traj_file, corrupt_backup)
+                        except Exception:
+                            pass
+                        raise CorruptedSessionError(
+                            f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
+                        ) from exc
 
                 entry = {
                     "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -117,8 +124,7 @@ class StorageManager:
                     os.fsync(f.fileno())
                 os.replace(tmp_file, traj_file)
             finally:
-                if fcntl:
-                    fcntl.flock(lock_f, fcntl.LOCK_UN)
+                fcntl.flock(lock_f, fcntl.LOCK_UN)
 
         return traj_file
 
@@ -127,32 +133,35 @@ class StorageManager:
         traj_file = os.path.join(session_dir, "trajectory.json")
         if not os.path.exists(traj_file):
             return []
+        if fcntl is None:
+            raise RuntimeError("POSIX file locking (fcntl) is required for safe concurrent storage operations.")
+
         lock_file = os.path.join(session_dir, ".trajectory.lock")
         with open(lock_file, "a", encoding="utf-8") as lock_f:
-            if fcntl:
-                fcntl.flock(lock_f, fcntl.LOCK_SH)
+            fcntl.flock(lock_f, fcntl.LOCK_SH)
             try:
                 with open(traj_file, "r", encoding="utf-8") as f:
                     content = f.read()
                 if not content.strip():
-                    return []
+                    raise ValueError("Trajectory file exists but is empty or whitespace-only")
+                parsed = json.loads(content)
+                if not isinstance(parsed, list):
+                    raise ValueError("Trajectory content must be a JSON list")
+                for idx, ev in enumerate(parsed):
+                    if not isinstance(ev, dict) or not all(k in ev for k in ("timestamp", "user_prompt", "agent_response")):
+                        raise ValueError(f"Trajectory entry at index {idx} is invalid or missing required schema fields")
+                return parsed
+            except Exception as exc:
+                corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
                 try:
-                    data = json.loads(content)
-                    if not isinstance(data, list):
-                        raise ValueError("Trajectory content is not a list")
-                    return data
-                except Exception as exc:
-                    corrupt_backup = f"{traj_file}.corrupt.{int(time.time() * 1000)}"
-                    try:
-                        shutil.copy2(traj_file, corrupt_backup)
-                    except Exception:
-                        pass
-                    raise CorruptedSessionError(
-                        f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
-                    ) from exc
+                    shutil.copy2(traj_file, corrupt_backup)
+                except Exception:
+                    pass
+                raise CorruptedSessionError(
+                    f"Corrupted trajectory in session {session_id}; preserved at {corrupt_backup}"
+                ) from exc
             finally:
-                if fcntl:
-                    fcntl.flock(lock_f, fcntl.LOCK_UN)
+                fcntl.flock(lock_f, fcntl.LOCK_UN)
 
     def list_artifacts(self, session_id: str) -> List[str]:
         artifacts_dir = self.get_artifacts_dir(session_id)

@@ -7,6 +7,7 @@ from openrad.validation.physics_rules import (
     GammaEvaluationError,
     DICOMGeometryError,
     RadiobiologyBoundsError,
+    DVHCurveError,
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "GammaEvaluationError",
     "DICOMGeometryError",
     "RadiobiologyBoundsError",
+    "DVHCurveError",
 ]

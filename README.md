@@ -1,6 +1,6 @@
 # OpenRad-Agent — OSI Hackathon 2026
 
-[![Tests: 289 Passed](https://img.shields.io/badge/pytest-289%20passed%20(100%25)-brightgreen.svg)](validation/)
+[![Tests: 291 Passed](https://img.shields.io/badge/pytest-291%20passed%20(100%25)-brightgreen.svg)](validation/)
 [![Physics Guardrails: Enforced](https://img.shields.io/badge/physics--guardrails-strictly%20enforced-blue.svg)](openrad/validation/physics_rules.py)
 [![Standards: TG--263%20%7C%20TG--218](https://img.shields.io/badge/standards-TG--263%20%7C%20TG--218-purple.svg)](openrad/validation/nomenclature.py)
 [![Scope: Research Only](https://img.shields.io/badge/scope-research%20use%20only-orange.svg)](validation/audits/medical_physics.md)
@@ -87,11 +87,11 @@ OpenRad Agent bridges safety-critical deterministic computing with modern tool-a
 
 ## 3. Verified Validation Milestones
 
-### 289 Automated Tests Passing
-The platform passes 289 automated unit, integration, and physics regression tests across all core capabilities:
+### 291 Automated Tests Passing
+The platform passes 291 automated unit, integration, and physics regression tests across all core capabilities:
 * **DICOM Intake & Spatial Geometry:** Slice spacing regularity, UID chain linkage, orthogonal direction cosines, and metadata de-identification.
 * **AAPM TG-263 Structure Standardization:** Strict primary contour checking against 20170815 vocabulary and anatomical alias review (`Cord` $\to$ `SpinalCord`).
-* **ICRU-83 Dosimetric Metrics:** Sub-millimeter DVH sampling: $D_{95}$ (95% target dose), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.
+* **ICRU-83 Dosimetric Metrics:** High-resolution cumulative DVH binning ($0.1\text{ Gy}$ bin width): $D_{95}$ (minimum dose received by at least 95% of structure volume), $D_{50}$ (median dose), $D_{2}$ (near-max dose), $V_{50\text{Gy}}$, $\bar{D}$, and $D_{\max}$.
 * **AAPM TG-218 3D Gamma Index:** Global 3% / 2 mm (with 10% low-dose threshold) and tight-margin 2% / 2 mm QA evaluation.
 * **TOPAS Parameter Validation:** Kinetic beam energies constrained to $0.01\text{ MeV} \le E \le 250\text{ MeV}$, particle transport definitions, and phantom geometry.
 * **Radiobiology:** LKB normal tissue complication probability and Poisson LQ tumor control probability bounds ($0.0 \le P \le 1.0$).
@@ -111,7 +111,7 @@ Evaluated on public SlicerRt reference datasets against Eclipse TPS (Varian) and
 | | Mean Dose | 39.146 Gy | 39.050 Gy | 39.046 Gy | -0.096 Gy (-0.25%) | +0.0037 Gy |
 | | D95% ($D_{95}$) | 28.061 Gy | 27.690 Gy | 27.690 Gy | -0.371 Gy (-1.32%) | 0.0000 Gy |
 
-> **Key Finding:** OpenRad calculation exhibits close mathematical concordance with `dicompyler-core` default voxel rasterization (volume $\Delta \le 0.0004\text{ cc}$, dose $\Delta \le 0.020\text{ Gy}$). Differences relative to Eclipse TPS summary export ($+0.653\text{ cc}$ in bladder volume, $-0.371\text{ Gy}$ in rectum D95) reflect commercial contour voxelization, sub-slice interpolation and linear dose-bin sampling differences. TPS exports and third-party tools are numerical comparators, not clinical ground truth.
+> **Key Finding:** OpenRad calculation exhibits close mathematical concordance with `dicompyler-core` default voxel rasterization (volume $\Delta \le 0.0004\text{ cc}$, dose $\Delta \le 0.020\text{ Gy}$). Differences relative to Eclipse TPS summary export ($+0.653\text{ cc}$ in bladder volume, $-0.371\text{ Gy}$ in rectum $D_{95}$) are hypothesized to arise from proprietary contour voxelization, sub-slice contour interpolation, and dose-bin interpolation algorithms. In accordance with clinical physics best practices, commercial TPS exports and third-party tools serve as numerical comparators rather than certified clinical ground truth.
 
 ---
 
