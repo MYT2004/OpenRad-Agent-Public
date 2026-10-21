@@ -58,6 +58,9 @@ def build_report(result, kind):
             if not item.get('found'):
                 row(name, 'Not evaluated', item.get('error', 'Review ROI mapping and contours.'))
                 continue
+            if 'bin_width_Gy' in item.get('dvh_curve',{}):
+                row(f'{name}: DVH curve step',number(item['dvh_curve']['bin_width_Gy'],'Gy',2),
+                    'Exported threshold spacing; not dose-grid resolution or clinical uncertainty.')
             for key, label, unit in [('volume_cc','Volume','cc'), ('mean_dose_Gy','Mean dose','Gy'),
                                     ('max_dose_Gy','Voxel Dmax','Gy'), ('D95_Gy','D95%','Gy'),
                                     ('D50_Gy','D50%','Gy'), ('D2_Gy','D2%','Gy'), ('V50_percent','V50Gy','%'), ('V50_cc','V50Gy','cc')]:

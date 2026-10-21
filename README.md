@@ -26,6 +26,10 @@ Choose **Patient-file Verification** in the UI or run `python agent_main.py veri
 
 DVH, gamma, radiobiology, TOPAS and model-assessment views provide readable summaries, measurements with units, criteria, limitations and follow-up actions. Download Markdown reports, CSV metrics and technical JSON; TOPAS also exports its parameter file. Reports show unperformed checks explicitly and preserve incomplete/blocked outcomes. See the [workflow audit and verification boundaries](docs/PHYSICIST_WORKFLOW_AUDIT.md).
 
+## External-data benchmark
+
+Run `python -m scripts.benchmark_slicerrt fetch` to explicitly download five pinned public SlicerRT examples, then `python -m scripts.benchmark_slicerrt run` for read-only intake checks and an Eclipse phantom DVH comparison against its exported TPS curves and dicompyler-core. Human reports and plots go to ignored `data/processed/slicerrt-benchmark/`. Existing inputs are never replaced. See [observations, source terms, limitations and unresolved discrepancies](docs/SLICERRT_BENCHMARK.md). Passing this software benchmark does not qualify a clinical model.
+
 ## Repository layout
 
 ```text

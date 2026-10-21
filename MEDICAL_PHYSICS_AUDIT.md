@@ -1,5 +1,7 @@
 # Medical physics audit — 21 October 2026
 
+This document records historical audit milestones and findings. For current implementation evidence and remaining gaps, use the [patient-file verification guide](docs/PATIENT_FILE_VERIFICATION.md), [external SlicerRT benchmark](docs/SLICERRT_BENCHMARK.md) and [submission specification](docs/HACKATHON_SPECIFICATION.md). Earlier test counts and residual implementation findings below must be read against their stated baseline.
+
 Baseline: GitHub main e62a73a. Status: research prototype; ALL-standards compliance is NOT established. This is a source-code review and synthetic regression exercise, not clinical commissioning or regulatory certification. Jurisdiction, intended use, machine modalities, patient populations and institutional protocols remain unspecified.
 
 ## Findings and mitigations

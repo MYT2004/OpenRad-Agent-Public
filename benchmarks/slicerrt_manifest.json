@@ -1,0 +1,1617 @@
+{
+  "repository": "https://github.com/SlicerRt/SlicerRtData",
+  "commit": "704936e8889c77174a0dd97cfb8703b47952e62c",
+  "tree": "e6b3e4277106d9a2f029f44a6e65125fac85b95c",
+  "usage": "Public sample-data testing; no dataset-specific license was located at repository root. No redistribution permission inferred from the software license. Source data is downloaded only on explicit command and is not committed to OpenRad.",
+  "cases": [
+    {
+      "id": "plastimatch_tiny-rt-study",
+      "intake_subdir": ".",
+      "expected_findings": [
+        "course_linkage"
+      ]
+    },
+    {
+      "id": "oncentra-4.1.6-prostate-ct-tilted-plane",
+      "intake_subdir": ".",
+      "expected_findings": [
+        "contour_orientation_scope",
+        "missing_rt_course"
+      ]
+    },
+    {
+      "id": "xio-4.60.00-phantom-irregular-spacing",
+      "intake_subdir": ".",
+      "expected_findings": [
+        "dicom_read"
+      ]
+    },
+    {
+      "id": "aria-phantom-contours-keyhole",
+      "intake_subdir": ".",
+      "expected_findings": [
+        "roi_name_review"
+      ]
+    },
+    {
+      "id": "eclipse-8.1.20-phantom-prostate",
+      "intake_subdir": "Original",
+      "expected_findings": [
+        "plan_frame_absent"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_1.dcm",
+      "sha": "4e4afabc2f6b53461d0919e084e98f66f59c6989",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_10.dcm",
+      "sha": "86ef9794be680f206b365c21dc5837e20401378c",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_100.dcm",
+      "sha": "ca5b3b88179893b54d02ea0376ddebfeadcdcb57",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_101.dcm",
+      "sha": "372d21e31b7afb838e3529c3e2871c98b09f65cf",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_102.dcm",
+      "sha": "4013dc0510c02eee4ae266db1437f6c8439cb92f",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_103.dcm",
+      "sha": "1cbbfe0f253a3e861f0b0726d87aa690ac01fb61",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_104.dcm",
+      "sha": "1d6e8cc649cc30ffcffc636a39f2efdcde11857a",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_105.dcm",
+      "sha": "ea715913d5b5c9a77c41c25d1c3998b8e0f11396",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_106.dcm",
+      "sha": "2b411ee84acf51f7329a9534a52b9a402b4dd434",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_107.dcm",
+      "sha": "281962487db0ffd8152ed784ed4111945d0826e2",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_108.dcm",
+      "sha": "9bc01fd4dc5a52c710ddbdfff9a8458aec79200f",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_109.dcm",
+      "sha": "278ad3ac6462db8a6bc28cfb15e063cd7112db4a",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_11.dcm",
+      "sha": "86094b5ff85278d2a4cab94b64432e675dbc504f",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_110.dcm",
+      "sha": "2aca09b6dec5a2746bdcd464856a318f60204056",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_111.dcm",
+      "sha": "1d67b6b08a30bbb905ed5a2d7dba65ab8a884871",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_112.dcm",
+      "sha": "e24ede7fa205af78097dc5da45d53ef0b96e5bd9",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_113.dcm",
+      "sha": "2c099c32f8e32f5c79959e6b554cb7c95f2f22af",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_114.dcm",
+      "sha": "a0a06acc8859f2e36b428b6f2a0e85b141562498",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_115.dcm",
+      "sha": "c2b3d6fb32594204329301da1aea1bee880ca08e",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_116.dcm",
+      "sha": "97d1870cb9c1c75a121f44ff34ca7fb702b84278",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_117.dcm",
+      "sha": "a5f4f37144536b5ddb7595284f851eeb5d28bf68",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_118.dcm",
+      "sha": "87f7b7753e257a6fcc120a35871b96c729b9a396",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_119.dcm",
+      "sha": "4f465254c654be1697332465f17f98475a135bc6",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_12.dcm",
+      "sha": "e25325c4ff24c46f34a0a98788581ef565b78c8d",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_120.dcm",
+      "sha": "d2980b9702a45d2abcb714f6b86aad462a8cf084",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_121.dcm",
+      "sha": "9753068f5f741bf0b217a7e6d8aae90900e4f926",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_122.dcm",
+      "sha": "05f4bb2a50a0b7d492bbbb19aa742eb331c5a0b8",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_123.dcm",
+      "sha": "b7cb585d1b723057452dab0be21345274dedb0ca",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_124.dcm",
+      "sha": "95582c47de0ec2644232b1184e3c0fe0f31926c2",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_125.dcm",
+      "sha": "07b522dd5f98b1552bb5715cf0850eb6475ba15a",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_126.dcm",
+      "sha": "f8894a885133af230fa6c388c34280ec6c123573",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_127.dcm",
+      "sha": "6408a1f9e0f0ec5855b0bfdbaa116618b12fc121",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_128.dcm",
+      "sha": "db1bb2b12de3e960712b8a42c68f3ee6cc48fbdc",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_129.dcm",
+      "sha": "41e7a2a1b02f79b974160d868b92fafc3a9bb980",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_13.dcm",
+      "sha": "bdafe50404fec9b907769882decb7a6efaf81b2e",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_130.dcm",
+      "sha": "b3c89b738b90364b5cf8dd38a2ddec089065b011",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_131.dcm",
+      "sha": "1bbadcfe0a8610fbcc35f628c422de9a244f0cb5",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_132.dcm",
+      "sha": "f671db558b2087abd09e45e0ae6edadd0a297230",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_133.dcm",
+      "sha": "66419b1ae5b8d2541cc8fe8d72e998948cfb07a1",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_134.dcm",
+      "sha": "ae6db7268d6604fc185f2adadcef10b2c94f6fe6",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_135.dcm",
+      "sha": "55bf7c0e1ae5758f04b8cb2cfb328714bf56a9e9",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_136.dcm",
+      "sha": "8a70f40eaeebf98febb071fde670100c642b160c",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_137.dcm",
+      "sha": "4b639cf0cee42f4d12a8aedccf8e0b400e1b308f",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_138.dcm",
+      "sha": "2e28990c16930c1aa152ed2b9581c785ed80d43f",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_139.dcm",
+      "sha": "63a7dab3e9c41d3e1726348f327eb5a2e0b7bd39",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_14.dcm",
+      "sha": "a77d5d989b2685882fd81346dbdcaeb6090c7103",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_140.dcm",
+      "sha": "c8cb2667e279ad5a5d89ece136caf7164a483a14",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_141.dcm",
+      "sha": "337959bc8c814c380822fc7b02265ff91d8f65d1",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_142.dcm",
+      "sha": "f7b8522a844ae65904bef1a9db694d2e3e430978",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_143.dcm",
+      "sha": "0c9b1fef091a39d6102c8b5e372ee6740df16699",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_144.dcm",
+      "sha": "f62b32cd289357ec657e605789d9f53074d141aa",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_145.dcm",
+      "sha": "76da60fed8486c0d2a799c828318618f36e542e6",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_146.dcm",
+      "sha": "caf2dc12cc4e674365698539c0bc74bd7e85c44b",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_147.dcm",
+      "sha": "7c1ea4f245239ed9889c99db2726e20da186763a",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_148.dcm",
+      "sha": "d3e4cdd8f72db66984f157d9f3c8cc15523cc132",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_149.dcm",
+      "sha": "a3bd38ef14a1928c3a293430f81dfa75749e027b",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_15.dcm",
+      "sha": "1d29ff439c2ba608b71ae7fef21fd05fb5fa626a",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_150.dcm",
+      "sha": "80be9856673b301506564ffa96a50d1b155c3bac",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_151.dcm",
+      "sha": "7bcc495ea4df68d38791d2ac794a47d443bfe8c9",
+      "size": 526070
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_152.dcm",
+      "sha": "4665ad0f166c75ce64ee2abf50926060155ee227",
+      "size": 526074
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_16.dcm",
+      "sha": "0d3ba72122f927a8544594f756615e0db53bba55",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_17.dcm",
+      "sha": "1e07bbba512691cafe20446c5ac5d5b0a66a6f57",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_18.dcm",
+      "sha": "6ee5193605c994124ea1d3b4e78c8d86036239d4",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_19.dcm",
+      "sha": "664dbdc564e541aca04f95fc4fc72b2ce649f70a",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_2.dcm",
+      "sha": "c0f8380d1d3cea42cef0a67b1fc9163cf01c20fa",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_20.dcm",
+      "sha": "bc377e0b1e8b947428075819d6fb4363794f2271",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_21.dcm",
+      "sha": "8f362a5a57e6b2eb539aa02fa57f9bd6a0a5a95f",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_22.dcm",
+      "sha": "ad8a0911ba33e1b9c26ffa551c44fcd8787b0446",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_23.dcm",
+      "sha": "9761b2f89c0ee28ed1a37a4fc89c33d7f17a88a4",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_24.dcm",
+      "sha": "332b226a7a323c735dda177bc69f6b6c37909c07",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_25.dcm",
+      "sha": "ab8e5f97985ae8f65367e6627a6d20100414aa32",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_26.dcm",
+      "sha": "485429dc4cd6d8ca6cbf9f117a93dfb8f322dd67",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_27.dcm",
+      "sha": "4d86b16dc1e37b92f2e0e6ee56014c86db612a29",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_28.dcm",
+      "sha": "061c5c56fc8f40f86c2abbd2646691652ed68b71",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_29.dcm",
+      "sha": "1927a8284cdd0b1f21dbe41e8712c014305c58e6",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_3.dcm",
+      "sha": "5e67e595e801db203e3ca159a9de59c4e2c61240",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_30.dcm",
+      "sha": "9b608ef32a1d2b6cd6515c4272d2865794944eb3",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_31.dcm",
+      "sha": "0ed90250c85578333af3395d290746af6addd176",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_32.dcm",
+      "sha": "5ac5c41d7616ec40a1bdb2aa112b1a0b17f7e67e",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_33.dcm",
+      "sha": "23fe6c97b3b151e625096d2fe779d9c7c35a34a9",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_34.dcm",
+      "sha": "775a90054387ebe82a8de26271ae0d79696877f2",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_35.dcm",
+      "sha": "567b17fc249c913d47e65d89eb4ce7458063f71b",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_36.dcm",
+      "sha": "5f9ea5718e9fca3d551b6df433acb32e46aafda8",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_37.dcm",
+      "sha": "f6dabede4a8ce4b5f4866cdbf55a4450add9d65b",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_38.dcm",
+      "sha": "5f7474ea1a49519f53d327bfe6a18eda3fb8351e",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_39.dcm",
+      "sha": "2e3d1d4f1ea91215598ffb7d8a851557d028f824",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_4.dcm",
+      "sha": "ed06458db9214d3903852631376d41dfdc93f1cf",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_40.dcm",
+      "sha": "2f0b231f9b1b173de97fb1f19b71a20bd8e36404",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_41.dcm",
+      "sha": "ae8023230ccf39cee2c9cef539a36785248d18fd",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_42.dcm",
+      "sha": "149032dbd0692e57c97b98aa0e843496911dff6c",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_43.dcm",
+      "sha": "5965e870792e908ff78ebb2c5c90473456beb14e",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_44.dcm",
+      "sha": "7592a1c73ae06c3df65814d9a3726454b486e6cd",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_45.dcm",
+      "sha": "c242aa22726b4571d6426ce0ab34e90a06e76367",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_46.dcm",
+      "sha": "533c3007ec6e516843b558505463f4266e0f8ea2",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_47.dcm",
+      "sha": "4f6227ae351da405229cbb6cb20d4ea9ac38b46c",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_48.dcm",
+      "sha": "0e833c25280a338123d771a4d7b21e7918bb71e4",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_49.dcm",
+      "sha": "5a052d68ae0f3a47a99c936d8f6473341170c73e",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_5.dcm",
+      "sha": "26756b81f94b99b528631cf57d2def1935d43be0",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_50.dcm",
+      "sha": "046afa1ad2a4da2f61cae68f3470000d73de59c5",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_51.dcm",
+      "sha": "3f4c2b15f5c55c414067eda475d41852e85d7212",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_52.dcm",
+      "sha": "deeb5d26f3e3c0e54fc57593527268e358995333",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_53.dcm",
+      "sha": "c06a5cee43fd54572292ac53601b93bc2e1d0f9d",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_54.dcm",
+      "sha": "8ce3713170318535ce71b31da9003ae517a6a7c8",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_55.dcm",
+      "sha": "9dc86970c3eab978515e3b5488cc0c8c5bad1489",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_56.dcm",
+      "sha": "f27b16daf40a11830afdda8535c4f4320e359ae3",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_57.dcm",
+      "sha": "8b2cfbb188fd48e89a0268881d9234b0c327ab9d",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_58.dcm",
+      "sha": "420e424102879da8dc8dfa456554bcd1fdef06ed",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_59.dcm",
+      "sha": "28b4a2c2d1d4448443bd79bc30d70b7f683266cf",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_6.dcm",
+      "sha": "4e938c5e67ffe64b568bcebc6cee6a2e05c5e81c",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_60.dcm",
+      "sha": "73d750c64ee6dc5a238f09aa40e6512a21edd9e9",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_61.dcm",
+      "sha": "5745af6cb3883634aac485c36fe1aa6c5dd79af4",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_62.dcm",
+      "sha": "d5781f372a49806e867f475cde2d784377a6d241",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_63.dcm",
+      "sha": "42839389c9054b180f60ddb279abc77ed69c83ab",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_64.dcm",
+      "sha": "02b964dfa1d534a63a78786ad646996358ff2673",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_65.dcm",
+      "sha": "f8be1631625680e542552891f308cd722d5a3598",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_66.dcm",
+      "sha": "129c2078904a1eacdbdca5797854ca6de0ec0f89",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_67.dcm",
+      "sha": "3cddbc87aa88838de24af6c5f1cfb89bbf98fcae",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_68.dcm",
+      "sha": "4f19281821c96af95b8a011b49bd856060b05995",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_69.dcm",
+      "sha": "f094722ab50ea2e7656c55c789f2e31002d49a2c",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_7.dcm",
+      "sha": "a97ea2a7a8a3045db63f137efdaa852079db18c5",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_70.dcm",
+      "sha": "d5f4e359a9ba32eb6d675d4aeb65c29dc19208de",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_71.dcm",
+      "sha": "f41830d431a9e5f8055b44bae6bfa4c63b9b601c",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_72.dcm",
+      "sha": "4269ca77d4d21491fb4eba0ff664c9534232d638",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_73.dcm",
+      "sha": "53ef74304a32501d7b4389d689b59b45c4398016",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_74.dcm",
+      "sha": "61162067a5b7154fa573bc5be1af3984dc1054ae",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_75.dcm",
+      "sha": "1cb4e6856d28e7ff5e7e252f3ec02eff254596b5",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_76.dcm",
+      "sha": "0f7539faa1eb1eada8e409da6cbb891a240f478f",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_77.dcm",
+      "sha": "eb48624f0ef57ba9e841fb15721584c660ac5d56",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_78.dcm",
+      "sha": "d69599697d956946fc22816aadff54a2b79cb4cc",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_79.dcm",
+      "sha": "9eecd24e1a93008a5a4ed1b90792a0fae874a8ee",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_8.dcm",
+      "sha": "7147416bcd4923f278fab8bff131fded4a0dd00c",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_80.dcm",
+      "sha": "f740a4e69785360e1fc0cfaa3978f4d6119053de",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_81.dcm",
+      "sha": "e64675707835e9ae88e9d4f5ef1509fe0a2cf567",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_82.dcm",
+      "sha": "f42cc39b665f967ceba2d2da183ce3483a77af6f",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_83.dcm",
+      "sha": "33c49198febc37c3e1b99288f30d4748ac4a631d",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_84.dcm",
+      "sha": "7d14e16b45187f6fea1531b93abe8275dced3e34",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_85.dcm",
+      "sha": "cd77e4e404bd2168fb12e3dbd556fcf100b8519d",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_86.dcm",
+      "sha": "903c2ef25bcee467298d8084799b7839921f9bb5",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_87.dcm",
+      "sha": "63d495527641621f972cbc5f175c3a778a9ab035",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_88.dcm",
+      "sha": "f70b0c9d2df0246550843a3716f34a8a978bfa37",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_89.dcm",
+      "sha": "bc882e936ba49156c10af8bbc230ab2dc07f9c2f",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_9.dcm",
+      "sha": "e9b16faf0bd7026eb28232284c32f13c63da07f0",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_90.dcm",
+      "sha": "6242def88d685e4da890796d7ef3e52e2b8823d5",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_91.dcm",
+      "sha": "3033b82d0c55ff06722bad6bb32ae5a872e44929",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_92.dcm",
+      "sha": "e00e1bdcb862aead2e84585d5e49e04e92c09e25",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_93.dcm",
+      "sha": "2d92bd76de3a989dca75df903f2f1ce7ec654fa0",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_94.dcm",
+      "sha": "79225db6636e91e1bf476ab425b1fa54be6f251c",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_95.dcm",
+      "sha": "aa32b44fafbc0470633beb69a442f133c08885af",
+      "size": 526064
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_96.dcm",
+      "sha": "a81b333434103767b178c7613e937e1f5bfa7b86",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_97.dcm",
+      "sha": "481dbba320f7e79eea5b765996226eac76581812",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_98.dcm",
+      "sha": "73c82d730364f3384a02cd61aeeecc6034f7ec16",
+      "size": 526072
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/CT.PYTIM05_99.dcm",
+      "sha": "aa42af08631c02ea6e91b60ffb5f171851d539ef",
+      "size": 526068
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/RD.PYTIM05_.dcm",
+      "sha": "fce6c2576bb495f3171d11e79a7710ad2d88b3cc",
+      "size": 12973534
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/RP.PYTIM05_PS3.dcm",
+      "sha": "68b0564160612d5b928d513cabc51b51b7390052",
+      "size": 4346
+    },
+    {
+      "path": "aria-phantom-contours-keyhole/RS.PYTIM05_.dcm",
+      "sha": "96ee5505c1575620bab9cce394e4128fd75ce040",
+      "size": 3089742
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.1.dcm",
+      "sha": "acc0abfc251128ccff8905900c769ba6a40c1b7f",
+      "size": 526094
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.10.dcm",
+      "sha": "ecdb00a9d315a9899e68c51b5fe36cfaaa9ba5ed",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.11.dcm",
+      "sha": "16705d8a2afadf43397eaa87325272991c58b9cc",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.12.dcm",
+      "sha": "35d418fb43d892fcf3239e3dd938ec5f60a9c0d7",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.13.dcm",
+      "sha": "b324ec521d47a0557bcd98b038ecbd0f9c138903",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.14.dcm",
+      "sha": "223548f2b04bf15232b590c40f3087a0d4a32ec7",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.15.dcm",
+      "sha": "e9ad41280236563cdd763b7872f6acbb79fb534c",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.16.dcm",
+      "sha": "d239c8304a7a98be1aadebd7c497d57c3fe76d57",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.17.dcm",
+      "sha": "b4fb93f185836511039a8a2e856531211ea370c7",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.18.dcm",
+      "sha": "92b0b875eebc0f0c5e5eb4cf7f3ebf45ed52380b",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.19.dcm",
+      "sha": "c192217f8e2a48ab6a6b718624c3ecc3cf4f9f42",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.2.dcm",
+      "sha": "b547b65f3ab18a7b0fded9ad70f48404e096e43c",
+      "size": 526100
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.20.dcm",
+      "sha": "b48d9a2dcc7f7c611bc2768ac3716792fde2e189",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.21.dcm",
+      "sha": "ac088136aa995aee4aa202c3908cf258375e8e29",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.22.dcm",
+      "sha": "ac9d9f92338a510126331660a6ecb835d4a12527",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.23.dcm",
+      "sha": "c86cc5056245cb400a0d7f26d34f20fc33f19a7f",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.24.dcm",
+      "sha": "f4c38a7b5021588600cd9745cb68babe1c21162c",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.25.dcm",
+      "sha": "641c782aaa4f7f1311cf74b62cbe4c8e8ca19dcf",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.26.dcm",
+      "sha": "7a7671d93d730041e50ec2965c29a9f90c048624",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.27.dcm",
+      "sha": "a9df445dee5b55a9e5df6e073e0083f6ee8e20f3",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.28.dcm",
+      "sha": "a69cb18b3cc5a915870cde1afb9dc6276276c7d4",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.29.dcm",
+      "sha": "49f532559dd9c409d389ede41b5a4edefe15070f",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.3.dcm",
+      "sha": "a84079c3d9b04f770cba8edb1465f9f116719f12",
+      "size": 526094
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.30.dcm",
+      "sha": "e2b3f1e4a6fd9f8b8d66d57fd8a41e8ad65849d6",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.31.dcm",
+      "sha": "bc85cac3e1b25defa54cad15842415d453127459",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.32.dcm",
+      "sha": "cb81d3f3ec4224b6d4ff1e0c394474f5882d9a37",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.33.dcm",
+      "sha": "d07d71ed81dadaf87ddd7b9216cb5f41a332930d",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.34.dcm",
+      "sha": "32c2fd66586c604c8b635819df8bf13fd458e4bf",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.35.dcm",
+      "sha": "33b02fcca275db67881c6edbd8deeaf938ff1c6d",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.36.dcm",
+      "sha": "8f33e17ec98a1456734a8cfc6d00ccd4270c0cce",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.37.dcm",
+      "sha": "6284993523ec7eab80d5cc328181f866167ffef9",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.38.dcm",
+      "sha": "047495e8820fd1d850ac1549ad2cedf66f009eb9",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.39.dcm",
+      "sha": "a328527a543ee5cc2ebf044f3ade7e882896b5e8",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.4.dcm",
+      "sha": "84c3f3139d3141e8d6efe44cdb6197e1f6af2ea0",
+      "size": 526094
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.40.dcm",
+      "sha": "075ee43b8c2154ebaf26c86cd953ef648728632d",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.41.dcm",
+      "sha": "8a4f03943ca8d281bbb7732dce21433d1f25d6aa",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.42.dcm",
+      "sha": "640b9dc6f69cff9d4837891325c4f493de518cd7",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.43.dcm",
+      "sha": "914ce2c42521d816416bfab7b40845c5d414b677",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.44.dcm",
+      "sha": "e184d37203aaf7c24e030eb37544947bbaeb7be8",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.45.dcm",
+      "sha": "42fbf2843c9b7256ae0482690c991df12d88349e",
+      "size": 526092
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.46.dcm",
+      "sha": "f0a24c82a179ce36c9be21cd6d00fdaddca4b20c",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.47.dcm",
+      "sha": "733ea22b8c54d5e7a38bd05b79c58ebaad16cb9b",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.48.dcm",
+      "sha": "00ab41e52b6e51ddc7bf5883faae04528866112d",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.49.dcm",
+      "sha": "9554782b099b788b8144554c707fd14694499c4a",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.5.dcm",
+      "sha": "0ada715ad93e8fd116710a60e89fb16442fd9ffc",
+      "size": 526088
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.50.dcm",
+      "sha": "45b75deb6ab0aefc5263a706a55a6f99fb25d365",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.51.dcm",
+      "sha": "c4cbd3eceb3e4d1807fc3f1af3bc06279519cf0a",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.52.dcm",
+      "sha": "4c44170cb8bc124e53d3053ae0d49a75464ea920",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.53.dcm",
+      "sha": "7d4d49e151fe0e911b913a0ef5bdec2d4c9fdaca",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.54.dcm",
+      "sha": "5a4043e0e8f57ab884b88a7764397350683b7d56",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.55.dcm",
+      "sha": "0ee8ed08619781030f11bdd73cb614dc37ac35f8",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.56.dcm",
+      "sha": "d684ab7622688ca8f0c7f5c0620d431a819f1601",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.57.dcm",
+      "sha": "3ee7e7dedcd3304f83af6bcdf028b0ab0d96a990",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.58.dcm",
+      "sha": "b145979e3898059b85bec8244016c198d8b7daf6",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.59.dcm",
+      "sha": "0398bdd3b0567457a4e143b81c0a4a549bef2932",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.6.dcm",
+      "sha": "ba92c7d64e7f134df7d6925bef4c1ce02d79977d",
+      "size": 526094
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.60.dcm",
+      "sha": "4f50f7abf252d6fb25c7c1f8894d7c9cc804c18b",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.61.dcm",
+      "sha": "4d7c94ec59cc89d19ba3829b135ae87b2623b370",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.62.dcm",
+      "sha": "961e2af416dbf7985f20cb199782cf9290927fba",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.63.dcm",
+      "sha": "4dad8e6589a6717dc4a75bffeca0f22ba7186017",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.64.dcm",
+      "sha": "c527c59b4b4807b691fbe8474c399742ddbbaa48",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.65.dcm",
+      "sha": "c8e03722817640fc87bf17b83a4d5c8711896c63",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.66.dcm",
+      "sha": "d914edc3dc621233b164b8d5dc63f29c07b64f35",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.67.dcm",
+      "sha": "3ddbf30fc30e40a6d5c4d86a68e3da2c81debe55",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.68.dcm",
+      "sha": "d6d79088e6bb4968a714d182b94e443f8ad0f27d",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.69.dcm",
+      "sha": "775dd2ee57db3feafc1d9a4eb91bbfcfbdf6c300",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.7.dcm",
+      "sha": "1972c56791492865dcd134fce429e844592f29af",
+      "size": 526088
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.70.dcm",
+      "sha": "4fd9d8353fcebb0f071fd5cb527064c3f31c30c1",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.71.dcm",
+      "sha": "67bf418ed99a1d06e9b1543b52d862162b29bcb4",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.72.dcm",
+      "sha": "b47871101693039925f4baeb846eb593c78606cc",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.73.dcm",
+      "sha": "294f44c2657a437318f719dd52c973aa798474a5",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.74.dcm",
+      "sha": "518f35f8eef77847ef607fb50ca359f170973d47",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.75.dcm",
+      "sha": "87e7f1b72b4d9c442f755f1c4e922cbafc4c1da5",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.76.dcm",
+      "sha": "ee89889e64c84c68cf2bb6e00f25be1e36f68761",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.77.dcm",
+      "sha": "7ce0a0d3ef4f2708fbcb099a34056f0e3f8bf52e",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.78.dcm",
+      "sha": "422389200469059bc0a915031cb789fb2c2b4ed6",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.79.dcm",
+      "sha": "46b8c338fb83d52cab77a81f8b6d776c172d1bd2",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.8.dcm",
+      "sha": "5e858e6ed5600a9fe90224516b695aa94ae1b6e3",
+      "size": 526094
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.80.dcm",
+      "sha": "2230966938aca1dc8c0ad036d97b464ed48ffda3",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.81.dcm",
+      "sha": "6c09fd7794f1d0d1b7715b979812f7c965cfbd1b",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.82.dcm",
+      "sha": "3cfb063ef590764db8b5e0b9be2d9054bb1ce3d6",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.83.dcm",
+      "sha": "44c2f41d8930857d56ab870a266f062f9f3ea131",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.84.dcm",
+      "sha": "58cd352abc5baf24959efdf2184f306f5f2f809f",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.85.dcm",
+      "sha": "3825ec3337a70282deeff46215824f101d3ec848",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.86.dcm",
+      "sha": "5ca8554b17f64b5516de29bb887c23bc1df20a70",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.87.dcm",
+      "sha": "68194f4da6c85214e596aa57efced21eec8f88a2",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.88.dcm",
+      "sha": "9479c563b8d320a40199cf311b0cde92e3949ebd",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.89.dcm",
+      "sha": "c289cf876468927f325e434ae302090fd7be3279",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.9.dcm",
+      "sha": "2bb3f7ac0422a4488f7faf85273c3cbd55b4db65",
+      "size": 526088
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.90.dcm",
+      "sha": "83e40750d2dc63b64bf28b6f6c352749bc5ce633",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.91.dcm",
+      "sha": "3f541970d91a7ee114f0c048977680ff4b5553c5",
+      "size": 526098
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/CT.1.2.840.113619.2.55.3.671756986.106.1316467036.466.92.dcm",
+      "sha": "1702bb6d93607ef7e3b46140396d2a2ba14b4675",
+      "size": 526104
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RD.1.2.246.352.71.7.2088656855.452083.20110920153746.dcm",
+      "sha": "c6e43987760f15264820a993cf67c0b84420ae32",
+      "size": 4305852
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381134.20110921150951.dcm",
+      "sha": "d81edf0fc6e1712a86aa604e78c3325e2f257da2",
+      "size": 526634
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381137.20110921152343.dcm",
+      "sha": "a69b172e8dbcf71b54c45c3178c5c25c31332edc",
+      "size": 526648
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381138.20110921153147.dcm",
+      "sha": "c477c338e2004822bdf928cc0918e15a4f5d7461",
+      "size": 526624
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RI.1.2.246.352.71.3.2088656855.2381139.20110921153147.dcm",
+      "sha": "f489d28452350cee6e31db1d56bc83b70aceae7c",
+      "size": 526638
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RP.1.2.246.352.71.5.2088656855.377401.20110920153647.dcm",
+      "sha": "75220c12ad1ff772a7eea30cef855540f24f1b30",
+      "size": 19172
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Original/RS.1.2.246.352.71.4.2088656855.2404649.20110920153449.dcm",
+      "sha": "9c99d083b20a6824baceedb5aec000748af7096d",
+      "size": 1971560
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Prostate DRR Screen Shot.jpg",
+      "sha": "40f714c4ad21c853f35824fe8f083fc3bc19980a",
+      "size": 724493
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Prostate Screen Shot.jpg",
+      "sha": "1e18b57e27088b10a177d0296758d8ecc3cbae6b",
+      "size": 929224
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/Rando, PROSTATE (TEST PHYS PROSTATE) DVH",
+      "sha": "bab27974d3f89b21da4dc8ec3666d55a0b4c88a8",
+      "size": 396189
+    },
+    {
+      "path": "eclipse-8.1.20-phantom-prostate/readme.txt",
+      "sha": "d10dd67804c119cb891973487057b3ccf38adc27",
+      "size": 249
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.17872389039225636003114712517102552.dcm",
+      "sha": "751c4f33a40f8bf928c0ae8d28f0907b5b55ea75",
+      "size": 132356
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.22367612717862586288258937892514156.dcm",
+      "sha": "27e85faed1b61ae6884f7febba7fa7f3bab95975",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.24868522841476962925438082942860851.dcm",
+      "sha": "a7d13a3748db0b6476bc03a8d153d2ba97180572",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.28587439838923936873561131961000937.dcm",
+      "sha": "fefad6b64e4e054a582d5d360d3a5921fb482cf9",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.30526214367323423646480956973062494.dcm",
+      "sha": "9d0f77d61843e3f88cb557069ff121da6b772eba",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.3594312864895273758108617995376903.dcm",
+      "sha": "df1f7b6ff83fcb87aa38f2f59b7a8ef1a2aa4351",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.37886923028252450464878538247756870.dcm",
+      "sha": "cf8664455398d69947f3e254feb8663689a2803e",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.41618595848150228809403094609706047.dcm",
+      "sha": "51376c9f252ad1bd87301744a7c364b7fbbc68a3",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.50289933122181835271381699721415458.dcm",
+      "sha": "673047f24bcf17ee319293350be48fe3c85b2f63",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.50862443536301373561278005034163599.dcm",
+      "sha": "4168cbfd5d642b0faad7b3cb38656ddbb2acfd1f",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.65357675627149094316041646442733138.dcm",
+      "sha": "6dbc23650cdbcff7316c2b6b9acae2569339d7e5",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/CT 1.2.826.0.1.3680043.2.1125.1.73478682197005658050599728652691557.dcm",
+      "sha": "78ab303b59fd236a4d152d6965d866d1735b77a9",
+      "size": 132382
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/RS 1.2.528.1.1007.189.1.32899.433512217.5.dcm",
+      "sha": "ecccfe9141f881ee292150db30a3da75be08b7b4",
+      "size": 17402
+    },
+    {
+      "path": "oncentra-4.1.6-prostate-ct-tilted-plane/_readme.txt",
+      "sha": "f743e7e3f7459dbdddc8e4f3cbecb29a85b12ed9",
+      "size": 66
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/dose_1.2.826.0.1.3680043.8.274.1.1.6549911257.77961.3133305374.424.dcm",
+      "sha": "598ebd10db9dd875f9bf359662b7483fdb14b3e1",
+      "size": 5760
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0000_1.2.826.0.1.3680043.8.274.1.1.2750954856.34924.5415589575.496.dcm",
+      "sha": "01de0d01321593cd7a1de2e9936c5927bebfbd6e",
+      "size": 1510
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0001_1.2.826.0.1.3680043.8.274.1.1.5945519238.35359.6590142192.335.dcm",
+      "sha": "cc97adfb00562df241136e96b8575ee878cb4336",
+      "size": 1510
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0002_1.2.826.0.1.3680043.8.274.1.1.9491626044.80423.6766573165.382.dcm",
+      "sha": "189e7a5137a70dce78a01ab2557d48618d0e950b",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0003_1.2.826.0.1.3680043.8.274.1.1.7810785014.44800.3397379354.727.dcm",
+      "sha": "c68438f08f946e73d209d88be1d19460b9fd749c",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0004_1.2.826.0.1.3680043.8.274.1.1.9059479387.68963.4959156378.500.dcm",
+      "sha": "3b7ed003c8f79ef88876a41552567d205bf3990a",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0005_1.2.826.0.1.3680043.8.274.1.1.9737344341.72642.5921474233.965.dcm",
+      "sha": "7bffb857b0283137bf52cc0988e692ac6302e462",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0006_1.2.826.0.1.3680043.8.274.1.1.1666165198.87321.6423451751.306.dcm",
+      "sha": "437f27b4e142d97c5e7ac529f245de60c0a2f8fe",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0007_1.2.826.0.1.3680043.8.274.1.1.5090341991.92345.1331754349.395.dcm",
+      "sha": "f88f5f5b5ccbd5d476a2d1680c38412cb6857df9",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0008_1.2.826.0.1.3680043.8.274.1.1.8517521574.11046.7875344575.134.dcm",
+      "sha": "335598df74239e80edf9468ac7d34065bdbb119e",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/image0009_1.2.826.0.1.3680043.8.274.1.1.7984847255.87224.1803445203.789.dcm",
+      "sha": "f5d6e70e8401dcdb01d08f0d714dd9cf1e7a3b5c",
+      "size": 1506
+    },
+    {
+      "path": "plastimatch_tiny-rt-study/rtss_1.2.826.0.1.3680043.8.274.1.1.7145442384.75872.7982248107.258.dcm",
+      "sha": "42e0c3b91666e327fb0c9c27677e00e70273068d",
+      "size": 14380
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-1.5.CT.dcm",
+      "sha": "79fb0c19fbf66cb87d3fb81eb57fd383d7f58f3c",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-11.5.CT.dcm",
+      "sha": "7d915ab2a27df46b05214e0d6fd8d2cc7061ff0a",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-14.CT.dcm",
+      "sha": "e08f6c119281aea11d29e9abd742b72c48722575",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-16.5.CT.dcm",
+      "sha": "7a83132cddd9e807bc4759cb462ae3ca851da644",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-19.CT.dcm",
+      "sha": "9deebe1f30a5a2d3667e46e68e88a211402fe851",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-20.CT.dcm",
+      "sha": "63a5bd727381ba18f6110a10ed2c8546e8193499",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-21.3.CT.dcm",
+      "sha": "a6a77fe5712d911f1bacac568a034bd4af244894",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-21.5.CT.dcm",
+      "sha": "c8ce363987a3e9ea782514b5983601203adc4a12",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-22.5.CT.dcm",
+      "sha": "14a857981c3c910cc3bb9840988d7067170a1989",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-23.8.CT.dcm",
+      "sha": "cfbb41be0baa0aa0be4b663044cb19ee6d46341c",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-4.CT.dcm",
+      "sha": "aaee8453e458001e6ae61e2fa37a1471373d47d4",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-6.5.CT.dcm",
+      "sha": "42e737af612720a0200a8071b7d3288c3f335604",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.-9.CT.dcm",
+      "sha": "9c761e214806d24c4b36cdf8bab2b14eafbcc12f",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.1.CT.dcm",
+      "sha": "f6b29fd66817d5bd03410614718d3728d932232e",
+      "size": 525210
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.11.CT.dcm",
+      "sha": "f500d2a657020bac3ed27febb5ce8326326d0593",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.13.5.CT.dcm",
+      "sha": "8ebea05a65ebb7e5b20ed1f53197d05f8abcb2e8",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.16.5.CT.dcm",
+      "sha": "440a94d1b76f3ab05fcad098927ec8e6380d1a55",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.17.8.CT.dcm",
+      "sha": "1912ae09f87a5f05081f3065fc111b605a610f3d",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.19.CT.dcm",
+      "sha": "5fe95a8de79ee3486adf130881c8ae34a981c98b",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.20.3.CT.dcm",
+      "sha": "b33fc5781ce125f8fd0803b14d5d6546f1569bea",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.21.5.CT.dcm",
+      "sha": "851c8d16cbd051563edcf531182b7ace6d5a4a52",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.22.8.CT.dcm",
+      "sha": "b8b3adb8af45420c53cea987b3b40214f67facd3",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.24.CT.dcm",
+      "sha": "d4610919afa615fd4efe04cd801bb020b17e7338",
+      "size": 525214
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.3.5.CT.dcm",
+      "sha": "1b7a683ba45d36bd5d4e22831c1bdf6403fa2c66",
+      "size": 525210
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.6.CT.dcm",
+      "sha": "186553b27964d0cd1fdf4b6265671f2b8d6c30a4",
+      "size": 525210
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/CT.rtp99.5.20110509.IRREGULAR.T.8.5.CT.dcm",
+      "sha": "86b0bb1f7e71420f2a3103929a9fd0aef1ccf35c",
+      "size": 525210
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/DOSE.20110509.1010_Irregular.dcm",
+      "sha": "8b987d2c49468a4cb9d5a28291d1bc1371b285cb",
+      "size": 8596
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/RTXPLAN.20110509.1010_Irregular.dcm",
+      "sha": "9685927c10a6d8723a67a5870cf8b7469ca1089b",
+      "size": 7680
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/SS.rtp99.5.20110509.1010.dcm",
+      "sha": "b84dd1d6f26ef8c42648c82f07d6cc6056cd1520",
+      "size": 34354
+    },
+    {
+      "path": "xio-4.60.00-phantom-irregular-spacing/readme.txt",
+      "sha": "ffba8a1159443f2e462ec80f083c87b58787ae0a",
+      "size": 133
+    }
+  ],
+  "comparison_profile": "eclipse-prostate-1"
+}

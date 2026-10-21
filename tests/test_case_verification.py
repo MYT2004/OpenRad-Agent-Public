@@ -316,3 +316,35 @@ def test_synthetic_and_unmarked_sources_cannot_be_mixed(tmp_path):
         assert result['status']=='BLOCKED' and 'mixed_synthetic_provenance' in codes(result)
         with pytest.raises(ValueError):
             parse_and_evaluate_dvh(str(root/'synthetic_dose.dcm'),str(root/'synthetic_struct.dcm'),['Brainstem'],rtplan_path=str(root/'synthetic_plan.dcm'))
+
+
+@pytest.mark.parametrize('kind,expected_code,status',[
+    ('tilted','contour_orientation_scope','FLAGGED_FOR_REVIEW'),
+    ('nonplanar','contour_planarity','BLOCKED'),
+    ('bad_count','contour_integrity','BLOCKED')])
+def test_standalone_structures_receive_geometry_checks(case_files,kind,expected_code,status):
+    root,datasets,_,_=case_files
+    (root/'dose.dcm').unlink();(root/'plan.dcm').unlink()
+    contour=datasets['struct'].ROIContourSequence[0].ContourSequence[0]
+    if kind=='tilted':contour.ContourData=[0,0,0,2,0,0,2,2,1,0,2,1]
+    elif kind=='nonplanar':contour.ContourData=[0,0,0,2,0,0,2,2,1,0,2,0]
+    else:contour.NumberOfContourPoints=99
+    datasets['struct'].save_as(root/'struct.dcm')
+    result=run(case_files)
+    assert result['status']==status and expected_code in codes(result)
+    assert result['criteria']['contour_plane_atol_mm']==.01
+    assert result['profile']=='case-intake-2'
+
+
+@pytest.mark.parametrize('kind,status',[('CLOSED_PLANAR','BLOCKED'),('POINT','FLAGGED_FOR_REVIEW')])
+def test_single_point_semantics_are_not_treated_as_a_volume(case_files,kind,status):
+    root,datasets,_,_=case_files
+    contour=datasets['struct'].ROIContourSequence[0].ContourSequence[0]
+    contour.ContourGeometricType=kind;contour.NumberOfContourPoints=1;contour.ContourData=[0,0,0]
+    datasets['struct'].save_as(root/'struct.dcm')
+    result=run(case_files)
+    assert result['status']==status
+    if kind=='CLOSED_PLANAR':
+        issue=next(f for f in result['findings'] if f['code']=='contour_integrity')
+        assert '/ROI_' in issue['scope'] and '/Contour_' in issue['scope']
+        assert issue['observed']['number_of_points']==1

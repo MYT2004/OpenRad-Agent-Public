@@ -24,6 +24,23 @@ class DVHAnalysisInput(BaseModel):
     reviewed_name_map: Optional[Dict[str, str]] = Field(default=None, description="Human-reviewed source ROI name to TG-263 primary/target name mapping. Never infer anatomy from names.")
 
 
+def cumulative_dvh_curve(doses):
+    """Empirical cumulative curve at 0.01 Gy resolution, bounded to 10,001 bins.
+
+    Sorting/search avoids a full voxel scan at every threshold. Above the bin
+    budget, the explicitly returned step increases in whole centigray units.
+    Clinical D metrics are calculated independently from the sampled doses.
+    """
+    values=np.sort(np.asarray(doses,dtype=float))
+    PhysicsValidationEngine.validate_dose_grid(values,raise_on_fail=True)
+    upper=max(float(values[-1])*1.05,1.)
+    step=max(.01,float(np.ceil(upper/10000*100)/100))
+    bins=np.round(np.arange(min(10000,int(np.ceil(upper/step)))+1)*step,2)
+    volumes=100*(len(values)-np.searchsorted(values,bins,side='left'))/len(values)
+    return {'dose_bins_Gy':np.round(bins,2).tolist(),'volume_percent':np.round(volumes,2).tolist(),
+            'bin_width_Gy':step,'method':'Empirical volume receiving at least each threshold; sorted samples, no dose smoothing.'}
+
+
 def analyze_dvh(
     dicom_rtstruct_path: str,
     dicom_rtdose_path: str,
@@ -123,7 +140,7 @@ def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, 
         "status": "research_only",
         "course_linkage_verified": linkage_verified,
         "clinical_release": False,
-        "limitations": ["Axial voxel-center sampling with contour-plane slab thickness and linear z dose interpolation. Keyhole contours, irregular planes and partial dose coverage are blocked. No clinical uncertainty bound established."],
+        "limitations": ["Axial voxel-center sampling with contour-plane slab thickness and linear z dose interpolation. Unsupported/self-intersecting polygon encodings, irregular planes and partial dose coverage are blocked. Topology interpretation requires independent verification. No clinical uncertainty bound established."],
         "dose_grid_shape": list(dose_grid.shape),
         "max_dose_Gy": float(np.max(dose_grid)),
         "voxel_volume_cc": float(voxel_volume_cc),
@@ -176,11 +193,6 @@ def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, 
         v50_percent = float(100.0 * v50_count / len(doses))
         v50_cc = float(v50_count * roi_voxel_volume_cc)
 
-        # Generate cumulative DVH curve bins (100 points)
-        dose_bins = np.linspace(0.0, max(d_max * 1.05, 1.0), 101)
-        # Cumulative volume fraction >= dose
-        vol_fractions = [float(100.0 * np.sum(doses >= b) / len(doses)) for b in dose_bins]
-
         results["structures"][target_name] = {
             "found": True,
             "structure_name": actual_name,
@@ -200,10 +212,7 @@ def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, 
             "D2_Gy": round(d2, 2),
             "V50_percent": round(v50_percent, 2),
             "V50_cc": round(v50_cc, 3),
-            "dvh_curve": {
-                "dose_bins_Gy": [round(float(b), 2) for b in dose_bins.tolist()],
-                "volume_percent": [round(float(v), 2) for v in vol_fractions],
-            },
+            "dvh_curve": cumulative_dvh_curve(doses),
         }
 
     return results

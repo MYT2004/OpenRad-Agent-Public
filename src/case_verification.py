@@ -269,6 +269,70 @@ def verify_patient_case(request: CaseVerificationRequest):
     if not series:
         finding('missing_ct','REVIEW','case','No conventional CT series was available for image association checks.',
                 'Provide the source image series or document the explicitly supported non-CT workflow.')
+    # Assess every structure set, even when dose/plan objects are absent.
+    structure_naming={}
+    for record in records.values():
+        if record['modality']!='RTSTRUCT':continue
+        scope=record['file_id'];struct=record['ds'];naming=[]
+        structure_naming[str(struct.SOPInstanceUID)]=naming
+        try:
+            rois=list(getattr(struct,'StructureSetROISequence',[]))
+            if not rois:raise ValueError('No ROI definitions')
+            build_roi_index(rois)
+            for roi in rois:
+                verdict=check_structure_name(str(roi.ROIName))
+                canonical=verdict['canonical_name']
+                label=canonical or f'ROI_{int(roi.ROINumber)}'
+                naming.append(dict(roi_number=int(roi.ROINumber),label=label,status=verdict['status']))
+                if canonical is None or verdict['status'] not in ('official_primary',):
+                    finding('roi_name_review','REVIEW',f'{scope}/ROI_{int(roi.ROINumber)}','Structure name requires scoped nomenclature/anatomical review.',
+                            'Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.',reference='tg263')
+            roi_numbers={int(roi.ROINumber) for roi in rois}
+            contoured=set()
+            for roi_contour in getattr(struct,'ROIContourSequence',[]):
+                if getattr(roi_contour,'ContourSequence',[]):
+                    contoured.add(int(roi_contour.ReferencedROINumber))
+                if int(roi_contour.ReferencedROINumber) not in roi_numbers:
+                    raise ValueError('Orphan ROI contour')
+                for contour_index,contour in enumerate(getattr(roi_contour,'ContourSequence',[]),1):
+                    contour_scope=f'{scope}/ROI_{int(roi_contour.ReferencedROINumber)}/Contour_{contour_index}'
+                    if str(getattr(contour,'ContourGeometricType','')) not in ('CLOSED_PLANAR','CLOSEDPLANAR_XOR'):
+                        finding('contour_type_scope','REVIEW',contour_scope,'One or more contours are not in the closed-planar DVH sampling scope.',
+                                'Review the contour purpose and select a supported anatomical/dosimetric workflow.',reference='dicom-roi-contour')
+                    points=np.asarray(getattr(contour,'ContourData',[]),dtype=float)
+                    expected_points=int(getattr(contour,'NumberOfContourPoints',0))
+                    if expected_points<1 or points.ndim!=1 or points.size!=3*expected_points or not np.isfinite(points).all():
+                        finding('contour_integrity','BLOCK',contour_scope,'Contour point count or finite coordinates are invalid.',
+                                'Review the structure export in the source TPS; do not invent or delete contour points.',reference='dicom-roi-contour')
+                        continue
+                    kind=str(getattr(contour,'ContourGeometricType',''))
+                    if kind in ('CLOSED_PLANAR','CLOSEDPLANAR_XOR'):
+                        if expected_points<3:
+                            finding('contour_integrity','BLOCK',contour_scope,'Closed planar contours require at least three points.',
+                                    'Review the source contour export; no area or volume is inferred.',
+                                    {'number_of_points':expected_points,'minimum_for_closed_polygon':3},'dicom-roi-contour')
+                            continue
+                        xyz=points.reshape(-1,3)
+                        centered=xyz-xyz.mean(axis=0)
+                        _,_,directions=np.linalg.svd(centered,full_matrices=False)
+                        residual=float(np.max(np.abs(np.sum(centered*directions[-1],axis=1))))
+                        if not np.isfinite(residual):raise ValueError('Nonfinite contour plane residual')
+                        if residual>0.01:
+                            finding('contour_planarity','BLOCK',contour_scope,'A closed-planar contour is not coplanar within the numerical tolerance.',
+                                    'Inspect the original contour in a validated viewer; do not flatten or repair source coordinates.',
+                                    {'max_plane_residual_mm':residual,'tolerance_mm':0.01},'dicom-roi-contour')
+                        elif float(np.ptp(xyz[:,2]))>0.01:
+                            finding('contour_orientation_scope','REVIEW',contour_scope,'A planar contour is tilted relative to the supported axial DVH sampling planes.',
+                                    'Use a validated orientation-aware contour/DVH workflow. A tilted contour can be valid DICOM; no axial projection is assumed.',
+                                    reference='dicom-roi-contour')
+            if roi_numbers-contoured:
+                finding('roi_contours_absent','REVIEW',scope,'Some ROI definitions have no associated contour item.',
+                        'Confirm which structures are intended for dose assessment and obtain their contours from the source system.',
+                        len(roi_numbers-contoured),'dicom-roi-contour')
+        except (ValueError,AttributeError,TypeError,KeyError,np.linalg.LinAlgError):
+            finding('structure_integrity','BLOCK',scope,'Structure ROI definitions or contour associations are malformed or ambiguous.',
+                    'Review the source structure export and ROI indices; no geometry or anatomical identity is inferred.')
+
     dose_cases=[]
     for record in records.values():
         if record['modality']!='RTDOSE':continue
@@ -311,35 +375,7 @@ def verify_patient_case(request: CaseVerificationRequest):
             if any(str(getattr(item,'FrameOfReferenceUID',''))!=frame for item in getattr(struct,'ReferencedFrameOfReferenceSequence',[])):
                 finding('structure_reference_frame','BLOCK',scope,'Structure source-reference frame and dose frame disagree.',
                         'Review the intended registered source images and course; retain the source identifiers unchanged.')
-            build_roi_index(rois)
-            for roi in rois:
-                verdict=check_structure_name(str(roi.ROIName))
-                canonical=verdict['canonical_name']
-                label=canonical or f'ROI_{int(roi.ROINumber)}'
-                case['roi_naming'].append(dict(roi_number=int(roi.ROINumber),label=label,status=verdict['status']))
-                if canonical is None or verdict['status'] not in ('official_primary',):
-                    finding('roi_name_review','REVIEW',f'{scope}/ROI_{int(roi.ROINumber)}','Structure name requires scoped nomenclature/anatomical review.',
-                            'Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.',reference='tg263')
-            roi_numbers={int(roi.ROINumber) for roi in rois}
-            contoured=set()
-            for roi_contour in getattr(struct,'ROIContourSequence',[]):
-                if getattr(roi_contour,'ContourSequence',[]):
-                    contoured.add(int(roi_contour.ReferencedROINumber))
-                if int(roi_contour.ReferencedROINumber) not in roi_numbers:
-                    raise ValueError('Orphan ROI contour')
-                for contour in getattr(roi_contour,'ContourSequence',[]):
-                    if str(getattr(contour,'ContourGeometricType','')) not in ('CLOSED_PLANAR','CLOSEDPLANAR_XOR'):
-                        finding('contour_type_scope','REVIEW',scope,'One or more contours are not in the closed-planar DVH sampling scope.',
-                                'Review the contour purpose and select a supported anatomical/dosimetric workflow.',reference='dicom-roi-contour')
-                    points=np.asarray(getattr(contour,'ContourData',[]),dtype=float)
-                    expected_points=int(getattr(contour,'NumberOfContourPoints',0))
-                    if expected_points<1 or points.ndim!=1 or points.size!=3*expected_points or not np.isfinite(points).all():
-                        finding('contour_integrity','BLOCK',scope,'Contour point count or finite coordinates are invalid.',
-                                'Review the structure export in the source TPS; do not invent or delete contour points.',reference='dicom-roi-contour')
-            if roi_numbers-contoured:
-                finding('roi_contours_absent','REVIEW',scope,'Some ROI definitions have no associated contour item.',
-                        'Confirm which structures are intended for dose assessment and obtain their contours from the source system.',
-                        len(roi_numbers-contoured),'dicom-roi-contour')
+            case['roi_naming']=structure_naming.get(str(struct.SOPInstanceUID),[])
             refs=set(_image_references(struct))
             if not refs:
                 finding('image_references_absent','REVIEW',scope,'No explicit source-image SOP references were found in the structure set.',
@@ -383,13 +419,14 @@ def verify_patient_case(request: CaseVerificationRequest):
         if len(group['example_scopes'])<5:group['example_scopes'].append(item['scope'])
         if item['observed'] is not None and len(group['example_observations'])<5:
             group['example_observations'].append({'scope':item['scope'],'observed':item['observed']})
-    result=dict(case_id=request.case_id,status=status,clinical_release=False,synthetic=synthetic,profile='case-intake-1',
+    result=dict(case_id=request.case_id,status=status,clinical_release=False,synthetic=synthetic,profile='case-intake-2',
                 counts=dict(counts),files_hashed=len(inventory),pixel_objects_decoded=pixel_checks,
                 check_pixels=request.check_pixels,ct_series=series_summaries,dose_cases=dose_cases,findings=findings,
                 source_inventory=inventory,references=REFERENCES,findings_summary=list(grouped.values()),
                 privacy={'source_files_modified':False,'source_paths_exported':False,'patient_identifiers_exported':False},
                 software={'pydicom':pydicom.__version__,'numpy':np.__version__,'verifier_source_sha256':_hash_file(Path(__file__))},
-                criteria={'orientation_atol':1e-4,'position_atol_mm':.05,'spacing_rtol':.01,'duplicate_plane_atol_mm':1e-4},
+                criteria={'orientation_atol':1e-4,'position_atol_mm':.05,'spacing_rtol':.01,'duplicate_plane_atol_mm':1e-4,
+                          'contour_plane_atol_mm':.01,'contour_axial_z_span_atol_mm':.01},
                 limitations=['Read-only research intake; no complete DICOM conformance, de-identification or treatment-plan certification.',
                              'No image registration, contour rasterization/topology assessment, clinical dose-constraint assessment or source correction is performed here.',
                              'Only conventional single-frame CT stacks and the existing axial RTDOSE scope are supported. Other workflows require review.'])
