@@ -4,7 +4,6 @@ import os
 from typing import Any, Dict, List, Optional
 import numpy as np
 import pydicom
-from matplotlib.path import Path
 from pydantic import BaseModel, Field
 
 from openrad.validation.physics_rules import (
@@ -46,11 +45,17 @@ def analyze_dvh(
     ds_struct = pydicom.dcmread(dicom_rtstruct_path)
     ds_dose = pydicom.dcmread(dicom_rtdose_path)
 
+    ds_plan = pydicom.dcmread(dicom_rtplan_path, stop_before_pixels=True) if dicom_rtplan_path else None
+    return analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map, ds_plan)
+
+
+def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, ds_plan=None, require_plan_linkage=True, parsed_dose=None):
+    """Analyze validated in-memory datasets, including scrubbed analysis copies."""
     linkage_verified = False
-    if getattr(ds_dose, 'ReferencedRTPlanSequence', None):
-        if not dicom_rtplan_path:
-            raise DICOMGeometryError("Referenced RTPLAN is required to verify dose/structure course linkage.")
-        plan = pydicom.dcmread(dicom_rtplan_path, stop_before_pixels=True)
+    if getattr(ds_dose, 'ReferencedRTPlanSequence', None) and ds_plan is None and require_plan_linkage:
+        raise DICOMGeometryError("Referenced RTPLAN is required to verify dose/structure course linkage.")
+    if getattr(ds_dose, 'ReferencedRTPlanSequence', None) and ds_plan is not None:
+        plan = ds_plan
         dose_refs = {str(r.ReferencedSOPInstanceUID) for r in ds_dose.ReferencedRTPlanSequence}
         struct_refs = {str(r.ReferencedSOPInstanceUID) for r in getattr(plan, 'ReferencedStructureSetSequence', [])}
         if plan.Modality != 'RTPLAN' or dose_refs != {str(plan.SOPInstanceUID)} or struct_refs != {str(ds_struct.SOPInstanceUID)} or plan.PatientID != ds_dose.PatientID:
@@ -82,7 +87,9 @@ def analyze_dvh(
     raw_array = ds_dose.pixel_array.astype(float)
     if raw_array.ndim != 3 or raw_array.shape[0] != len(ds_dose.GridFrameOffsetVector):
         raise DICOMGeometryError("Dose pixel shape does not match frame geometry.")
-    dose_grid = raw_array * scaling  # Shape: (Z, Y, X) in Gy
+    dose_grid = raw_array * scaling if parsed_dose is None else np.asarray(parsed_dose, dtype=float)
+    if dose_grid.shape != raw_array.shape or not np.allclose(dose_grid, raw_array * scaling, rtol=0, atol=1e-10):
+        raise DICOMGeometryError("Parsed dose grid disagrees with source scaling/shape.")
 
     PhysicsValidationEngine.validate_dose_grid(dose_grid, raise_on_fail=True)
 

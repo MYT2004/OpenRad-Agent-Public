@@ -94,8 +94,9 @@ class PhysicsValidationEngine:
                 raise DoseIntegrityError(res.error_message)
             return res
 
-        min_val = float(np.nanmin(arr))
-        max_val = float(np.nanmax(arr))
+        finite = arr[np.isfinite(arr)]
+        min_val = float(finite.min()) if finite.size else None
+        max_val = float(finite.max()) if finite.size else None
         has_nans = bool((~np.isfinite(arr)).any())
 
         if has_nans:

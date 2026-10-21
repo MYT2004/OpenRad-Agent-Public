@@ -52,3 +52,7 @@ See [implementation scope and provenance](docs/TG263.md). Added the official pin
 ## Local integration follow-up
 
 Local workflows now discover linked DICOM objects, verify course references, use contour rather than dose-grid slab thickness, interpolate z-dose and quarantine malformed contours. API mappings are forwarded and synthetic patient outputs have been removed. See docs/LOCAL_WORKFLOWS.md; dataset-specific evidence remains in ignored local reports. 86 automated tests plus real-data UI/API checks were performed. Prior DVH volume estimates should not be reused. Clinical release blockers remain open.
+
+## OSI submission refactor
+
+Canonical REST/CLI tools now live in src/tools.py and session code in src/storage.py. The optional UI moved to frontend/app.py. DICOM analyses use recursive metadata allowlisting, consistent in-memory UID replacement, pydicom/PyMedPhys dose and axis cross-checks, and enforced post-tool shape/dose validation. Source data remains unchanged; exported plots use only scrubbed ROI labels. The analysis projection does not establish general DICOM de-identification compliance. 100 automated tests and the four real dose/structure pair checks pass with the expected two registration blocks. Docker execution is unverified locally because Docker is unavailable; CI now includes image build and health checks. Cloud Run deployment, TOPAS execution and clinical release remain unverified.

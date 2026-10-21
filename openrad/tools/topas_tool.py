@@ -186,23 +186,9 @@ def generate_topas_deck(
             "",
         ])
         scorer_component = "Phantom"
-    elif geom_norm in ["ct_patient", "patient", "dicom"]:
-        lines.extend([
-            "# --- Patient DICOM Geometry Container ---",
-            "s:Ge/Patient/Type = \"TsBox\"",
-            "s:Ge/Patient/Parent = \"World\"",
-            "s:Ge/Patient/Material = \"G4_WATER\"",
-            f"d:Ge/Patient/HLX = {hlx:.2f} cm",
-            f"d:Ge/Patient/HLY = {hly:.2f} cm",
-            f"d:Ge/Patient/HLZ = {hlz:.2f} cm",
-            "s:Ge/Patient/Color = \"gray\"",
-            "# Patient HU to material conversion table is enabled in production clinical setups",
-            "",
-        ])
-        scorer_component = "Patient"
     else:
         raise ValueError(
-            f"Unknown geometry_type '{geometry_type}'. Allowed: 'water_phantom', 'slab_heterogeneity', 'ct_patient'."
+            f"Unknown geometry_type '{geometry_type}'. Allowed: 'water_phantom', 'slab_heterogeneity'. Patient CT transport is unavailable."
         )
 
     # Beam Source Setup

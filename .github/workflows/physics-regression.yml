@@ -10,3 +10,18 @@ jobs:
           python-version: '3.11'
       - run: pip install ".[app,api,test]"
       - run: python -m pytest tests -q
+      - run: python agent_main.py --help
+
+  container-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t openrad-osi .
+      - run: |
+          docker run -d --name openrad-smoke -p 8080:8080 -e PORT=8080 openrad-osi
+          for attempt in $(seq 1 30); do
+            if curl --fail http://localhost:8080/health; then exit 0; fi
+            sleep 1
+          done
+          docker logs openrad-smoke
+          exit 1

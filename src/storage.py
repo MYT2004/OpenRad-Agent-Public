@@ -94,3 +94,31 @@ class StorageManager:
             with open(meta_file, "r", encoding="utf-8") as f:
                 return json.load(f)
         return {}
+
+# Context-local sessions keep concurrent API/CLI calls in separate artifact folders.
+from contextlib import contextmanager
+from contextvars import ContextVar
+from uuid import uuid4
+
+_active_session = ContextVar('openrad_session', default=None)
+
+
+@contextmanager
+def session_scope(manager, session_id=None):
+    session_id = session_id or str(uuid4())
+    manager.initialize_session(session_id)
+    token = _active_session.set((manager, session_id))
+    try:
+        yield session_id
+    finally:
+        _active_session.reset(token)
+
+
+def current_session():
+    active = _active_session.get()
+    if active is None:
+        manager = StorageManager(os.getenv('STORAGE_DIR', './storage/sessions'))
+        session_id = str(uuid4())
+        manager.initialize_session(session_id)
+        return manager, session_id
+    return active

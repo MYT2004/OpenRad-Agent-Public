@@ -55,9 +55,11 @@ class OpenRadAgent:
         llm_client: Optional[Any] = None,
         model_name: str = "gpt-4o",
     ):
-        self.artifact_dir = artifact_dir or os.path.abspath(
-            os.path.join(os.getcwd(), "artifacts")
-        )
+        if artifact_dir is None:
+            from src.storage import current_session
+            manager, session_id = current_session()
+            artifact_dir = manager.get_artifacts_dir(session_id)
+        self.artifact_dir = os.path.abspath(artifact_dir)
         os.makedirs(self.artifact_dir, exist_ok=True)
 
         self.repl = StatefulPythonREPL(artifact_dir=self.artifact_dir)
@@ -68,8 +70,9 @@ class OpenRadAgent:
         self.history: List[Dict[str, Any]] = []
 
         # Tool registry with typed JSON schemas
+        from src.tools import evaluate_dvh_tool
         self.tools = {
-            "analyze_dvh": analyze_dvh,
+            "analyze_dvh": evaluate_dvh_tool,
             "evaluate_gamma_index": evaluate_gamma_index,
             "generate_topas_deck": generate_topas_deck,
             "calculate_tcp_ntcp": calculate_tcp_ntcp,

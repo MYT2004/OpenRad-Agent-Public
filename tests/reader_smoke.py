@@ -10,10 +10,10 @@ from openrad.tools.multimodal_readers import (
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-RAW_DATA_DIR = os.path.join(SCRIPT_DIR, "data", "raw")
+RAW_DATA_DIR = os.path.join(SCRIPT_DIR, "..", "data", "raw")
 
 
-def test_all_files(root_dir: str):
+def run_reader_smoke(root_dir: str):
     print(f"Target directory: {root_dir}")
     if not os.path.exists(root_dir):
         print(f"Directory '{root_dir}' does not exist.")
@@ -51,4 +51,4 @@ def test_all_files(root_dir: str):
 
 
 if __name__ == "__main__":
-    test_all_files(RAW_DATA_DIR)
+    run_reader_smoke(RAW_DATA_DIR)

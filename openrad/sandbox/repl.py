@@ -48,9 +48,11 @@ class StatefulPythonREPL:
     """Persistent, isolated execution environment for medical physics computation."""
 
     def __init__(self, artifact_dir: Optional[str] = None):
-        self.artifact_dir = artifact_dir or os.path.abspath(
-            os.path.join(os.getcwd(), "artifacts")
-        )
+        if artifact_dir is None:
+            from src.storage import current_session
+            manager, session_id = current_session()
+            artifact_dir = manager.get_artifacts_dir(session_id)
+        self.artifact_dir = os.path.abspath(artifact_dir)
         os.makedirs(self.artifact_dir, exist_ok=True)
         self.figure_counter = 0
 

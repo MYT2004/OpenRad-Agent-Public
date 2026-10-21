@@ -22,3 +22,11 @@ data/processed/*
 /storage/
 build/
 dist/
+
+# OSI submission: local secrets, caches and all nested raw DICOM inputs
+.env
+__pycache__/
+storage/sessions/*
+data/raw/*.dcm
+data/raw/**/*.dcm
+.pytest_cache/

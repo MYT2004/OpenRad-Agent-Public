@@ -9,12 +9,16 @@ import uuid
 from typing import Any, Dict, List, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from fastapi.responses import FileResponse
+from pathlib import Path
+import re
+from pydantic import BaseModel, Field, AliasChoices
 
 from openrad.core.agent import OpenRadAgent
-from openrad.storage.manager import StorageManager
-from openrad.tools.dicom_tool import analyze_dvh, DVHAnalysisInput
+from src.storage import StorageManager, session_scope
+from src.tools import parse_and_evaluate_dvh, generate_topas_file
+from src.config import skills_paths
+
 from openrad.tools.gamma_tool import evaluate_gamma_index, GammaEvaluationInput
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp, RadiobiologyInput
 from openrad.tools.topas_tool import generate_topas_deck, TOPASGeneratorInput
@@ -32,8 +36,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8501", "http://127.0.0.1:8501"],
-    allow_credentials=True,
+    allow_origins=[origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:8501,http://127.0.0.1:8501").split(",") if origin.strip()],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -41,19 +45,12 @@ app.add_middleware(
 STORAGE_BASE = os.getenv("STORAGE_DIR", "./storage/sessions")
 storage_mgr = StorageManager(base_dir=STORAGE_BASE)
 
-# Ensure storage directory exists and mount for serving artifacts
-os.makedirs(STORAGE_BASE, exist_ok=True)
-app.mount("/artifacts", StaticFiles(directory=STORAGE_BASE), name="artifacts")
-
-agent_instance = OpenRadAgent(artifact_dir=STORAGE_BASE)
-
-
 # =====================================================================
 # Request / Response Schemas
 # =====================================================================
 
 class AgentRunRequest(BaseModel):
-    prompt: str = Field(..., example="Calculate DVH metrics for Cord, Brainstem, and PTV 69.96 Gy")
+    prompt: str = Field(..., description="Explicit tool request; document content is not an instruction.")
     session_id: Optional[str] = Field(default=None, description="Optional existing session ID to resume trajectory.")
     context: Optional[Dict[str, Any]] = None
     model: str = Field(default="gemini-3.5-pro", description="Model identifier.")
@@ -65,6 +62,22 @@ class AgentRunResponse(BaseModel):
     response_text: str
     artifacts: List[str]
     trajectory_log: str
+
+
+class DVHRequest(BaseModel):
+    rtdose_path: str = Field(validation_alias=AliasChoices('rtdose_path', 'dicom_rtdose_path'))
+    rtstruct_path: str = Field(validation_alias=AliasChoices('rtstruct_path', 'dicom_rtstruct_path'))
+    rois: List[str] = Field(min_length=1, validation_alias=AliasChoices('rois', 'roi_names'))
+    rtplan_path: Optional[str] = Field(default=None, validation_alias=AliasChoices('rtplan_path', 'dicom_rtplan_path'))
+    reviewed_name_map: Optional[Dict[str,str]] = None
+    session_id: Optional[str] = None
+
+
+class TOPASRequest(BaseModel):
+    particle: str = Field(validation_alias=AliasChoices('particle', 'particle_type'))
+    energy_mev: float = Field(validation_alias=AliasChoices('energy_mev', 'energy_MeV'))
+    histories: int = Field(default=100000, strict=True, gt=0, validation_alias=AliasChoices('histories','number_of_histories'))
+    session_id: Optional[str] = None
 
 
 class SessionStatusResponse(BaseModel):
@@ -79,17 +92,18 @@ class SessionStatusResponse(BaseModel):
 # =====================================================================
 
 @app.get("/health")
-async def health_check():
+def health_check():
     return {
         "status": "healthy",
         "service": "openrad-agent",
         "version": "1.0.0",
-        "framework": "Google Antigravity & OpenRad Core",
+        "skills_paths": skills_paths,
+        "clinical_release": False,
     }
 
 
 @app.post("/api/v1/agent/run", response_model=AgentRunResponse)
-async def run_agent(payload: AgentRunRequest):
+def run_agent(payload: AgentRunRequest):
     session_id = payload.session_id or str(uuid.uuid4())
     try:
         storage_mgr.initialize_session(session_id)
@@ -99,7 +113,7 @@ async def run_agent(payload: AgentRunRequest):
     try:
         session_agent = OpenRadAgent(artifact_dir=storage_mgr.get_artifacts_dir(session_id))
         result = session_agent.run(payload.prompt, context=payload.context)
-        storage_mgr.save_trajectory(session_id, payload.prompt, result.response)
+        storage_mgr.save_trajectory(session_id, "[request redacted]", "completed" if result.success else "failed")
         artifacts = storage_mgr.list_artifacts(session_id)
 
         # Include direct artifacts if any
@@ -110,29 +124,24 @@ async def run_agent(payload: AgentRunRequest):
             status="completed" if result.success else "failed",
             response_text=result.response,
             artifacts=all_artifacts,
-            trajectory_log=f"/artifacts/{session_id}/trajectory.json",
+            trajectory_log="",
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/v1/dvh/analyze")
-async def run_dvh(payload: DVHAnalysisInput):
+def run_dvh(payload: DVHRequest):
     try:
-        results = analyze_dvh(
-            dicom_rtstruct_path=payload.dicom_rtstruct_path,
-            dicom_rtdose_path=payload.dicom_rtdose_path,
-            roi_names=payload.roi_names,
-            reviewed_name_map=payload.reviewed_name_map,
-            dicom_rtplan_path=payload.dicom_rtplan_path,
-        )
-        return results
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        with session_scope(storage_mgr, payload.session_id):
+            return parse_and_evaluate_dvh(payload.rtdose_path, payload.rtstruct_path, payload.rois,
+                rtplan_path=payload.rtplan_path, reviewed_name_map=payload.reviewed_name_map)
+    except (ValueError, OSError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @app.post("/api/v1/gamma/evaluate")
-async def run_gamma(payload: GammaEvaluationInput):
+def run_gamma(payload: GammaEvaluationInput):
     try:
         results = evaluate_gamma_index(
             reference_dose_path=payload.reference_dose_path,
@@ -149,24 +158,23 @@ async def run_gamma(payload: GammaEvaluationInput):
 
 
 @app.post("/api/v1/topas/generate")
-async def run_topas(payload: TOPASGeneratorInput):
+def run_topas(payload: TOPASRequest):
     try:
-        deck = generate_topas_deck(
-            particle_type=payload.particle_type,
-            energy_MeV=payload.energy_MeV,
-            geometry_type=payload.geometry_type,
-            phantom_dimensions_cm=payload.phantom_dimensions_cm,
-            number_of_histories=payload.number_of_histories,
-        )
-        return {"status": "success", "deck": deck}
-    except BeamEnergyBoundsError as e:
-        raise HTTPException(status_code=422, detail=f"Physics Guardrail Error: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        with session_scope(storage_mgr, payload.session_id) as session_id:
+            filename = 'topas_' + uuid.uuid4().hex + '.txt'
+            target = str(Path(storage_mgr.get_artifacts_dir(session_id))/filename)
+            result = generate_topas_file(payload.particle, payload.energy_mev, payload.histories, target)
+            result.pop('output_path', None)
+            result.update(session_id=session_id, artifacts=[f'/artifacts/{session_id}/artifacts/{filename}'])
+            return result
+    except BeamEnergyBoundsError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except (ValueError, OSError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @app.post("/api/v1/radiobio/calculate")
-async def run_radiobio(payload: RadiobiologyInput):
+def run_radiobio(payload: RadiobiologyInput):
     try:
         results = calculate_tcp_ntcp(
             dvh_data=payload.dvh_data,
@@ -180,7 +188,7 @@ async def run_radiobio(payload: RadiobiologyInput):
 
 
 @app.get("/api/v1/sessions/{session_id}", response_model=SessionStatusResponse)
-async def get_session(session_id: str):
+def get_session(session_id: str):
     try:
         exists = storage_mgr.session_exists(session_id)
     except ValueError as exc:
@@ -199,7 +207,25 @@ async def get_session(session_id: str):
     )
 
 
-if __name__ == "__main__":
+@app.get('/artifacts/{session_id}/artifacts/{filename}')
+def get_artifact(session_id: str, filename: str):
+    if not re.fullmatch(r'(?:dvh|topas)_[a-f0-9]{32}\.(?:png|txt)', filename):
+        raise HTTPException(status_code=404, detail='Artifact not found.')
+    try:
+        directory = Path(storage_mgr.get_artifacts_dir(session_id)).resolve()
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    target = (directory/filename).resolve()
+    if target.parent != directory or not target.is_file():
+        raise HTTPException(status_code=404, detail='Artifact not found.')
+    return FileResponse(target)
+
+
+def main():
     import uvicorn
-    port = int(os.getenv("PORT", "8000"))
-    uvicorn.run("server:app", host="127.0.0.1", port=port, reload=False)
+    port = int(os.getenv("PORT", 8080))
+    uvicorn.run("server:app", host="0.0.0.0", port=port, reload=False)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,160 +1,97 @@
-See [local dataset workflows](docs/LOCAL_WORKFLOWS.md) for linked-data discovery, supported analyses and validation limits.
+# OpenRad-Agent — OSI Hackathon
 
-# Clinical validation status
+A deterministic research proof of concept for DICOM-RT dose-volume analysis and TOPAS input generation. The FastAPI server and CLI share real tools, session storage, metadata scrubbing and mandatory physics checks. Clinical commissioning and regulatory conformity are not established; see [the physics audit](MEDICAL_PHYSICS_AUDIT.md).
 
-Research prototype: clinical standards compliance and uncertainty margins are not established. See [TG-263 naming and metric implementation](docs/TG263.md) and the [medical physics audit](MEDICAL_PHYSICS_AUDIT.md) for mitigations, unsupported cases and release blockers.
-
-# OpenRad-Agent
-
-> **Autonomous AI Agent for Radiation Oncology & Medical Imaging Intelligence**  
-> Developed for the Open Scientific Intelligence (OSI) Hackathon 2026.
-
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](./tests)
-[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](./pyproject.toml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](./LICENSE)
-
----
-
-## 1. Project Overview
-
-In radiation therapy, clinical and physics data spans complex DICOM imaging series (CT simulation scans, RT structure sets, RT dose grids), longitudinal clinical metadata (PDF reports, JSON/FHIR), and Monte Carlo radiation transport simulations. 
-
-**OpenRad-Agent** is an autonomous medical physics and radiotherapy intelligence system powered by **Google Antigravity**. It unifies multimodal clinical ingestion, deterministic radiation oncology tools, stateful REPL computing, and an uncompromising **Physics Validation Engine** that enforces domain guardrails (AAPM TG-218, ICRU 83, and QUANTEC tolerances).
-
----
-
-## 2. System Architecture
+## Repository layout
 
 ```text
-                              +-----------------------+
-                              |   User Query / Task   |
-                              +-----------+-----------+
-                                          |
-                                          v
-                          +---------------+---------------+
-                          |    Orchestrator / Agent Core  |
-                          |   (LLM Reasoning & Strategy)  |
-                          +---------------+---------------+
-                                          |
-                 +------------------------+------------------------+
-                 |                                                 |
-                 v                                                 v
-   +-------------+-------------+                     +-------------+-------------+
-   |   Deterministic Tools     |                     |    Stateful Python REPL    |
-   |  (Structured Schema API)  |                     |    (Dynamic Execution)     |
-   +-------------+-------------+                     +-------------+-------------+
-                 |                                                 |
-                 +------------------------+------------------------+
-                                          |
-                                          v
-                          +---------------+---------------+
-                          |   Physics Validation Engine   |
-                          | (Constraints & Boundary Check)|
-                          +---------------+---------------+
-                                          |
-                                   [Pass / Fail?]
-                                     /         \
-                         (Pass)     /           \     (Fail: Self-Correction Loop)
-                                   v             v
-                       +-----------+---+   +-----+-------------------+
-                       | Output /      |   | Return Error + Trajectory|
-                       | Artifacts     |   | Back to Agent Core      |
-                       +---------------+   +-------------------------+
+server.py                    FastAPI REST entry point for Cloud Run
+agent_main.py                CLI entry point
+src/
+  tools.py                   Canonical DVH and TOPAS tools
+  storage.py                 Session and artifact management
+  hooks.py                   Enforced @post_tool_call validation
+  privacy.py                 Minimal scrubbed DICOM analysis copies
+  config.py                  Shared relative skills_paths
+openrad/                     Deterministic physics and nomenclature engine
+frontend/app.py              Optional local Streamlit UI
+tests/                       Automated tests and reader smoke runner
+skills/radiation_physics/    Physics workflow instructions
+SKILL.md                     Entry-point execution policy
+storage/sessions/            Runtime outputs only; ignored by Git
 ```
 
-### Core Subsystems
-1. **Orchestrator Core**: Manages prompt state, task decomposition, tool routing, and the autonomous self-correction loop.
-2. **Deterministic Tool Registry**: Fast, typed function interfaces wrapping key radiotherapy libraries (`pydicom`, `PyMedPhys`, `scipy`, `numpy`).
-3. **Stateful Python REPL**: Isolated execution environment where the agent dynamically manipulates 3D dose distributions and automatically intercepts `matplotlib` figures as artifacts.
-4. **Physics Validation Engine**: Hardcoded domain guardrails that prevent unphysical doses, invalid beam energies, or spatial misregistrations.
+The repository is already flat; there is no inner `OpenRad-Antigravity-Agent/` project. Root `README.md` is the canonical project guide. `requirements.txt` installs the extras defined in `pyproject.toml` rather than maintaining another dependency list.
 
----
+## Install and verify
 
-## 3. Structured Tool Definitions
+Python 3.9+ is supported by the project; the Cloud Run image uses Python 3.11.
 
-| Tool Name | Module | Description | Input Schema |
-| :--- | :--- | :--- | :--- |
-| `analyze_dvh` | `openrad.tools.dicom_tool` | Parses DICOM RTSTRUCT & RTDOSE, samples 3D dose grids within polygonal contours, and calculates D95, D50, D2, V50, Dmean, Dmin, Dmax. | `DVHAnalysisInput` |
-| `evaluate_gamma_index` | `openrad.tools.gamma_tool` | Computes 2D/3D Gamma Index passing rates, average gamma, and max gamma (AAPM TG-218 standard). | `GammaEvaluationInput` |
-| `generate_topas_deck` | `openrad.tools.topas_tool` | Generates syntactically valid TOPAS (Geant4-based) parameter decks for proton, e-, gamma, and neutron radiation transport. | `TOPASGeneratorInput` |
-| `calculate_tcp_ntcp` | `openrad.tools.radiobio_tool` | Calculates Lyman-Kutcher-Burman (LKB) NTCP, Poisson-LQ TCP, and Equivalent Uniform Dose (EUD). | `RadiobiologyInput` |
-| `execute_python_repl` | `openrad.sandbox.repl` | Stateful execution sandbox capturing figures, logs, and inspecting dose arrays for physics violations. | `code: str` |
-| `parse_dicom_metadata` | `openrad.tools.multimodal_readers` | Lightweight DICOM header parsing without loading heavy pixel arrays. | `file_path: str` |
-| `parse_patient_pdf/json/csv` | `openrad.tools.multimodal_readers` | Multi-format clinical document and tabular metadata parsers. | `file_path: str` |
-
----
-
-## 4. Physics Validation Guardrails
-
-To enforce maximum clinical safety and reliability, code execution and tool calls pass through the **Physics Validation Engine** before producing outputs:
-
-| Physics Domain | Rule Description | Action on Violation |
-| :--- | :--- | :--- |
-| **Dose Grid Integrity** | Dose values $D(\vec{r}) \ge 0\text{ Gy}$. Negative dose values are physically invalid. | Reject output; auto-prompt agent to re-check array calibration or background subtraction. |
-| **Beam Energy Bounds** | Clinical radiotherapy energies restricted to $0.01\text{ MeV} \le E \le 250\text{ MeV}$. | Abort Monte Carlo execution; inform agent of unphysical energy parameter. |
-| **Gamma Index** | $0\% \le \text{Pass Rate} \le 100\%$. | Check array alignment and spatial registration dimensions. |
-| **DICOM Geometry** | Grid voxel spacing $\Delta x, \Delta y, \Delta z > 0$ and slice orientation vectors are orthogonal. | Flag DICOM header discrepancy. |
-| **Radiobiology** | Normal tissue complication and tumor control probabilities $0.0 \le P \le 1.0$. | Reject parameter set; flag biologically invalid exponent or normalizer. |
-
----
-
-## 5. Repository Structure
-
-```text
-OpenRad-Agent/
-├── .agents/
-│   ├── rules/
-│   │   └── AGENTS.md                  # Domain physics rules & mandatory guardrails
-│   └── skills/
-│       └── openrad-radiotherapy/
-│           └── SKILL.md               # Antigravity skill playbook & clinical SOPs
-├── openrad/
-│   ├── core/                          # Orchestrator agent & medical physics prompts
-│   ├── tools/                         # Deterministic DVH, Gamma, TOPAS, & Radiobio tools
-│   ├── sandbox/                       # Stateful Python REPL with plot artifact interception
-│   ├── validation/                    # Physics Validation Engine & unit boundary checks
-│   └── storage/                       # Session trajectory & artifact persistence manager
-├── examples/                          # End-to-end DVH and TOPAS demonstration scripts
-├── tests/                             # Pytest suite (16 tests verifying all guardrails & tools)
-├── app.py                             # Streamlit interactive clinician dashboard
-├── server.py                          # FastAPI REST & streaming gateway
-├── Dockerfile                         # Container deployment for hackathon presentation
-├── pyproject.toml                     # Python package build configuration
-├── requirements.txt                   # Unified dependency specification
-└── README.md                          # Architectural specification and guide
-```
-
----
-
-## 6. Quickstart & Installation
-
-### 1. Setup Environment
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -r requirements.txt
+python -m pytest tests -q
 ```
 
-### 2. Run the Verification Test Suite
+## CLI
+
 ```bash
-pytest -v
+python agent_main.py dvh --rtdose /input/dose.dcm --rtstruct /input/struct.dcm --rtplan /input/plan.dcm --roi Brainstem
+python agent_main.py topas --particle proton --energy-mev 150 --histories 100000
 ```
 
-### 3. Launch Interactive Streamlit Dashboard
+Use `--storage-dir` and `--session-id` before the subcommand to choose a session. `dvh --roi-map '{"Cord":"SpinalCord"}'` accepts explicitly human-reviewed legacy ROI mappings. The CLI emits JSON and exits with code 2 for failed or incomplete analyses. `topas --output output.txt` selects a destination; existing files are not overwritten.
+
+The public Python interfaces are:
+
+```python
+from src.tools import parse_and_evaluate_dvh, generate_topas_file
+from src.storage import StorageManager, session_scope
+
+manager = StorageManager("storage/sessions")
+with session_scope(manager, "demo"):
+    result = parse_and_evaluate_dvh("dose.dcm", "struct.dcm", ["Brainstem"], rtplan_path="plan.dcm")
+    deck = generate_topas_file("proton", 150.0, 100000, "storage/sessions/demo/artifacts/topas.txt")
+```
+
+`parse_and_evaluate_dvh` uses pydicom for DICOM/contours and the public PyMedPhys dose/coordinate API. It reports D95%[Gy], D50%[Gy], D2%[Gy], V50Gy[%], V50Gy[cc] and mean dose. It saves cumulative DVH PNGs under the active session. The three positional arguments work without RTPLAN, but course linkage is then explicitly unverified. Supply RTPLAN for full dose→plan→structure association checks.
+
+## REST server and Cloud Run
+
 ```bash
-streamlit run app.py
+PORT=8080 python server.py
 ```
 
-### 4. Launch FastAPI REST Gateway
+The server listens on `0.0.0.0` and the dynamic `PORT` environment variable (default 8080), as required by [Cloud Run's container contract](https://docs.cloud.google.com/run/docs/container-contract). Use `CORS_ORIGINS` for a comma-separated list of authorized frontend origins; credentialed wildcard CORS is not enabled.
+
+- `GET /health` — readiness metadata and shared skill paths.
+- `POST /api/v1/dvh/analyze` — `rtdose_path`, `rtstruct_path`, `rois`, optional `rtplan_path`, `reviewed_name_map`, `session_id`.
+- `POST /api/v1/topas/generate` — `particle`, `energy_mev`, `histories`, optional `session_id`.
+- `GET /artifacts/{session_id}/artifacts/{filename}` — generated DVH PNGs or TOPAS text; session trajectories are not publicly mounted.
+- Existing gamma, radiobiology, agent and session endpoints remain available. Older DVH/TOPAS field names are accepted as aliases.
+
 ```bash
-uvicorn server.py:app --host 0.0.0.0 --port 8000
+docker build -t openrad-osi .
+docker run --rm -p 8080:8080 -e PORT=8080 openrad-osi
 ```
 
-### 5. Run Standalone Demonstration Scripts
+The image runs as a non-root user. `.dockerignore` and explicit Docker copies exclude patient datasets, secrets and runtime sessions. Cloud Run storage defaults to `/tmp/openrad/sessions` and is ephemeral. Mount authorized, appropriately de-identified input files separately; do not bake patient records into the image. Use Cloud Run IAM authentication before any network deployment with sensitive data. This refactor does not deploy a service or provision durable storage.
+
+Both entry points use `skills_paths = ["./skills/radiation_physics", "./SKILL.md"]`. Run from the repository root; the image uses `/app` as its working directory.
+
+## Optional frontend
+
 ```bash
-# DVH analysis & Radiobiological modeling on TCIA patient dataset
-python examples/dvh_analysis_demo.py
-
-# TOPAS Monte Carlo deck generation & physics guardrail self-correction
-python examples/topas_generation_demo.py
+streamlit run frontend/app.py --server.address 127.0.0.1 --browser.gatherUsageStats false
 ```
+
+The local UI can discover UID-linked datasets and route DVH requests through `src.tools`. Configure local folders in the sidebar or ignored `.env`. See [local workflows](docs/LOCAL_WORKFLOWS.md) and [TG-263 implementation scope](docs/TG263.md).
+
+## Safety and privacy scope
+
+Patient identity is checked before scrubbing so anonymisation cannot hide a wrong-patient match. Only required numeric geometry, pixels and contours are copied into analysis datasets; private tags, demographics, dates, free text and original identifying UIDs are excluded or replaced. Unsupported names are replaced with generic ROI labels; recognized TG-263 names are retained. Original DICOMs remain unchanged. This is an in-memory analysis projection, not a general de-identification exporter or certification of DICOM confidentiality-profile compliance. Burned-in annotation is rejected for dedicated review.
+
+The enforced `@post_tool_call` hook rejects negative/nonfinite doses and array/axis shape corruption. Beam energy must be 0.01–250 MeV and histories must be positive integers. TOPAS files contain World, Physics, BeamPosition, source and scorer definitions, but require validation in an installed TOPAS runtime.
+
+The axial DVH sampler rejects frame mismatches, unsupported topology, oblique/nonuniform grids, irregular contour planes and incomplete coverage. No measurements or prescriptions are silently changed. Gamma needs independent measurements; radiobiology needs explicit endpoint-specific parameters. The trusted local REPL is not a security sandbox. Clinical release and uncertainty budgets remain open work.

@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.venv
+venv
+artifacts
+storage
+data/raw
+data/processed
+**/*.dcm
+**/*.dicom
+build
+dist
+*.egg-info

@@ -53,8 +53,8 @@ def test_api_mapping_forwarded(monkeypatch,tmp_path):
     from fastapi.testclient import TestClient
     import server
     captured={}
-    def analyze(**kwargs):captured.update(kwargs);return {'status':'test'}
-    monkeypatch.setattr(server,'analyze_dvh',analyze)
+    def analyze(*args,**kwargs):captured.update(kwargs);return {'status':'test'}
+    monkeypatch.setattr(server,'parse_and_evaluate_dvh',analyze)
     client=TestClient(server.app)
     res=client.post('/api/v1/dvh/analyze',json={'dicom_rtstruct_path':'struct','dicom_rtdose_path':'dose','roi_names':['Cord'],'reviewed_name_map':{'Cord':'SpinalCord'}})
     assert res.status_code==200
@@ -67,7 +67,7 @@ def test_streamlit_all_modes_and_error_paths(monkeypatch):
     monkeypatch.setenv('OPENRAD_DATA_ROOTS','[]')
     from streamlit.testing.v1 import AppTest
     modes=['Interactive Agent Query','DICOM-RT & DVH Analyzer','Gamma Index QA (AAPM TG-218)','TOPAS Monte Carlo Deck Generator','Radiobiology (TCP / NTCP)','Stateful Python REPL Sandbox']
-    at=AppTest.from_file('app.py',default_timeout=15).run()
+    at=AppTest.from_file('frontend/app.py',default_timeout=15).run()
     for mode in modes:
         at.sidebar.selectbox[0].select(mode).run()
         assert not at.exception, (mode,at.exception)

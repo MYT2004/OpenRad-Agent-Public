@@ -16,11 +16,13 @@ dependencies = [
     "matplotlib>=3.5.0",
     "python-dotenv>=1.0.0",
     "shapely>=2.0",
+    "pymedphys>=0.40.0",
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["openrad*"]
+include = ["openrad*", "src*"]
+exclude = ["openrad.storage*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -33,3 +35,10 @@ openrad = ["data/*.json"]
 app = ["streamlit>=1.30", "pandas>=2.0", "pypdf>=3.0"]
 api = ["fastapi>=0.100", "uvicorn>=0.23"]
 test = ["pytest>=7.0", "httpx>=0.24"]
+
+[project.scripts]
+openrad-agent = "agent_main:main"
+openrad-server = "server:main"
+
+[tool.setuptools]
+py-modules = ["server", "agent_main"]

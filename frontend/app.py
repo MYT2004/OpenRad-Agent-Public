@@ -1,13 +1,15 @@
 """Local research workflows; patient files are never executed or sent to an LLM."""
+import sys
 import json
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
 import streamlit as st
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from dotenv import load_dotenv
 from openrad.core.agent import OpenRadAgent
 from openrad.tools.dataset import discover_dataset
-from openrad.tools.dicom_tool import analyze_dvh
+from src.tools import evaluate_dvh_tool as analyze_dvh
 from openrad.tools.gamma_tool import evaluate_gamma_index
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp
 from openrad.tools.topas_tool import generate_topas_deck
