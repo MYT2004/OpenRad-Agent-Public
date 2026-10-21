@@ -19,7 +19,7 @@ This skill defines domain-specific physical rules, mathematical formulas, unit g
 | :--- | :--- | :--- | :--- |
 | **Absorbed Dose** | Gray ($\text{Gy}$) | $D(\vec{r}) \ge 0\text{ Gy}$. Negative dose values are physically invalid. | Reject output; auto-prompt agent to re-check array calibration or background subtraction. |
 | **Beam Energy** | $0.01\text{ MeV} \le E \le 250\text{ MeV}$ | Enforce clinical bounds for photons ($\text{MV}$), electrons ($\text{MeV}$), and protons ($\text{MeV}$). | Abort Monte Carlo execution; inform agent of unphysical energy parameter. |
-| **Gamma Index** | $3\% / 3\text{ mm}$, $10\%$ cutoff | $0\% \le \text{Passing Rate} \le 100\%$. Voxels where $\gamma(\vec{r}) \le 1.0$ pass. | Check array alignment, origin shifts, and spatial registration dimensions. |
+| **Gamma Index** | $3\% / 2\text{ mm}$, $10\%$ cutoff | $0\% \le \text{Passing Rate} \le 100\%$. Voxels where $\gamma(\vec{r}) \le 1.0$ pass. | Check array alignment, origin shifts, and spatial registration dimensions. |
 | **DICOM Geometry** | Millimeters ($\text{mm}$) | $\Delta x, \Delta y, \Delta z > 0$ and slice orientation vectors are orthogonal. | Flag DICOM header discrepancy. |
 | **Radiobiology** | Probability $[0.0, 1.0]$ | $0.0 \le \text{NTCP}, \text{TCP} \le 1.0$, $TD_{50} > 0$, $m > 0$, $n > 0$. | Reject parameter set; flag biologically invalid exponent or normalizer. |
 
@@ -68,7 +68,7 @@ qa_results = evaluate_gamma_index(
     reference_dose_path=ref_dose_path,
     evaluated_dose_path=eval_dose_path,
     dose_tolerance_percent=3.0,
-    distance_tolerance_mm=3.0,
+    distance_tolerance_mm=2.0,
     dose_threshold_percent=10.0
 )
 ```
@@ -113,3 +113,7 @@ repl = StatefulPythonREPL(artifact_dir="artifacts")
 result = repl.execute("plt.plot([0, 10], [0, 50]); plt.title('Dose Profile')")
 # result.artifacts contains saved figure paths
 ```
+
+## TG-263 nomenclature
+
+Use `openrad.validation.nomenclature` and the pinned AAPM 20170815 vocabulary. Primary names are preferred. Preserve source ROI names, laterality and qualifiers. Unknown or reverse-order names require review; pass human-reviewed aliases via `reviewed_name_map`. Reject duplicate case-insensitive names and mapping collisions. Report the supported syntax scope; never claim naming confirms anatomy. DVH results expose `tg263_metrics` with explicit labels such as `D95%[Gy]` and `V50Gy[%]`. See `docs/TG263.md` for source provenance and unsupported target forms. Never change patient data or requested beam parameters to make a guardrail pass.

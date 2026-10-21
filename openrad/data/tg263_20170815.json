@@ -1,0 +1,2880 @@
+{
+  "source_url": "https://www.aapm.org/pubs/reports/rpt_263_supplemental/TG263_Nomenclature_Worksheet_20170815.xls",
+  "worksheet_version": "20170815",
+  "retrieved": "2026-10-21",
+  "source_sha256": "5ff0b9e2ebf578793f6fa8f59c2357b3feb61fdc0f87171e9103a0495d93d150",
+  "structures": [
+    {
+      "primary": "A_Aorta",
+      "reverse": "Aorta_A"
+    },
+    {
+      "primary": "A_Aorta_Asc",
+      "reverse": "Asc_Aorta_A"
+    },
+    {
+      "primary": "A_Brachiocephls",
+      "reverse": "Brachiocephls_A"
+    },
+    {
+      "primary": "A_Carotid",
+      "reverse": "Carotid_A"
+    },
+    {
+      "primary": "A_Carotid_L",
+      "reverse": "L_Carotid_A"
+    },
+    {
+      "primary": "A_Carotid_R",
+      "reverse": "R_Carotid_A"
+    },
+    {
+      "primary": "A_Celiac",
+      "reverse": "Celiac_A"
+    },
+    {
+      "primary": "A_Coronary",
+      "reverse": "Coronary_A"
+    },
+    {
+      "primary": "A_Coronary_L",
+      "reverse": "L_Coronary_A"
+    },
+    {
+      "primary": "A_Coronary_R",
+      "reverse": "R_Coronary_A"
+    },
+    {
+      "primary": "A_Femoral_Cflx_L",
+      "reverse": "L_Cflx_Femoral_A"
+    },
+    {
+      "primary": "A_Femoral_Cflx_R",
+      "reverse": "R_Cflx_Femoral_A"
+    },
+    {
+      "primary": "A_Femoral_L",
+      "reverse": "L_Femoral_A"
+    },
+    {
+      "primary": "A_Femoral_R",
+      "reverse": "R_Femoral_A"
+    },
+    {
+      "primary": "A_Humeral_Cflx_L",
+      "reverse": "L_Cflx_Humeral_A"
+    },
+    {
+      "primary": "A_Humeral_Cflx_R",
+      "reverse": "R_Cflx_Humeral_A"
+    },
+    {
+      "primary": "A_Humeral_L",
+      "reverse": "L_Humeral_A"
+    },
+    {
+      "primary": "A_Humeral_R",
+      "reverse": "R_Humeral_A"
+    },
+    {
+      "primary": "A_Hypophyseal_I",
+      "reverse": "I_Hypophyseal_A"
+    },
+    {
+      "primary": "A_Hypophyseal_S",
+      "reverse": "S_Hypophyseal_A"
+    },
+    {
+      "primary": "A_Iliac_Cflx_L",
+      "reverse": "L_Cflx_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_Cflx_R",
+      "reverse": "R_Cflx_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_Ext_L",
+      "reverse": "L_Ext_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_Ext_R",
+      "reverse": "R_Ext_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_Int_L",
+      "reverse": "L_Int_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_Int_R",
+      "reverse": "R_Int_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_L",
+      "reverse": "L_Iliac_A"
+    },
+    {
+      "primary": "A_Iliac_R",
+      "reverse": "R_Iliac_A"
+    },
+    {
+      "primary": "A_LAD",
+      "reverse": "LAD_A"
+    },
+    {
+      "primary": "A_Mesenteric_I",
+      "reverse": "I_Mesenteric_A"
+    },
+    {
+      "primary": "A_Mesenteric_S",
+      "reverse": "S_Mesenteric_A"
+    },
+    {
+      "primary": "A_Pulmonary",
+      "reverse": "Pulmonary_A"
+    },
+    {
+      "primary": "A_Subclavian",
+      "reverse": "Subclavian_A"
+    },
+    {
+      "primary": "A_Subclavian_L",
+      "reverse": "L_Subclavian_A"
+    },
+    {
+      "primary": "A_Subclavian_R",
+      "reverse": "R_Subclavian_A"
+    },
+    {
+      "primary": "A_Vertebral",
+      "reverse": "Vertebral_A"
+    },
+    {
+      "primary": "A_Vertebral_L",
+      "reverse": "L_Vertebral_A"
+    },
+    {
+      "primary": "A_Vertebral_R",
+      "reverse": "R_Vertebral_A"
+    },
+    {
+      "primary": "Acetabulum_L",
+      "reverse": "L_Acetabulum"
+    },
+    {
+      "primary": "Acetabulum_R",
+      "reverse": "R_Acetabulum"
+    },
+    {
+      "primary": "Acetabulums",
+      "reverse": "Acetabulums"
+    },
+    {
+      "primary": "AirWay_Dist",
+      "reverse": "Dist_AirWay"
+    },
+    {
+      "primary": "AirWay_Prox",
+      "reverse": "Prox_AirWay"
+    },
+    {
+      "primary": "Anus",
+      "reverse": "Anus"
+    },
+    {
+      "primary": "Appendix",
+      "reverse": "Appendix"
+    },
+    {
+      "primary": "Arytenoid",
+      "reverse": "Arytenoid"
+    },
+    {
+      "primary": "Arytenoid_L",
+      "reverse": "L_Arytenoid"
+    },
+    {
+      "primary": "Arytenoid_R",
+      "reverse": "R_Arytenoid"
+    },
+    {
+      "primary": "Atrium",
+      "reverse": "Atrium"
+    },
+    {
+      "primary": "Atrium_L",
+      "reverse": "L_Atrium"
+    },
+    {
+      "primary": "Atrium_R",
+      "reverse": "R_Atrium"
+    },
+    {
+      "primary": "Bag_Bowel",
+      "reverse": "Bowel_Bag"
+    },
+    {
+      "primary": "Bag_Ostomy",
+      "reverse": "Ostomy_Bag"
+    },
+    {
+      "primary": "BileDuct_Common",
+      "reverse": "Common_BileDuct"
+    },
+    {
+      "primary": "Bladder",
+      "reverse": "Bladder"
+    },
+    {
+      "primary": "Bladder_Wall",
+      "reverse": "Bladder_Wall"
+    },
+    {
+      "primary": "Bladder-CTV",
+      "reverse": "Bladder-CTV"
+    },
+    {
+      "primary": "Body",
+      "reverse": "Body"
+    },
+    {
+      "primary": "Body-PTV",
+      "reverse": "Body-PTV"
+    },
+    {
+      "primary": "Bolus",
+      "reverse": "Bolus"
+    },
+    {
+      "primary": "Bolus_xxmm",
+      "reverse": "xxmm_Bolus"
+    },
+    {
+      "primary": "Bone",
+      "reverse": "Bone"
+    },
+    {
+      "primary": "Bone_Ethmoid",
+      "reverse": "Ethmoid_Bone"
+    },
+    {
+      "primary": "Bone_Frontal",
+      "reverse": "Frontal_Bone"
+    },
+    {
+      "primary": "Bone_Hyoid",
+      "reverse": "Hyoid_Bone"
+    },
+    {
+      "primary": "Bone_Ilium",
+      "reverse": "Ilium_Bone"
+    },
+    {
+      "primary": "Bone_Ilium_L",
+      "reverse": "L_Ilium_Bone"
+    },
+    {
+      "primary": "Bone_Ilium_R",
+      "reverse": "R_Ilium_Bone"
+    },
+    {
+      "primary": "Bone_Incus",
+      "reverse": "Incus_Bone"
+    },
+    {
+      "primary": "Bone_Incus_L",
+      "reverse": "L_Incus_Bone"
+    },
+    {
+      "primary": "Bone_Incus_R",
+      "reverse": "R_Incus_Bone"
+    },
+    {
+      "primary": "Bone_Ischium_L",
+      "reverse": "L_Ischium_Bone"
+    },
+    {
+      "primary": "Bone_Ischium_R",
+      "reverse": "R_Ischium_Bone"
+    },
+    {
+      "primary": "Bone_Lacrimal",
+      "reverse": "Lacrimal_Bone"
+    },
+    {
+      "primary": "Bone_Lacrimal_L",
+      "reverse": "L_Lacrimal_Bone"
+    },
+    {
+      "primary": "Bone_Lacrimal_R",
+      "reverse": "R_Lacrimal_Bone"
+    },
+    {
+      "primary": "Bone_Mandible",
+      "reverse": "Mandible_Bone"
+    },
+    {
+      "primary": "Bone_Mastoid",
+      "reverse": "Mastoid_Bone"
+    },
+    {
+      "primary": "Bone_Mastoid_L",
+      "reverse": "L_Mastoid_Bone"
+    },
+    {
+      "primary": "Bone_Mastoid_R",
+      "reverse": "R_Mastoid_Bone"
+    },
+    {
+      "primary": "Bone_Nasal",
+      "reverse": "Nasal_Bone"
+    },
+    {
+      "primary": "Bone_Nasal_L",
+      "reverse": "L_Nasal_Bone"
+    },
+    {
+      "primary": "Bone_Nasal_R",
+      "reverse": "R_Nasal_Bone"
+    },
+    {
+      "primary": "Bone_Occipital",
+      "reverse": "Occipital_Bone"
+    },
+    {
+      "primary": "Bone_Palatine",
+      "reverse": "Palatine_Bone"
+    },
+    {
+      "primary": "Bone_Palatine_L",
+      "reverse": "L_Palatine_Bone"
+    },
+    {
+      "primary": "Bone_Palatine_R",
+      "reverse": "R_Palatine_Bone"
+    },
+    {
+      "primary": "Bone_Parietal",
+      "reverse": "Parietal_Bone"
+    },
+    {
+      "primary": "Bone_Parietal_L",
+      "reverse": "L_Parietal_Bone"
+    },
+    {
+      "primary": "Bone_Parietal_R",
+      "reverse": "R_Parietal_Bone"
+    },
+    {
+      "primary": "Bone_Pelvic",
+      "reverse": "Pelvic_Bone"
+    },
+    {
+      "primary": "Bone_Pelvic_L",
+      "reverse": "L_Pelvic_Bone"
+    },
+    {
+      "primary": "Bone_Pelvic_R",
+      "reverse": "R_Pelvic_Bone"
+    },
+    {
+      "primary": "Bone_Sphenoid",
+      "reverse": "Sphenoid_Bone"
+    },
+    {
+      "primary": "Bone_Temporal",
+      "reverse": "Temporal_Bone"
+    },
+    {
+      "primary": "Bone_Temporal_L",
+      "reverse": "L_Temporal_Bone"
+    },
+    {
+      "primary": "Bone_Temporal_R",
+      "reverse": "R_Temporal_Bone"
+    },
+    {
+      "primary": "Bone_Zygomatic_L",
+      "reverse": "L_Zygomatic_Bone"
+    },
+    {
+      "primary": "Bone_Zygomatic_R",
+      "reverse": "R_Zygomatic_Bone"
+    },
+    {
+      "primary": "Bone_Zygomatics",
+      "reverse": "Zygomatics_Bone"
+    },
+    {
+      "primary": "BoneMarrow",
+      "reverse": "BoneMarrow"
+    },
+    {
+      "primary": "BoneMarrow_Act",
+      "reverse": "Act_BoneMarrow"
+    },
+    {
+      "primary": "Boost",
+      "reverse": "Boost"
+    },
+    {
+      "primary": "Bowel",
+      "reverse": "Bowel"
+    },
+    {
+      "primary": "Bowel_Large",
+      "reverse": "Large_Bowel"
+    },
+    {
+      "primary": "Bowel_Small",
+      "reverse": "Small_Bowel"
+    },
+    {
+      "primary": "BrachialPlex_L",
+      "reverse": "L_BrachialPlex"
+    },
+    {
+      "primary": "BrachialPlex_R",
+      "reverse": "R_BrachialPlex"
+    },
+    {
+      "primary": "BrachialPlexs",
+      "reverse": "BrachialPlexs"
+    },
+    {
+      "primary": "Brain",
+      "reverse": "Brain"
+    },
+    {
+      "primary": "Brain-CTV",
+      "reverse": "Brain-CTV"
+    },
+    {
+      "primary": "Brain-GTV",
+      "reverse": "Brain-GTV"
+    },
+    {
+      "primary": "Brain-PTV",
+      "reverse": "Brain-PTV"
+    },
+    {
+      "primary": "Brainstem",
+      "reverse": "Brainstem"
+    },
+    {
+      "primary": "Brainstem_Core",
+      "reverse": "Core_Brainstem"
+    },
+    {
+      "primary": "Brainstem_PRV",
+      "reverse": "PRV_Brainstem"
+    },
+    {
+      "primary": "Brainstem_PRVxx",
+      "reverse": "PRVxx_Brainstem"
+    },
+    {
+      "primary": "Brainstem_Surf",
+      "reverse": "Surf_Brainstem"
+    },
+    {
+      "primary": "Breast_L",
+      "reverse": "L_Breast"
+    },
+    {
+      "primary": "Breast_R",
+      "reverse": "R_Breast"
+    },
+    {
+      "primary": "Breasts",
+      "reverse": "Breasts"
+    },
+    {
+      "primary": "Bronchus",
+      "reverse": "Bronchus"
+    },
+    {
+      "primary": "Bronchus_L",
+      "reverse": "L_Bronchus"
+    },
+    {
+      "primary": "Bronchus_Main",
+      "reverse": "Main_Bronchus"
+    },
+    {
+      "primary": "Bronchus_Main_L",
+      "reverse": "L_Main_Bronchus"
+    },
+    {
+      "primary": "Bronchus_Main_R",
+      "reverse": "R_Main_Bronchus"
+    },
+    {
+      "primary": "Bronchus_PRVxx",
+      "reverse": "PRVxx_Bronchus"
+    },
+    {
+      "primary": "Bronchus_R",
+      "reverse": "R_Bronchus"
+    },
+    {
+      "primary": "Canal_Anal",
+      "reverse": "Anal_Canal"
+    },
+    {
+      "primary": "Carina",
+      "reverse": "Carina"
+    },
+    {
+      "primary": "Cartlg_Thyroid",
+      "reverse": "Thyroid_Cartlg"
+    },
+    {
+      "primary": "CaudaEquina",
+      "reverse": "CaudaEquina"
+    },
+    {
+      "primary": "Cavernosum",
+      "reverse": "Cavernosum"
+    },
+    {
+      "primary": "Cavity_Nasal",
+      "reverse": "Nasal_Cavity"
+    },
+    {
+      "primary": "Cavity_Oral",
+      "reverse": "Oral_Cavity"
+    },
+    {
+      "primary": "Cecum",
+      "reverse": "Cecum"
+    },
+    {
+      "primary": "Cerebellum",
+      "reverse": "Cerebellum"
+    },
+    {
+      "primary": "Cerebrum",
+      "reverse": "Cerebrum"
+    },
+    {
+      "primary": "Cerebrum_L",
+      "reverse": "L_Cerebrum"
+    },
+    {
+      "primary": "Cerebrum_R",
+      "reverse": "R_Cerebrum"
+    },
+    {
+      "primary": "Cervix",
+      "reverse": "Cervix"
+    },
+    {
+      "primary": "Chestwall",
+      "reverse": "Chestwall"
+    },
+    {
+      "primary": "Chestwall_L",
+      "reverse": "L_Chestwall"
+    },
+    {
+      "primary": "Chestwall_R",
+      "reverse": "R_Chestwall"
+    },
+    {
+      "primary": "Cist_Pontine",
+      "reverse": "Pontine_Cist"
+    },
+    {
+      "primary": "Cist_Suprasellar",
+      "reverse": "Suprasellar_Cist"
+    },
+    {
+      "primary": "Clavicle_L",
+      "reverse": "L_Clavicle"
+    },
+    {
+      "primary": "Clavicle_R",
+      "reverse": "R_Clavicle"
+    },
+    {
+      "primary": "CN_III",
+      "reverse": "III_CN"
+    },
+    {
+      "primary": "CN_III_L",
+      "reverse": "L_III_CN"
+    },
+    {
+      "primary": "CN_III_R",
+      "reverse": "R_III_CN"
+    },
+    {
+      "primary": "CN_IX",
+      "reverse": "IX_CN"
+    },
+    {
+      "primary": "CN_IX_L",
+      "reverse": "L_IX_CN"
+    },
+    {
+      "primary": "CN_IX_R",
+      "reverse": "R_IX_CN"
+    },
+    {
+      "primary": "CN_V",
+      "reverse": "V_CN"
+    },
+    {
+      "primary": "CN_V_L",
+      "reverse": "L_V_CN"
+    },
+    {
+      "primary": "CN_V_R",
+      "reverse": "R_V_CN"
+    },
+    {
+      "primary": "CN_VI",
+      "reverse": "VI_CN"
+    },
+    {
+      "primary": "CN_VI_L",
+      "reverse": "L_VI_CN"
+    },
+    {
+      "primary": "CN_VI_R",
+      "reverse": "R_VI_CN"
+    },
+    {
+      "primary": "CN_VII",
+      "reverse": "VII_CN"
+    },
+    {
+      "primary": "CN_VII_L",
+      "reverse": "L_VII_CN"
+    },
+    {
+      "primary": "CN_VII_R",
+      "reverse": "R_VII_CN"
+    },
+    {
+      "primary": "CN_VIII",
+      "reverse": "VIII_CN"
+    },
+    {
+      "primary": "CN_VIII_L",
+      "reverse": "L_VIII_CN"
+    },
+    {
+      "primary": "CN_VIII_R",
+      "reverse": "R_VIII_CN"
+    },
+    {
+      "primary": "CN_XI",
+      "reverse": "XI_CN"
+    },
+    {
+      "primary": "CN_XI_L",
+      "reverse": "L_XI_CN"
+    },
+    {
+      "primary": "CN_XI_R",
+      "reverse": "R_XI_CN"
+    },
+    {
+      "primary": "CN_XII",
+      "reverse": "XII_CN"
+    },
+    {
+      "primary": "CN_XII_L",
+      "reverse": "L_XII_CN"
+    },
+    {
+      "primary": "CN_XII_R",
+      "reverse": "R_XII_CN"
+    },
+    {
+      "primary": "Cochlea",
+      "reverse": "Cochlea"
+    },
+    {
+      "primary": "Cochlea_L",
+      "reverse": "L_Cochlea"
+    },
+    {
+      "primary": "Cochlea_R",
+      "reverse": "R_Cochlea"
+    },
+    {
+      "primary": "Colon",
+      "reverse": "Colon"
+    },
+    {
+      "primary": "Colon_Ascending",
+      "reverse": "Ascending_Colon"
+    },
+    {
+      "primary": "Colon_Decending",
+      "reverse": "Decending_Colon"
+    },
+    {
+      "primary": "Colon_PTVxx",
+      "reverse": "PTVxx_Colon"
+    },
+    {
+      "primary": "Colon_Sigmoid",
+      "reverse": "Sigmoid_Colon"
+    },
+    {
+      "primary": "Colon_Transverse",
+      "reverse": "Transverse_Colon"
+    },
+    {
+      "primary": "Cornea",
+      "reverse": "Cornea"
+    },
+    {
+      "primary": "Cornea_L",
+      "reverse": "L_Cornea"
+    },
+    {
+      "primary": "Cornea_R",
+      "reverse": "R_Cornea"
+    },
+    {
+      "primary": "CribriformPlate",
+      "reverse": "CribriformPlate"
+    },
+    {
+      "primary": "Cricoid",
+      "reverse": "Cricoid"
+    },
+    {
+      "primary": "Cricopharyngeus",
+      "reverse": "Cricopharyngeus"
+    },
+    {
+      "primary": "CTV",
+      "reverse": "CTV"
+    },
+    {
+      "primary": "Dens",
+      "reverse": "Dens"
+    },
+    {
+      "primary": "Diaphragm",
+      "reverse": "Diaphragm"
+    },
+    {
+      "primary": "Duodenum",
+      "reverse": "Duodenum"
+    },
+    {
+      "primary": "Ear_External_L",
+      "reverse": "L_External_Ear"
+    },
+    {
+      "primary": "Ear_External_R",
+      "reverse": "R_External_Ear"
+    },
+    {
+      "primary": "Ear_Externals",
+      "reverse": "Externals_Ear"
+    },
+    {
+      "primary": "Ear_Internal_L",
+      "reverse": "L_Internal_Ear"
+    },
+    {
+      "primary": "Ear_Internal_R",
+      "reverse": "R_Internal_Ear"
+    },
+    {
+      "primary": "Ear_Internals",
+      "reverse": "Internals_Ear"
+    },
+    {
+      "primary": "Ear_Middle",
+      "reverse": "Middle_Ear"
+    },
+    {
+      "primary": "Ear_Middle_L",
+      "reverse": "L_Middle_Ear"
+    },
+    {
+      "primary": "Ear_Middle_R",
+      "reverse": "R_Middle_Ear"
+    },
+    {
+      "primary": "Edema",
+      "reverse": "Edema"
+    },
+    {
+      "primary": "Elbow",
+      "reverse": "Elbow"
+    },
+    {
+      "primary": "Elbow_L",
+      "reverse": "L_Elbow"
+    },
+    {
+      "primary": "Elbow_R",
+      "reverse": "R_Elbow"
+    },
+    {
+      "primary": "E-PTV_Ev05_xxxx",
+      "reverse": "E-PTV_Ev05_xxxx"
+    },
+    {
+      "primary": "E-PTV_xxxx",
+      "reverse": "E-PTV_xxxx"
+    },
+    {
+      "primary": "Esophagus",
+      "reverse": "Esophagus"
+    },
+    {
+      "primary": "Esophagus_I",
+      "reverse": "I_Esophagus"
+    },
+    {
+      "primary": "Esophagus_M",
+      "reverse": "M_Esophagus"
+    },
+    {
+      "primary": "Esophagus_NAdj",
+      "reverse": "NAdj_Esophagus"
+    },
+    {
+      "primary": "Esophagus_S",
+      "reverse": "S_Esophagus"
+    },
+    {
+      "primary": "Eval",
+      "reverse": "Eval"
+    },
+    {
+      "primary": "External",
+      "reverse": "External"
+    },
+    {
+      "primary": "Eye_L",
+      "reverse": "L_Eye"
+    },
+    {
+      "primary": "Eye_R",
+      "reverse": "R_Eye"
+    },
+    {
+      "primary": "Eyes",
+      "reverse": "Eyes"
+    },
+    {
+      "primary": "Femur_Base_L",
+      "reverse": "L_Base_Femur"
+    },
+    {
+      "primary": "Femur_Base_R",
+      "reverse": "R_Base_Femur"
+    },
+    {
+      "primary": "Femur_Head_L",
+      "reverse": "L_Head_Femur"
+    },
+    {
+      "primary": "Femur_Head_R",
+      "reverse": "R_Head_Femur"
+    },
+    {
+      "primary": "Femur_Joint_L",
+      "reverse": "L_Joint_Femur"
+    },
+    {
+      "primary": "Femur_Joint_R",
+      "reverse": "R_Joint_Femur"
+    },
+    {
+      "primary": "Femur_L",
+      "reverse": "L_Femur"
+    },
+    {
+      "primary": "Femur_Neck_L",
+      "reverse": "L_Neck_Femur"
+    },
+    {
+      "primary": "Femur_Neck_R",
+      "reverse": "R_Neck_Femur"
+    },
+    {
+      "primary": "Femur_R",
+      "reverse": "R_Femur"
+    },
+    {
+      "primary": "Femur_Shaft_L",
+      "reverse": "L_Shaft_Femur"
+    },
+    {
+      "primary": "Femur_Shaft_R",
+      "reverse": "R_Shaft_Femur"
+    },
+    {
+      "primary": "Femurs",
+      "reverse": "Femurs"
+    },
+    {
+      "primary": "Fibula",
+      "reverse": "Fibula"
+    },
+    {
+      "primary": "Fibula_L",
+      "reverse": "L_Fibula"
+    },
+    {
+      "primary": "Fibula_R",
+      "reverse": "R_Fibula"
+    },
+    {
+      "primary": "Foley",
+      "reverse": "Foley"
+    },
+    {
+      "primary": "Fossa_Jugular",
+      "reverse": "Jugular_Fossa"
+    },
+    {
+      "primary": "Fossa_Posterior",
+      "reverse": "Posterior_Fossa"
+    },
+    {
+      "primary": "Gallbladder",
+      "reverse": "Gallbladder"
+    },
+    {
+      "primary": "Genitals",
+      "reverse": "Genitals"
+    },
+    {
+      "primary": "Glnd_Adrenal_L",
+      "reverse": "L_Adrenal_Glnd"
+    },
+    {
+      "primary": "Glnd_Adrenal_R",
+      "reverse": "R_Adrenal_Glnd"
+    },
+    {
+      "primary": "Glnd_Lacrimal",
+      "reverse": "Lacrimal_Glnd"
+    },
+    {
+      "primary": "Glnd_Lacrimal_L",
+      "reverse": "L_Lacrimal_Glnd"
+    },
+    {
+      "primary": "Glnd_Lacrimal_R",
+      "reverse": "R_Lacrimal_Glnd"
+    },
+    {
+      "primary": "Glnd_Parathyroid",
+      "reverse": "Parathyroid_Glnd"
+    },
+    {
+      "primary": "Glnd_Subling_L",
+      "reverse": "L_Subling_Glnd"
+    },
+    {
+      "primary": "Glnd_Subling_R",
+      "reverse": "R_Subling_Glnd"
+    },
+    {
+      "primary": "Glnd_Sublings",
+      "reverse": "Sublings_Glnd"
+    },
+    {
+      "primary": "Glnd_Submand_L",
+      "reverse": "L_Submand_Glnd"
+    },
+    {
+      "primary": "Glnd_Submand_R",
+      "reverse": "R_Submand_Glnd"
+    },
+    {
+      "primary": "Glnd_Submands",
+      "reverse": "Submands_Glnd"
+    },
+    {
+      "primary": "Glnd_Thymus",
+      "reverse": "Thymus_Glnd"
+    },
+    {
+      "primary": "Glnd_Thyroid",
+      "reverse": "Thyroid_Glnd"
+    },
+    {
+      "primary": "Glottis",
+      "reverse": "Glottis"
+    },
+    {
+      "primary": "GreatVes",
+      "reverse": "GreatVes"
+    },
+    {
+      "primary": "GreatVes_NAdj",
+      "reverse": "NAdj_GreatVes"
+    },
+    {
+      "primary": "GrowthPlate_L",
+      "reverse": "L_GrowthPlate"
+    },
+    {
+      "primary": "GrowthPlate_R",
+      "reverse": "R_GrowthPlate"
+    },
+    {
+      "primary": "GTV",
+      "reverse": "GTV"
+    },
+    {
+      "primary": "Hardpalate",
+      "reverse": "Hardpalate"
+    },
+    {
+      "primary": "Heart",
+      "reverse": "Heart"
+    },
+    {
+      "primary": "Hemisphere_L",
+      "reverse": "L_Hemisphere"
+    },
+    {
+      "primary": "Hemisphere_R",
+      "reverse": "R_Hemisphere"
+    },
+    {
+      "primary": "Hemispheres",
+      "reverse": "Hemispheres"
+    },
+    {
+      "primary": "Hippocampi",
+      "reverse": "Hippocampi"
+    },
+    {
+      "primary": "Hippocampus_L",
+      "reverse": "L_Hippocampus"
+    },
+    {
+      "primary": "Hippocampus_R",
+      "reverse": "R_Hippocampus"
+    },
+    {
+      "primary": "Humerus_L",
+      "reverse": "L_Humerus"
+    },
+    {
+      "primary": "Humerus_R",
+      "reverse": "R_Humerus"
+    },
+    {
+      "primary": "Hypothalmus",
+      "reverse": "Hypothalmus"
+    },
+    {
+      "primary": "Hypothalmus_PRV",
+      "reverse": "PRV_Hypothalmus"
+    },
+    {
+      "primary": "Hypothalmus_PRVx",
+      "reverse": "PRVx_Hypothalmus"
+    },
+    {
+      "primary": "IDL",
+      "reverse": "IDL"
+    },
+    {
+      "primary": "Ileum",
+      "reverse": "Ileum"
+    },
+    {
+      "primary": "ITV",
+      "reverse": "ITV"
+    },
+    {
+      "primary": "Jejunum",
+      "reverse": "Jejunum"
+    },
+    {
+      "primary": "Jejunum_Ileum",
+      "reverse": "Jejunum_Ileum"
+    },
+    {
+      "primary": "Joint_Elbow",
+      "reverse": "Elbow_Joint"
+    },
+    {
+      "primary": "Joint_Elbow_L",
+      "reverse": "L_Elbow_Joint"
+    },
+    {
+      "primary": "Joint_Elbow_R",
+      "reverse": "R_Elbow_Joint"
+    },
+    {
+      "primary": "Joint_Glenohum",
+      "reverse": "Glenohum_Joint"
+    },
+    {
+      "primary": "Joint_Glenohum_L",
+      "reverse": "L_Glenohum_Joint"
+    },
+    {
+      "primary": "Joint_Glenohum_R",
+      "reverse": "R_Glenohum_Joint"
+    },
+    {
+      "primary": "Joint_Surface",
+      "reverse": "Surface_Joint"
+    },
+    {
+      "primary": "Joint_TM",
+      "reverse": "TM_Joint"
+    },
+    {
+      "primary": "Joint_TM_L",
+      "reverse": "L_TM_Joint"
+    },
+    {
+      "primary": "Joint_TM_R",
+      "reverse": "R_TM_Joint"
+    },
+    {
+      "primary": "Kidney_Cortex",
+      "reverse": "Cortex_Kidney"
+    },
+    {
+      "primary": "Kidney_Cortex_L",
+      "reverse": "L_Cortex_Kidney"
+    },
+    {
+      "primary": "Kidney_Cortex_R",
+      "reverse": "R_Cortex_Kidney"
+    },
+    {
+      "primary": "Kidney_Hilum_L",
+      "reverse": "L_Hilum_Kidney"
+    },
+    {
+      "primary": "Kidney_Hilum_R",
+      "reverse": "R_Hilum_Kidney"
+    },
+    {
+      "primary": "Kidney_Hilums",
+      "reverse": "Hilums_Kidney"
+    },
+    {
+      "primary": "Kidney_L",
+      "reverse": "L_Kidney"
+    },
+    {
+      "primary": "Kidney_L-GTV",
+      "reverse": "L_Kidney-GTV"
+    },
+    {
+      "primary": "Kidney_Pelvis_L",
+      "reverse": "L_Pelvis_Kidney"
+    },
+    {
+      "primary": "Kidney_Pelvis_R",
+      "reverse": "R_Pelvis_Kidney"
+    },
+    {
+      "primary": "Kidney_R",
+      "reverse": "R_Kidney"
+    },
+    {
+      "primary": "Kidney_R-GTV",
+      "reverse": "R_Kidney-GTV"
+    },
+    {
+      "primary": "Kidney-GTV",
+      "reverse": "Kidney-GTV"
+    },
+    {
+      "primary": "Kidneys",
+      "reverse": "Kidneys"
+    },
+    {
+      "primary": "Knee",
+      "reverse": "Knee"
+    },
+    {
+      "primary": "Knee_L",
+      "reverse": "L_Knee"
+    },
+    {
+      "primary": "Knee_R",
+      "reverse": "R_Knee"
+    },
+    {
+      "primary": "Laryngl_Pharynx",
+      "reverse": "Pharynx_Laryngl"
+    },
+    {
+      "primary": "Larynx",
+      "reverse": "Larynx"
+    },
+    {
+      "primary": "Larynx_SG",
+      "reverse": "SG_Larynx"
+    },
+    {
+      "primary": "Leads",
+      "reverse": "Leads"
+    },
+    {
+      "primary": "Lens",
+      "reverse": "Lens"
+    },
+    {
+      "primary": "Lens_L",
+      "reverse": "L_Lens"
+    },
+    {
+      "primary": "Lens_R",
+      "reverse": "R_Lens"
+    },
+    {
+      "primary": "Lig_Hepatogastrc",
+      "reverse": "Hepatogastrc_Lig"
+    },
+    {
+      "primary": "Lips",
+      "reverse": "Lips"
+    },
+    {
+      "primary": "Liver",
+      "reverse": "Liver"
+    },
+    {
+      "primary": "Liver-CTV",
+      "reverse": "Liver-CTV"
+    },
+    {
+      "primary": "Liver-GTV",
+      "reverse": "Liver-GTV"
+    },
+    {
+      "primary": "LN",
+      "reverse": "LN"
+    },
+    {
+      "primary": "LN_Ax_Apical",
+      "reverse": "Apical_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Apical_L",
+      "reverse": "L_Apical_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Apical_R",
+      "reverse": "R_Apical_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Central_L",
+      "reverse": "L_Central_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Central_R",
+      "reverse": "R_Central_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Centrals",
+      "reverse": "Centrals_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L",
+      "reverse": "L_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L1_L",
+      "reverse": "L_L1_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L1_R",
+      "reverse": "R_L1_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L2_L",
+      "reverse": "L_L2_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L2_R",
+      "reverse": "R_L2_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L3_L",
+      "reverse": "L_L3_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_L3_R",
+      "reverse": "R_L3_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Lateral_L",
+      "reverse": "L_Lateral_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Lateral_R",
+      "reverse": "R_Lateral_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Laterals",
+      "reverse": "Laterals_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Pectoral_L",
+      "reverse": "L_Pectoral_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Pectoral_R",
+      "reverse": "R_Pectoral_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Pectorals",
+      "reverse": "Pectorals_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_R",
+      "reverse": "R_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Subscap_L",
+      "reverse": "L_Subscap_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Subscap_R",
+      "reverse": "R_Subscap_Ax_LN"
+    },
+    {
+      "primary": "LN_Ax_Subscaps",
+      "reverse": "Subscaps_Ax_LN"
+    },
+    {
+      "primary": "LN_Brachioceph_L",
+      "reverse": "L_Brachioceph_LN"
+    },
+    {
+      "primary": "LN_Brachioceph_R",
+      "reverse": "R_Brachioceph_LN"
+    },
+    {
+      "primary": "LN_Brachiocephs",
+      "reverse": "Brachiocephs_LN"
+    },
+    {
+      "primary": "LN_Bronchpulm_L",
+      "reverse": "L_Bronchpulm_LN"
+    },
+    {
+      "primary": "LN_Bronchpulm_R",
+      "reverse": "R_Bronchpulm_LN"
+    },
+    {
+      "primary": "LN_Bronchpulms",
+      "reverse": "Bronchpulms_LN"
+    },
+    {
+      "primary": "LN_Diaphragmatic",
+      "reverse": "Diaphragmatic_LN"
+    },
+    {
+      "primary": "LN_Iliac_Ext_L",
+      "reverse": "L_Ext_Iliac_LN"
+    },
+    {
+      "primary": "LN_Iliac_Ext_R",
+      "reverse": "R_Ext_Iliac_LN"
+    },
+    {
+      "primary": "LN_Iliac_Int_L",
+      "reverse": "L_Int_Iliac_LN"
+    },
+    {
+      "primary": "LN_Iliac_L",
+      "reverse": "L_Iliac_LN"
+    },
+    {
+      "primary": "LN_Iliac_R",
+      "reverse": "R_Iliac_LN"
+    },
+    {
+      "primary": "LN_IMN_L",
+      "reverse": "L_IMN_LN"
+    },
+    {
+      "primary": "LN_IMN_R",
+      "reverse": "R_IMN_LN"
+    },
+    {
+      "primary": "LN_IMNs",
+      "reverse": "IMNs_LN"
+    },
+    {
+      "primary": "LN_Inguinofem",
+      "reverse": "Inguinofem_LN"
+    },
+    {
+      "primary": "LN_Inguinofem_L",
+      "reverse": "L_Inguinofem_LN"
+    },
+    {
+      "primary": "LN_Inguinofem_R",
+      "reverse": "R_Inguinofem_LN"
+    },
+    {
+      "primary": "LN_Intercostals",
+      "reverse": "Intercostals_LN"
+    },
+    {
+      "primary": "LN_L",
+      "reverse": "L_LN"
+    },
+    {
+      "primary": "LN_Ligamentarter",
+      "reverse": "Ligamentarter_LN"
+    },
+    {
+      "primary": "LN_lliac_Int_R",
+      "reverse": "R_Int_Iliac_LN"
+    },
+    {
+      "primary": "LN_Mediastinals",
+      "reverse": "Mediastinals_LN"
+    },
+    {
+      "primary": "LN_Neck_IA_L",
+      "reverse": "L_IA_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IA_R",
+      "reverse": "R_IA_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IB_L",
+      "reverse": "L_IB_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IB_R",
+      "reverse": "R_IB_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_II_L",
+      "reverse": "L_II_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_II_R",
+      "reverse": "R_II_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IIA_L",
+      "reverse": "L_IIA_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IIA_R",
+      "reverse": "R_IIA_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IIB_L",
+      "reverse": "L_IIB_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IIB_R",
+      "reverse": "R_IIB_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_III_L",
+      "reverse": "L_III_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_III_R",
+      "reverse": "R_III_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IV_L",
+      "reverse": "L_IV_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_IV_R",
+      "reverse": "R_IV_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_V_L",
+      "reverse": "L_V_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_V_R",
+      "reverse": "R_V_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VA_L",
+      "reverse": "L_VA_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VA_R",
+      "reverse": "R_VA_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VB_L",
+      "reverse": "L_VB_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VB_R",
+      "reverse": "R_VB_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VC_L",
+      "reverse": "L_VC_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VC_R",
+      "reverse": "R_VC_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VI_L",
+      "reverse": "L_VI_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VI_R",
+      "reverse": "R_VI_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VII_L",
+      "reverse": "L_VII_Neck_LN"
+    },
+    {
+      "primary": "LN_Neck_VII_R",
+      "reverse": "R_VII_Neck_LN"
+    },
+    {
+      "primary": "LN_Obturator_L",
+      "reverse": "L_Obturator_LN"
+    },
+    {
+      "primary": "LN_Obturator_R",
+      "reverse": "R_Obturator_LN"
+    },
+    {
+      "primary": "LN_Paraaortic",
+      "reverse": "Paraaortic_LN"
+    },
+    {
+      "primary": "LN_Paramammary_L",
+      "reverse": "L_Paramammary_LN"
+    },
+    {
+      "primary": "LN_Paramammary_R",
+      "reverse": "R_Paramammary_LN"
+    },
+    {
+      "primary": "LN_Paramammarys",
+      "reverse": "Paramammarys_LN"
+    },
+    {
+      "primary": "LN_Parasternal_L",
+      "reverse": "L_Parasternal_LN"
+    },
+    {
+      "primary": "LN_Parasternal_R",
+      "reverse": "R_Parasternal_LN"
+    },
+    {
+      "primary": "LN_Parasternals",
+      "reverse": "Parasternals_LN"
+    },
+    {
+      "primary": "LN_Pelvic_L",
+      "reverse": "L_Pelvic_LN"
+    },
+    {
+      "primary": "LN_Pelvic_R",
+      "reverse": "R_Pelvic_LN"
+    },
+    {
+      "primary": "LN_Pelvics",
+      "reverse": "Pelvics_LN"
+    },
+    {
+      "primary": "LN_Portahepatis",
+      "reverse": "Portahepatis_LN"
+    },
+    {
+      "primary": "LN_Presacral_L",
+      "reverse": "L_Presacral_LN"
+    },
+    {
+      "primary": "LN_Presacral_R",
+      "reverse": "R_Presacral_LN"
+    },
+    {
+      "primary": "LN_Pulmonary_L",
+      "reverse": "L_Pulmonary_LN"
+    },
+    {
+      "primary": "LN_Pulmonary_R",
+      "reverse": "R_Pulmonary_LN"
+    },
+    {
+      "primary": "LN_Pulmonarys",
+      "reverse": "Pulmonarys_LN"
+    },
+    {
+      "primary": "LN_R",
+      "reverse": "R_LN"
+    },
+    {
+      "primary": "LN_Sclav_L",
+      "reverse": "L_Sclav_LN"
+    },
+    {
+      "primary": "LN_Sclav_R",
+      "reverse": "R_Sclav_LN"
+    },
+    {
+      "primary": "LN_Supmammary_L",
+      "reverse": "L_Supmammary_LN"
+    },
+    {
+      "primary": "LN_Supmammary_R",
+      "reverse": "R_Supmammary_LN"
+    },
+    {
+      "primary": "LN_Supmammarys",
+      "reverse": "Supmammarys_LN"
+    },
+    {
+      "primary": "LN_Trachbrnchs",
+      "reverse": "Trachbronchs_LN"
+    },
+    {
+      "primary": "LN_Trachbrnchs_L",
+      "reverse": "L_Trachbronchs_LN"
+    },
+    {
+      "primary": "LN_Trachbrnchs_R",
+      "reverse": "R_Trachbronchs_LN"
+    },
+    {
+      "primary": "Lobe_Frontal",
+      "reverse": "Frontal_Lobe"
+    },
+    {
+      "primary": "Lobe_Frontal_L",
+      "reverse": "L_Frontal_Lobe"
+    },
+    {
+      "primary": "Lobe_Frontal_R",
+      "reverse": "R_Frontal_Lobe"
+    },
+    {
+      "primary": "Lobe_Occipital",
+      "reverse": "Occipital_Lobe"
+    },
+    {
+      "primary": "Lobe_Occipital_L",
+      "reverse": "L_Occipital_Lobe"
+    },
+    {
+      "primary": "Lobe_Occipital_R",
+      "reverse": "R_Occipital_Lobe"
+    },
+    {
+      "primary": "Lobe_Parietal",
+      "reverse": "Parietal_Lobe"
+    },
+    {
+      "primary": "Lobe_Parietal_L",
+      "reverse": "L_Parietal_Lobe"
+    },
+    {
+      "primary": "Lobe_Parietal_R",
+      "reverse": "R_Parietal_Lobe"
+    },
+    {
+      "primary": "Lobe_Temporal",
+      "reverse": "Temporal_Lobe"
+    },
+    {
+      "primary": "Lobe_Temporal_L",
+      "reverse": "L_Temporal_Lobe"
+    },
+    {
+      "primary": "Lobe_Temporal_R",
+      "reverse": "R_Temporal_Lobe"
+    },
+    {
+      "primary": "Lung_L",
+      "reverse": "L_Lung"
+    },
+    {
+      "primary": "Lung_LLL",
+      "reverse": "LLL_Lung"
+    },
+    {
+      "primary": "Lung_LUL",
+      "reverse": "LUL_Lung"
+    },
+    {
+      "primary": "Lung_R",
+      "reverse": "R_Lung"
+    },
+    {
+      "primary": "Lung_RLL",
+      "reverse": "RLL_Lung"
+    },
+    {
+      "primary": "Lung_RML",
+      "reverse": "RML_Lung"
+    },
+    {
+      "primary": "Lung_RUL",
+      "reverse": "RUL_Lung"
+    },
+    {
+      "primary": "Lungs",
+      "reverse": "Lungs"
+    },
+    {
+      "primary": "Lungs-CTV",
+      "reverse": "Lungs-CTV"
+    },
+    {
+      "primary": "Lungs-GTV",
+      "reverse": "Lungs-GTV"
+    },
+    {
+      "primary": "Lungs-ITV",
+      "reverse": "Lungs-ITV"
+    },
+    {
+      "primary": "Lungs-PTV",
+      "reverse": "Lungs-PTV"
+    },
+    {
+      "primary": "Malleus",
+      "reverse": "Malleus"
+    },
+    {
+      "primary": "Malleus_L",
+      "reverse": "L_Malleus"
+    },
+    {
+      "primary": "Malleus_R",
+      "reverse": "R_Malleus"
+    },
+    {
+      "primary": "Markers",
+      "reverse": "Markers"
+    },
+    {
+      "primary": "Maxilla",
+      "reverse": "Maxilla"
+    },
+    {
+      "primary": "Maxilla_L",
+      "reverse": "L_Maxilla"
+    },
+    {
+      "primary": "Maxilla_R",
+      "reverse": "R_Maxilla"
+    },
+    {
+      "primary": "Mediastinum",
+      "reverse": "Mediastinum"
+    },
+    {
+      "primary": "Musc",
+      "reverse": "Musc"
+    },
+    {
+      "primary": "Musc_Constrict",
+      "reverse": "Constrict_Musc"
+    },
+    {
+      "primary": "Musc_Constrict_I",
+      "reverse": "I_Constrict_Musc"
+    },
+    {
+      "primary": "Musc_Constrict_M",
+      "reverse": "M_Constrict_Musc"
+    },
+    {
+      "primary": "Musc_Constrict_S",
+      "reverse": "S_Constrict_Musc"
+    },
+    {
+      "primary": "Musc_Digastric_L",
+      "reverse": "L_Digastric_Musc"
+    },
+    {
+      "primary": "Musc_Digastric_R",
+      "reverse": "R_Digastric_Musc"
+    },
+    {
+      "primary": "Musc_Masseter",
+      "reverse": "Masseter_Musc"
+    },
+    {
+      "primary": "Musc_Masseter_L",
+      "reverse": "L_Masseter_Musc"
+    },
+    {
+      "primary": "Musc_Masseter_R",
+      "reverse": "R_Masseter_Musc"
+    },
+    {
+      "primary": "Musc_Platysma_L",
+      "reverse": "L_Platysma_Musc"
+    },
+    {
+      "primary": "Musc_Platysma_R",
+      "reverse": "R_Platysma_Musc"
+    },
+    {
+      "primary": "Musc_Pterygoid_L",
+      "reverse": "L_Pterygoid_Musc"
+    },
+    {
+      "primary": "Musc_Pterygoid_R",
+      "reverse": "R_Pterygoid_Musc"
+    },
+    {
+      "primary": "Musc_Sclmast_L",
+      "reverse": "L_Sclmast_Musc"
+    },
+    {
+      "primary": "Musc_Sclmast_R",
+      "reverse": "R_Sclmast_Musc"
+    },
+    {
+      "primary": "Musc_Temporal_L",
+      "reverse": "L_Temporal_Musc"
+    },
+    {
+      "primary": "Musc_Temporal_R",
+      "reverse": "R_Temporal_Musc"
+    },
+    {
+      "primary": "Nasalconcha_LI",
+      "reverse": "LI_Nasalconcha"
+    },
+    {
+      "primary": "Nasalconcha_RI",
+      "reverse": "RI_Nasalconcha"
+    },
+    {
+      "primary": "Nasopharynx",
+      "reverse": "Nasopharynx"
+    },
+    {
+      "primary": "Nose",
+      "reverse": "Nose"
+    },
+    {
+      "primary": "Nrv_Peripheral",
+      "reverse": "Peripheral_Nrv"
+    },
+    {
+      "primary": "Nrv_Root",
+      "reverse": "Root_Nrv"
+    },
+    {
+      "primary": "OpticChiasm",
+      "reverse": "OpticChiasm"
+    },
+    {
+      "primary": "OpticChiasm_PRV",
+      "reverse": "PRV_OpticChiasm"
+    },
+    {
+      "primary": "OpticChiasm_PRVx",
+      "reverse": "PRVx_OpticChiasm"
+    },
+    {
+      "primary": "OpticNrv",
+      "reverse": "OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_L",
+      "reverse": "L_OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_PRV",
+      "reverse": "PRV_OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_PRV_L",
+      "reverse": "L_PRV_OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_PRV_R",
+      "reverse": "R_PRV_OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_PRVxx_L",
+      "reverse": "L_PRVxx_OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_PRVxx_R",
+      "reverse": "R_PRVxx_OpticNrv"
+    },
+    {
+      "primary": "OpticNrv_R",
+      "reverse": "R_OpticNrv"
+    },
+    {
+      "primary": "Orbit_L",
+      "reverse": "L_Orbit"
+    },
+    {
+      "primary": "Orbit_R",
+      "reverse": "R_Orbit"
+    },
+    {
+      "primary": "Oropharynx",
+      "reverse": "Oropharynx"
+    },
+    {
+      "primary": "Ovaries",
+      "reverse": "Ovaries"
+    },
+    {
+      "primary": "Ovary_L",
+      "reverse": "L_Ovary"
+    },
+    {
+      "primary": "Ovary_R",
+      "reverse": "R_Ovary"
+    },
+    {
+      "primary": "Pacemaker",
+      "reverse": "Pacemaker"
+    },
+    {
+      "primary": "Palate_Soft",
+      "reverse": "Soft_Palate"
+    },
+    {
+      "primary": "PancJejuno",
+      "reverse": "PancJejuno"
+    },
+    {
+      "primary": "Pancreas",
+      "reverse": "Pancreas"
+    },
+    {
+      "primary": "Pancreas_Head",
+      "reverse": "Head_Pancreas"
+    },
+    {
+      "primary": "Pancreas_Tail",
+      "reverse": "Tail_Pancreas"
+    },
+    {
+      "primary": "Parametrium",
+      "reverse": "Parametrium"
+    },
+    {
+      "primary": "Parotid_L",
+      "reverse": "L_Parotid"
+    },
+    {
+      "primary": "Parotid_R",
+      "reverse": "R_Parotid"
+    },
+    {
+      "primary": "Parotids",
+      "reverse": "Parotids"
+    },
+    {
+      "primary": "PenileBulb",
+      "reverse": "PenileBulb"
+    },
+    {
+      "primary": "Penis",
+      "reverse": "Penis"
+    },
+    {
+      "primary": "Pericardium",
+      "reverse": "Pericardium"
+    },
+    {
+      "primary": "Perineum",
+      "reverse": "Perineum"
+    },
+    {
+      "primary": "Peritoneum",
+      "reverse": "Peritoneum"
+    },
+    {
+      "primary": "Pharynx",
+      "reverse": "Pharynx"
+    },
+    {
+      "primary": "Pineal",
+      "reverse": "Pineal"
+    },
+    {
+      "primary": "Pituitary",
+      "reverse": "Pituitary"
+    },
+    {
+      "primary": "Pituitary_PRVxx",
+      "reverse": "PRVxx_Pituitary"
+    },
+    {
+      "primary": "Pons",
+      "reverse": "Pons"
+    },
+    {
+      "primary": "Postop",
+      "reverse": "Postop"
+    },
+    {
+      "primary": "Preop",
+      "reverse": "Preop"
+    },
+    {
+      "primary": "Proc_Condyloid_L",
+      "reverse": "L_Condyloid_Proc"
+    },
+    {
+      "primary": "Proc_Condyloid_R",
+      "reverse": "R_Condyloid_Proc"
+    },
+    {
+      "primary": "Proc_Coronoid_L",
+      "reverse": "L_Coronoid_Proc"
+    },
+    {
+      "primary": "Proc_Coronoid_R",
+      "reverse": "R_Coronoid_Proc"
+    },
+    {
+      "primary": "Prostate",
+      "reverse": "Prostate"
+    },
+    {
+      "primary": "ProstateBed",
+      "reverse": "ProstateBed"
+    },
+    {
+      "primary": "Prosthesis",
+      "reverse": "Prosthesis"
+    },
+    {
+      "primary": "Pterygoid_Lat_L",
+      "reverse": "L_Lat_Pterygoid"
+    },
+    {
+      "primary": "Pterygoid_Lat_R",
+      "reverse": "R_Lat_Pterygoid"
+    },
+    {
+      "primary": "Pterygoid_Med_L",
+      "reverse": "L_Med_Pterygoid"
+    },
+    {
+      "primary": "Pterygoid_Med_R",
+      "reverse": "R_Med_Pterygoid"
+    },
+    {
+      "primary": "PTV",
+      "reverse": "PTV"
+    },
+    {
+      "primary": "PubicSymphys",
+      "reverse": "PubicSymphys"
+    },
+    {
+      "primary": "PubicSymphys_L",
+      "reverse": "L_PubicSymphys"
+    },
+    {
+      "primary": "PubicSymphys_R",
+      "reverse": "R_PubicSymphys"
+    },
+    {
+      "primary": "Radius_L",
+      "reverse": "L_Radius"
+    },
+    {
+      "primary": "Radius_R",
+      "reverse": "R_Radius"
+    },
+    {
+      "primary": "Rectal_Wall",
+      "reverse": "Rectal_Wall"
+    },
+    {
+      "primary": "Rectum",
+      "reverse": "Rectum"
+    },
+    {
+      "primary": "Retina_L",
+      "reverse": "L_Retina"
+    },
+    {
+      "primary": "Retina_PRVxx_L",
+      "reverse": "L_PRVxx_Retina"
+    },
+    {
+      "primary": "Retina_PRVxx_R",
+      "reverse": "R_PRVxx_Retina"
+    },
+    {
+      "primary": "Retina_R",
+      "reverse": "R_Retina"
+    },
+    {
+      "primary": "Retinas",
+      "reverse": "Retinas"
+    },
+    {
+      "primary": "Rib",
+      "reverse": "Rib"
+    },
+    {
+      "primary": "Rib01_L",
+      "reverse": "L_Rib01"
+    },
+    {
+      "primary": "Rib01_R",
+      "reverse": "R_Rib01"
+    },
+    {
+      "primary": "Rib02_L",
+      "reverse": "L_Rib02"
+    },
+    {
+      "primary": "Rib02_R",
+      "reverse": "R_Rib02"
+    },
+    {
+      "primary": "Rib03_L",
+      "reverse": "L_Rib03"
+    },
+    {
+      "primary": "Rib03_R",
+      "reverse": "R_Rib03"
+    },
+    {
+      "primary": "Rib04_L",
+      "reverse": "L_Rib04"
+    },
+    {
+      "primary": "Rib04_R",
+      "reverse": "R_Rib04"
+    },
+    {
+      "primary": "Rib05_L",
+      "reverse": "L_Rib05"
+    },
+    {
+      "primary": "Rib05_R",
+      "reverse": "R_Rib05"
+    },
+    {
+      "primary": "Rib06_L",
+      "reverse": "L_Rib06"
+    },
+    {
+      "primary": "Rib06_R",
+      "reverse": "R_Rib06"
+    },
+    {
+      "primary": "Rib07_L",
+      "reverse": "L_Rib07"
+    },
+    {
+      "primary": "Rib07_R",
+      "reverse": "R_Rib07"
+    },
+    {
+      "primary": "Rib08_L",
+      "reverse": "L_Rib08"
+    },
+    {
+      "primary": "Rib08_R",
+      "reverse": "R_Rib08"
+    },
+    {
+      "primary": "Rib09_L",
+      "reverse": "L_Rib09"
+    },
+    {
+      "primary": "Rib09_R",
+      "reverse": "R_Rib09"
+    },
+    {
+      "primary": "Rib10_L",
+      "reverse": "L_Rib10"
+    },
+    {
+      "primary": "Rib10_R",
+      "reverse": "R_Rib10"
+    },
+    {
+      "primary": "Rib11_L",
+      "reverse": "L_Rib11"
+    },
+    {
+      "primary": "Rib11_R",
+      "reverse": "R_Rib11"
+    },
+    {
+      "primary": "Rib12_L",
+      "reverse": "L_Rib12"
+    },
+    {
+      "primary": "Rib12_R",
+      "reverse": "R_Rib12"
+    },
+    {
+      "primary": "SacralPlex",
+      "reverse": "SacralPlex"
+    },
+    {
+      "primary": "Sacrum",
+      "reverse": "Sacrum"
+    },
+    {
+      "primary": "Scalp",
+      "reverse": "Scalp"
+    },
+    {
+      "primary": "Scapula_L",
+      "reverse": "L_Scapula"
+    },
+    {
+      "primary": "Scapula_R",
+      "reverse": "R_Scapula"
+    },
+    {
+      "primary": "Scar",
+      "reverse": "Scar"
+    },
+    {
+      "primary": "Scar_Boost",
+      "reverse": "Boost_Scar"
+    },
+    {
+      "primary": "Scrotum",
+      "reverse": "Scrotum"
+    },
+    {
+      "primary": "SeminalVes",
+      "reverse": "SeminalVes"
+    },
+    {
+      "primary": "SeminalVes_Dist",
+      "reverse": "Dist_SeminalVes"
+    },
+    {
+      "primary": "SeminalVes_Prox",
+      "reverse": "Prox_SeminalVes"
+    },
+    {
+      "primary": "Sinus_Ethmoid",
+      "reverse": "Ethmoid_Sinus"
+    },
+    {
+      "primary": "Sinus_Frontal",
+      "reverse": "Frontal_Sinus"
+    },
+    {
+      "primary": "Sinus_Frontal_L",
+      "reverse": "L_Frontal_Sinus"
+    },
+    {
+      "primary": "Sinus_Frontal_R",
+      "reverse": "R_Frontal_Sinus"
+    },
+    {
+      "primary": "Sinus_Maxilry",
+      "reverse": "Maxilry_Sinus"
+    },
+    {
+      "primary": "Sinus_Maxilry_L",
+      "reverse": "L_Maxilry_Sinus"
+    },
+    {
+      "primary": "Sinus_Maxilry_R",
+      "reverse": "R_Maxilry_Sinus"
+    },
+    {
+      "primary": "Sinus_Sphenoid",
+      "reverse": "Sphenoid_Sinus"
+    },
+    {
+      "primary": "Sinus_Sphenoid_L",
+      "reverse": "L_Sphenoid_Sinus"
+    },
+    {
+      "primary": "Sinus_Sphenoid_R",
+      "reverse": "R_Sphenoid_Sinus"
+    },
+    {
+      "primary": "Skin",
+      "reverse": "Skin"
+    },
+    {
+      "primary": "Skin_Perineum",
+      "reverse": "Perineum_Skin"
+    },
+    {
+      "primary": "Skin_Peritoneum",
+      "reverse": "Peritoneum_Skin"
+    },
+    {
+      "primary": "Skull",
+      "reverse": "Skull"
+    },
+    {
+      "primary": "Spc",
+      "reverse": "Spc"
+    },
+    {
+      "primary": "Spc_Bowel",
+      "reverse": "Bowel_Spc",
+      "source_primary": "Spc_Bowel "
+    },
+    {
+      "primary": "Spc_Bowel_Small",
+      "reverse": "Small_Bowel_Spc"
+    },
+    {
+      "primary": "Spc_Retrophar_L",
+      "reverse": "L_Retrophar_Spc"
+    },
+    {
+      "primary": "Spc_Retrophar_R",
+      "reverse": "R_Retrophar_Spc"
+    },
+    {
+      "primary": "Spc_Retrophars",
+      "reverse": "Retrophars_Spc"
+    },
+    {
+      "primary": "Spc_Retrosty",
+      "reverse": "Retrosty_Spc"
+    },
+    {
+      "primary": "Spc_Retrosty_L",
+      "reverse": "L_Retrosty_Spc"
+    },
+    {
+      "primary": "Spc_Retrosty_R",
+      "reverse": "R_Retrosty_Spc"
+    },
+    {
+      "primary": "Spc_Supraclav_L",
+      "reverse": "L_Supraclav_Spc"
+    },
+    {
+      "primary": "Spc_Supraclav_R",
+      "reverse": "R_Supraclav_Spc"
+    },
+    {
+      "primary": "Sphincter_Anal",
+      "reverse": "Anal_Sphincter"
+    },
+    {
+      "primary": "SpinalCanal",
+      "reverse": "SpinalCanal"
+    },
+    {
+      "primary": "SpinalCanal_PRV",
+      "reverse": "PRV_SpinalCanal"
+    },
+    {
+      "primary": "SpinalCanal_PRVx",
+      "reverse": "PRVx_SpinalCanal"
+    },
+    {
+      "primary": "SpinalCord",
+      "reverse": "SpinalCord"
+    },
+    {
+      "primary": "SpinalCord_Cerv",
+      "reverse": "Cerv_SpinalCord"
+    },
+    {
+      "primary": "SpinalCord_Lum",
+      "reverse": "Lum_SpinalCord"
+    },
+    {
+      "primary": "SpinalCord_PRV",
+      "reverse": "PRV_SpinalCord"
+    },
+    {
+      "primary": "SpinalCord_PRVxx",
+      "reverse": "PRVxx_SpinalCord"
+    },
+    {
+      "primary": "SpinalCord_Sac",
+      "reverse": "Sac_SpinalCord"
+    },
+    {
+      "primary": "SpinalCord_Thor",
+      "reverse": "Thor_SpinalCord"
+    },
+    {
+      "primary": "Spleen",
+      "reverse": "Spleen"
+    },
+    {
+      "primary": "Spleen_Hilum",
+      "reverse": "Hilum_Spleen"
+    },
+    {
+      "primary": "Spongiosum",
+      "reverse": "Spongiosum"
+    },
+    {
+      "primary": "Stapes",
+      "reverse": "Stapes"
+    },
+    {
+      "primary": "Stapes_L",
+      "reverse": "L_Stapes"
+    },
+    {
+      "primary": "Stapes_R",
+      "reverse": "R_Stapes"
+    },
+    {
+      "primary": "Stomach",
+      "reverse": "Stomach"
+    },
+    {
+      "primary": "Stomach_PRVxx",
+      "reverse": "PRVxx_Stomach"
+    },
+    {
+      "primary": "Strct",
+      "reverse": "Strct",
+      "source_primary": "Strct "
+    },
+    {
+      "primary": "Strct_Suprapatel",
+      "reverse": "Suprapatel_Strct"
+    },
+    {
+      "primary": "Surf_Eye",
+      "reverse": "Eye_Surf"
+    },
+    {
+      "primary": "SurgicalBed",
+      "reverse": "SurgicalBed"
+    },
+    {
+      "primary": "Sys_Ventricular",
+      "reverse": "Ventricular_Sys"
+    },
+    {
+      "primary": "Tendon",
+      "reverse": "Tendon",
+      "source_primary": "Tendon "
+    },
+    {
+      "primary": "Tendon_Quad",
+      "reverse": "Quad_Tendon"
+    },
+    {
+      "primary": "Testis",
+      "reverse": "Testis"
+    },
+    {
+      "primary": "Testis_L",
+      "reverse": "L_Testis"
+    },
+    {
+      "primary": "Testis_R",
+      "reverse": "R_Testis"
+    },
+    {
+      "primary": "ThecalSac",
+      "reverse": "ThecalSac"
+    },
+    {
+      "primary": "Thoracic_Duct",
+      "reverse": "Duct_Thoracic"
+    },
+    {
+      "primary": "Tongue",
+      "reverse": "Tongue"
+    },
+    {
+      "primary": "Tongue_All",
+      "reverse": "All_Tongue"
+    },
+    {
+      "primary": "Tongue_Base",
+      "reverse": "Base_Tongue"
+    },
+    {
+      "primary": "Tongue_Base_L",
+      "reverse": "L_Base_Tongue"
+    },
+    {
+      "primary": "Tongue_Base_R",
+      "reverse": "R_Base_Tongue"
+    },
+    {
+      "primary": "Tongue_Oral",
+      "reverse": "Oral_Tongue"
+    },
+    {
+      "primary": "Tongue_Oral_L",
+      "reverse": "L_Oral_Tongue"
+    },
+    {
+      "primary": "Tongue_Oral_R",
+      "reverse": "R_Oral_Tongue"
+    },
+    {
+      "primary": "Tonsil",
+      "reverse": "Tonsil"
+    },
+    {
+      "primary": "Trachea",
+      "reverse": "Trachea"
+    },
+    {
+      "primary": "Trachea_NAdj",
+      "reverse": "NAdj_Trachea"
+    },
+    {
+      "primary": "TumorBed",
+      "reverse": "TumorBed"
+    },
+    {
+      "primary": "Ureter_L",
+      "reverse": "L_Ureter"
+    },
+    {
+      "primary": "Ureter_R",
+      "reverse": "R_Ureter"
+    },
+    {
+      "primary": "UreterDivert",
+      "reverse": "UreterDivert"
+    },
+    {
+      "primary": "Ureters",
+      "reverse": "Ureters"
+    },
+    {
+      "primary": "Urethra",
+      "reverse": "Urethra"
+    },
+    {
+      "primary": "Urethra_Prostatc",
+      "reverse": "Prostatc_Urethra"
+    },
+    {
+      "primary": "Uterus",
+      "reverse": "Uterus"
+    },
+    {
+      "primary": "V_Azygos",
+      "reverse": "Azygos_V"
+    },
+    {
+      "primary": "V_Brachioceph_L",
+      "reverse": "L_Brachioceph_V"
+    },
+    {
+      "primary": "V_Brachioceph_R",
+      "reverse": "R_Brachioceph_V"
+    },
+    {
+      "primary": "V_Iliac_Ext_L",
+      "reverse": "L_Ext_Iliac_V"
+    },
+    {
+      "primary": "V_Iliac_Ext_R",
+      "reverse": "R_Ext_Iliac_V"
+    },
+    {
+      "primary": "V_Iliac_Int_L",
+      "reverse": "L_Int_Iliac_V"
+    },
+    {
+      "primary": "V_Iliac_Int_R",
+      "reverse": "R_Int_Iliac_V"
+    },
+    {
+      "primary": "V_Iliac_L",
+      "reverse": "L_Iliac_V"
+    },
+    {
+      "primary": "V_Iliac_R",
+      "reverse": "R_Iliac_V"
+    },
+    {
+      "primary": "V_Jugular",
+      "reverse": "Jugular_V"
+    },
+    {
+      "primary": "V_Jugular_Ext_L",
+      "reverse": "L_Ext_Jugular_V"
+    },
+    {
+      "primary": "V_Jugular_Ext_R",
+      "reverse": "R_Ext_Jugular_V"
+    },
+    {
+      "primary": "V_Jugular_Int_L",
+      "reverse": "L_Int_Jugular_V"
+    },
+    {
+      "primary": "V_Jugular_Int_R",
+      "reverse": "R_Int_Jugular_V"
+    },
+    {
+      "primary": "V_Portal",
+      "reverse": "Portal_V"
+    },
+    {
+      "primary": "V_Pulmonary",
+      "reverse": "Pulmonary_V"
+    },
+    {
+      "primary": "V_Subclavian_L",
+      "reverse": "L_Subclavian_V"
+    },
+    {
+      "primary": "V_Subclavian_R",
+      "reverse": "R_Subclavian_V"
+    },
+    {
+      "primary": "V_Subclavians",
+      "reverse": "Subclavians_V"
+    },
+    {
+      "primary": "V_Venacava_I",
+      "reverse": "I_Venacava_V"
+    },
+    {
+      "primary": "V_Venacava_S",
+      "reverse": "S_Venacava_V"
+    },
+    {
+      "primary": "Vagina",
+      "reverse": "Vagina"
+    },
+    {
+      "primary": "Vagina_Surf",
+      "reverse": "Surf_Vagina"
+    },
+    {
+      "primary": "VaginalCuff",
+      "reverse": "VaginalCuff"
+    },
+    {
+      "primary": "Valve",
+      "reverse": "Valve"
+    },
+    {
+      "primary": "Valve_Aortic",
+      "reverse": "Aortic_Valve"
+    },
+    {
+      "primary": "Valve_Mitral",
+      "reverse": "Mitral_Valve"
+    },
+    {
+      "primary": "Valve_Pulmonic",
+      "reverse": "Pulmonic_Valve"
+    },
+    {
+      "primary": "Valve_Tricuspid",
+      "reverse": "Tricuspid_Valve"
+    },
+    {
+      "primary": "VB",
+      "reverse": "VB"
+    },
+    {
+      "primary": "VB_C",
+      "reverse": "C_VB"
+    },
+    {
+      "primary": "VB_C1",
+      "reverse": "C1_VB"
+    },
+    {
+      "primary": "VB_C2",
+      "reverse": "C2_VB"
+    },
+    {
+      "primary": "VB_C3",
+      "reverse": "C3_VB"
+    },
+    {
+      "primary": "VB_C4",
+      "reverse": "C4_VB"
+    },
+    {
+      "primary": "VB_C5",
+      "reverse": "C5_VB"
+    },
+    {
+      "primary": "VB_C6",
+      "reverse": "C6_VB"
+    },
+    {
+      "primary": "VB_C7",
+      "reverse": "C7_VB"
+    },
+    {
+      "primary": "VB_L",
+      "reverse": "L_VB"
+    },
+    {
+      "primary": "VB_L1",
+      "reverse": "L1_VB"
+    },
+    {
+      "primary": "VB_L2",
+      "reverse": "L2_VB"
+    },
+    {
+      "primary": "VB_L3",
+      "reverse": "L3_VB"
+    },
+    {
+      "primary": "VB_L4",
+      "reverse": "L4_VB"
+    },
+    {
+      "primary": "VB_L5",
+      "reverse": "L5_VB"
+    },
+    {
+      "primary": "VB_S",
+      "reverse": "S_VB"
+    },
+    {
+      "primary": "VB_S1",
+      "reverse": "S1_VB"
+    },
+    {
+      "primary": "VB_S2",
+      "reverse": "S2_VB"
+    },
+    {
+      "primary": "VB_S3",
+      "reverse": "S3_VB"
+    },
+    {
+      "primary": "VB_S4",
+      "reverse": "S4_VB"
+    },
+    {
+      "primary": "VB_S5",
+      "reverse": "S5_VB"
+    },
+    {
+      "primary": "VB_T",
+      "reverse": "T_VB"
+    },
+    {
+      "primary": "VB_T01",
+      "reverse": "T01_VB"
+    },
+    {
+      "primary": "VB_T02",
+      "reverse": "T02_VB"
+    },
+    {
+      "primary": "VB_T03",
+      "reverse": "T03_VB"
+    },
+    {
+      "primary": "VB_T04",
+      "reverse": "T04_VB"
+    },
+    {
+      "primary": "VB_T05",
+      "reverse": "T05_VB"
+    },
+    {
+      "primary": "VB_T06",
+      "reverse": "T06_VB"
+    },
+    {
+      "primary": "VB_T07",
+      "reverse": "T07_VB"
+    },
+    {
+      "primary": "VB_T08",
+      "reverse": "T08_VB"
+    },
+    {
+      "primary": "VB_T09",
+      "reverse": "T09_VB"
+    },
+    {
+      "primary": "VB_T10",
+      "reverse": "T10_VB"
+    },
+    {
+      "primary": "VB_T11",
+      "reverse": "T11_VB"
+    },
+    {
+      "primary": "VB_T12",
+      "reverse": "T12_VB"
+    },
+    {
+      "primary": "VBs",
+      "reverse": "VBs"
+    },
+    {
+      "primary": "Ventricle",
+      "reverse": "Ventricle"
+    },
+    {
+      "primary": "Ventricle_L",
+      "reverse": "L_Ventricle"
+    },
+    {
+      "primary": "Ventricle_R",
+      "reverse": "R_Ventricle"
+    },
+    {
+      "primary": "VocalCord_L",
+      "reverse": "L_VocalCord"
+    },
+    {
+      "primary": "VocalCord_R",
+      "reverse": "R_VocalCord"
+    },
+    {
+      "primary": "VocalCords",
+      "reverse": "VocalCords"
+    },
+    {
+      "primary": "Vomer",
+      "reverse": "Vomer"
+    },
+    {
+      "primary": "Vulva",
+      "reverse": "Vulva"
+    },
+    {
+      "primary": "Wall_Vagina",
+      "reverse": "Vagina_Wall"
+    }
+  ],
+  "extraction_notes": "Names stripped of spreadsheet cell padding; original cell values retained when changed. No anatomical aliases added."
+}

@@ -22,7 +22,7 @@ class GammaEvaluationInput(BaseModel):
     reference_dose_path: str = Field(description="Path to baseline DICOM/3D dose array (e.g., TPS calculated dose).")
     evaluated_dose_path: str = Field(description="Path to measured or Monte Carlo simulated 3D dose array.")
     dose_tolerance_percent: float = Field(default=3.0, description="Dose difference tolerance in percent (e.g., 3.0 for 3%).")
-    distance_tolerance_mm: float = Field(default=3.0, description="Distance-to-agreement tolerance in mm (e.g., 3.0 mm).")
+    distance_tolerance_mm: float = Field(default=2.0, description="Distance-to-agreement tolerance in mm (e.g., 3.0 mm).")
     dose_threshold_percent: float = Field(default=10.0, description="Low-dose cutoff threshold percentage.")
 
 
@@ -41,7 +41,9 @@ def _load_dose_and_coords(
     lower_path = path_or_array.lower()
     if lower_path.endswith(".dcm") or lower_path.endswith(".dicom"):
         ds = pydicom.dcmread(path_or_array)
-        scaling = float(getattr(ds, "DoseGridScaling", 1.0))
+        from openrad.tools.dose_geometry import validate_axial_dose
+        validate_axial_dose(ds)
+        scaling = float(ds.DoseGridScaling)
         dose = ds.pixel_array.astype(float) * scaling
 
         spacing = [float(v) for v in getattr(ds, "PixelSpacing", [1.0, 1.0])]
@@ -61,7 +63,7 @@ def _load_dose_and_coords(
         return dose, (z_coords, y_coords, x_coords)
 
     elif lower_path.endswith(".npy"):
-        loaded = np.load(path_or_array, allow_pickle=True)
+        loaded = np.load(path_or_array, allow_pickle=False)
         if isinstance(loaded, np.ndarray):
             arr = loaded.astype(float)
             coords = tuple(np.arange(s, dtype=float) for s in arr.shape)
@@ -89,7 +91,7 @@ def evaluate_gamma_index(
     reference_dose_path: str,
     evaluated_dose_path: str,
     dose_tolerance_percent: float = 3.0,
-    distance_tolerance_mm: float = 3.0,
+    distance_tolerance_mm: float = 2.0,
     dose_threshold_percent: float = 10.0,
 ) -> Dict[str, float]:
     """Computes 2D/3D Gamma Index passing rates between reference and evaluated dose distributions.
@@ -97,9 +99,13 @@ def evaluate_gamma_index(
     Returns passing rate percentage, average gamma, and max gamma.
     Validates physics domain guardrails on dose positivity and gamma limits.
     """
+    if not np.isfinite([dose_tolerance_percent, distance_tolerance_mm, dose_threshold_percent]).all() or dose_tolerance_percent <= 0 or distance_tolerance_mm <= 0 or not 0 <= dose_threshold_percent <= 100:
+        raise GammaEvaluationError("Gamma tolerances must be finite and positive; cutoff must be in [0,100].")
     ref_dose, ref_coords = _load_dose_and_coords(reference_dose_path)
     eval_dose, eval_coords = _load_dose_and_coords(evaluated_dose_path)
 
+    if ref_dose.ndim not in (2, 3) or eval_dose.ndim != ref_dose.ndim:
+        raise GammaEvaluationError("Dose arrays must have matching dimensionality (2D or 3D).")
     # 1. Physics Validation: Non-negative dose
     PhysicsValidationEngine.validate_dose_grid(ref_dose, raise_on_fail=True)
     PhysicsValidationEngine.validate_dose_grid(eval_dose, raise_on_fail=True)
@@ -127,36 +133,16 @@ def evaluate_gamma_index(
     eval_count = int(np.sum(mask_eval))
 
     if eval_count == 0:
-        return {
-            "passing_rate": 100.0,
-            "average_gamma": 0.0,
-            "max_gamma": 0.0,
-            "evaluated_voxels": 0,
-            "total_voxels": int(ref_d.size),
-        }
+        raise GammaEvaluationError("No voxels above cutoff; no QA verdict can be computed.")
 
     sub_ref_pts = ref_pts[mask_eval]
     sub_ref_d = ref_d[mask_eval]
 
-    # KDTree spatial search
-    tree = cKDTree(eval_pts)
-    search_radius = delta_dist * 3.5  # search sphere
-    neighbors = tree.query_ball_point(sub_ref_pts, search_radius)
-
-    gamma_values = np.zeros(eval_count, dtype=float)
-    for i, n_indices in enumerate(neighbors):
-        if len(n_indices) == 0:
-            gamma_values[i] = 3.5
-            continue
-
-        cand_pts = eval_pts[n_indices]
-        cand_d = eval_d[n_indices]
-
-        d_dist = np.linalg.norm(cand_pts - sub_ref_pts[i], axis=1)
-        d_val = np.abs(cand_d - sub_ref_d[i])
-
-        gamma_sq = (d_dist / delta_dist) ** 2 + (d_val / delta_dose) ** 2
-        gamma_values[i] = float(np.sqrt(np.min(gamma_sq)))
+    # Exact nearest-neighbor search in normalized joint space/dose coordinates.
+    # This is discrete gamma: interpolation and commissioning remain required.
+    candidates = np.column_stack((eval_pts / delta_dist, eval_d / delta_dose))
+    queries = np.column_stack((sub_ref_pts / delta_dist, sub_ref_d / delta_dose))
+    gamma_values, _ = cKDTree(candidates).query(queries)
 
     passed_points = int(np.sum(gamma_values <= 1.0))
     pass_rate = float(100.0 * passed_points / eval_count)
@@ -172,7 +158,11 @@ def evaluate_gamma_index(
     )
 
     return {
-        "passing_rate": round(pass_rate, 2),
+        "clinical_release": False,
+        "method": "discrete_global_gamma",
+        "criteria": {"dose_percent": dose_tolerance_percent, "distance_mm": distance_tolerance_mm, "cutoff_percent": dose_threshold_percent},
+        "limitations": ["No interpolation or measurement uncertainty model; not commissioned for clinical QA.", "Array/NPY/CSV inputs assume 1 mm spacing and Gy; DICOM supports canonical axial geometry only."],
+        "passing_rate": pass_rate,
         "average_gamma": round(avg_gamma, 3),
         "max_gamma": round(max_gamma, 3),
         "evaluated_voxels": eval_count,

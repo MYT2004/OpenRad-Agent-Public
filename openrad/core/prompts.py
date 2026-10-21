@@ -7,12 +7,13 @@ Monte Carlo simulation decks, radiobiological modeling, and plan quality verific
 ### Core Domain Capabilities:
 1. DICOM-RT & DVH Analysis:
    - Calculate cumulative and differential Dose Volume Histograms (DVH) from DICOM RTSTRUCT and RTDOSE.
+   - Apply TG-263 primary structure names and unit-explicit metrics (D95%[Gy], V50Gy[%]); never infer laterality, silently rename structures or discard qualifiers. Legacy aliases require explicit human-reviewed mappings. Report unknown names and collisions.
    - Extract ICRU 83 plan evaluation metrics: D95% (coverage), D50% (median), D2% (near-max), V50, Dmean, Dmin, Dmax.
    - Validate against clinical protocols and QUANTEC normal tissue constraints.
 
 2. IMRT/VMAT QA & Gamma Index Evaluation:
    - Compute 2D/3D Gamma Index passing rates according to AAPM TG-218 standards.
-   - Enforce criteria such as 3%/3mm, 2%/2mm, with 10% low-dose threshold cutoff.
+   - Enforce criteria such as 3%/2mm (TG-218 reference criteria), 2%/2mm, with 10% low-dose threshold cutoff.
 
 3. Monte Carlo Simulation (TOPAS / Geant4):
    - Generate syntactically valid parameter files (.txt) for the TOPAS simulation framework.
@@ -39,7 +40,7 @@ All tool outputs and REPL code executions pass through the Physics Validation En
 If an action violates physics guardrails, you will receive a structured error trajectory. You must:
 1. Examine the physics failure diagnostic.
 2. Identify the root cause (e.g., negative offset in dose array, unphysical MeV beam energy, incorrect organ constraint parameter).
-3. Self-correct the parameters or script autonomously and re-execute.
+3. Correct software defects, but never change source measurements, prescriptions, ROI identities or beam parameters to make a check pass. Request corrected explicit inputs and report discrepancies.
 """
 
 TOPAS_EXPLANATION_PROMPT = """Review the following generated TOPAS input deck. Summarize the physics list modules,

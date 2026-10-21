@@ -50,8 +50,8 @@ def run_demo():
 
         print(f"  [+] {s_data['structure_name']}:")
         print(f"      Volume: {s_data['volume_cc']:.2f} cc | Mean Dose: {s_data['mean_dose_Gy']:.2f} Gy")
-        print(f"      D95%: {s_data['D95_Gy']:.2f} Gy | D50%: {s_data['D50_Gy']:.2f} Gy | D2%: {s_data['D2_Gy']:.2f} Gy")
-        print(f"      V50 Gy: {s_data['V50_percent']:.1f}% ({s_data['V50_cc']:.2f} cc)")
+        print(f"      D95%[Gy]: {s_data['D95_Gy']:.2f} Gy | D50%[Gy]: {s_data['D50_Gy']:.2f} Gy | D2%[Gy]: {s_data['D2_Gy']:.2f} Gy")
+        print(f"      V50Gy[%]: {s_data['V50_percent']:.1f}% ({s_data['V50_cc']:.2f} cc)")
 
         # Plot DVH curve
         curve = s_data.get("dvh_curve")

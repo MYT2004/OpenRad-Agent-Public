@@ -190,11 +190,11 @@ class OpenRadAgent:
 
             # Parse ROI names from task
             roi_names = []
-            for target in ["Cord", "Brainstem", "PTV 69.96 Gy", "PTV", "Rectum", "Bladder", "Parotid"]:
+            for target in ["SpinalCord", "Brainstem", "PTV_High", "PTV", "Rectum", "Bladder", "Parotid_L", "Parotid_R"]:
                 if target.lower() in task_lower:
                     roi_names.append(target)
             if not roi_names:
-                roi_names = ["Cord", "Brainstem", "PTV 69.96 Gy"]
+                roi_names = ["SpinalCord", "Brainstem", "PTV_High"]
 
             record = self.dispatch_tool(
                 "analyze_dvh",
@@ -213,6 +213,7 @@ class OpenRadAgent:
                     f"- **Dose Grid Dimensions**: {res_dict.get('dose_grid_shape')}",
                     f"- **Maximum Plan Dose**: {res_dict.get('max_dose_Gy')} Gy",
                     f"- **Physics Validation**: Passed (D(r) >= 0 Gy, valid geometry)",
+                    f"- **Nomenclature review**: {res_dict.get('nomenclature')}",
                     "\n#### Structure Metrics:",
                 ]
                 for s_name, s_data in res_dict.get("structures", {}).items():
@@ -221,9 +222,11 @@ class OpenRadAgent:
                             f"- **{s_data.get('structure_name', s_name)}**:\n"
                             f"  - Volume: {s_data.get('volume_cc')} cc\n"
                             f"  - Mean Dose: {s_data.get('mean_dose_Gy')} Gy | Max Dose: {s_data.get('max_dose_Gy')} Gy\n"
-                            f"  - D95%: {s_data.get('D95_Gy')} Gy | D50%: {s_data.get('D50_Gy')} Gy | D2%: {s_data.get('D2_Gy')} Gy\n"
-                            f"  - V50%: {s_data.get('V50_percent')}% ({s_data.get('V50_cc')} cc)"
+                            f"  - D95%[Gy]: {s_data.get('D95_Gy')} | D50%[Gy]: {s_data.get('D50_Gy')} | D2%[Gy]: {s_data.get('D2_Gy')}\n"
+                            f"  - V50Gy[%]: {s_data.get('V50_percent')} | V50Gy[cc]: {s_data.get('V50_cc')}"
                         )
+                    else:
+                        lines.append(f"- **{s_name}**: {s_data.get('error', s_data.get('warning'))}")
                 response = "\n".join(lines)
                 return AgentExecutionResult(
                     task=task,
@@ -237,7 +240,7 @@ class OpenRadAgent:
         elif any(w in task_lower for w in ["gamma", "gamma index", "qa", "passing rate"]):
             # Check for parameters
             d_tol = 3.0
-            dist_tol = 3.0
+            dist_tol = 2.0
             cut_tol = 10.0
             m_dtol = re.search(r"(\d+(\.\d+)?)\s*%", task)
             if m_dtol:
@@ -246,38 +249,11 @@ class OpenRadAgent:
             if m_dist:
                 dist_tol = float(m_dist.group(1))
 
-            # Default sample dose path
-            sample_dose = "data/raw/HNSCC-01-0199/10-26-2002-NA-RT SIMULATION-18560/1.000000-NA-67954/1-1.dcm"
-            record = self.dispatch_tool(
-                "evaluate_gamma_index",
-                {
-                    "reference_dose_path": sample_dose,
-                    "evaluated_dose_path": sample_dose,
-                    "dose_tolerance_percent": d_tol,
-                    "distance_tolerance_mm": dist_tol,
-                    "dose_threshold_percent": cut_tol,
-                },
+            return AgentExecutionResult(
+                task=task,
+                response="Gamma QA requires explicit independent reference and evaluated dose inputs. Use the typed evaluate_gamma_index tool; the agent will not substitute a sample self-comparison.",
+                success=False,
             )
-            tool_records.append(record)
-
-            if record.physics_passed and record.output:
-                out = record.output
-                response = (
-                    f"### OpenRad Agent: Gamma Index Evaluation (AAPM TG-218)\n"
-                    f"- Criteria: {d_tol}% / {dist_tol} mm (Low-dose cutoff: {cut_tol}%)\n"
-                    f"- **Gamma Passing Rate**: {out.get('passing_rate')}%\n"
-                    f"- **Average Gamma Index**: {out.get('average_gamma')}\n"
-                    f"- **Maximum Gamma Index**: {out.get('max_gamma')}\n"
-                    f"- **Evaluated Voxels**: {out.get('evaluated_voxels')} / {out.get('total_voxels')}\n"
-                    f"- **Physics Guardrail Check**: Passed (0% <= Pass Rate <= 100%)"
-                )
-                return AgentExecutionResult(
-                    task=task,
-                    response=response,
-                    tool_records=tool_records,
-                    artifacts=artifacts,
-                    success=True,
-                )
 
         # 3. TOPAS Monte Carlo Intent
         elif any(w in task_lower for w in ["topas", "monte carlo", "geant4", "bragg peak", "deck"]):
@@ -305,24 +281,6 @@ class OpenRadAgent:
                 },
             )
             tool_records.append(record)
-
-            # Self-Correction Trigger: if unphysical energy violated bounds
-            if not record.physics_passed and "BeamEnergyBoundsError" in (record.error or ""):
-                retries += 1
-                # Self-correction: clamp to clinical range
-                corrected_energy = min(250.0, max(0.01, energy))
-                rec2 = self.dispatch_tool(
-                    "generate_topas_deck",
-                    {
-                        "particle_type": particle,
-                        "energy_MeV": corrected_energy,
-                        "geometry_type": "water_phantom",
-                        "phantom_dimensions_cm": [30.0, 30.0, 30.0],
-                        "number_of_histories": 100000,
-                    },
-                )
-                tool_records.append(rec2)
-                record = rec2
 
             if record.physics_passed and record.output:
                 deck_path = os.path.join(self.artifact_dir, "topas_simulation.txt")

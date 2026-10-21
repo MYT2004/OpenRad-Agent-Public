@@ -14,16 +14,21 @@ from openrad.validation.physics_rules import (
 )
 
 
+from openrad.validation.nomenclature import build_roi_index, tg263_dvh_metrics
+
+
 class DVHAnalysisInput(BaseModel):
     dicom_rtstruct_path: str = Field(description="Path to the DICOM RTSTRUCT file containing contour data.")
     dicom_rtdose_path: str = Field(description="Path to the DICOM RTDOSE file containing 3D dose grid.")
-    roi_names: List[str] = Field(description="List of Structure names to analyze, e.g., ['PTV_60', 'Rectum', 'Bladder'].")
+    roi_names: List[str] = Field(description="Exact source or TG-263 primary names to analyze.")
+    reviewed_name_map: Optional[Dict[str, str]] = Field(default=None, description="Human-reviewed source ROI name to TG-263 primary/target name mapping. Never infer anatomy from names.")
 
 
 def analyze_dvh(
     dicom_rtstruct_path: str,
     dicom_rtdose_path: str,
     roi_names: List[str],
+    reviewed_name_map: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """Parses DICOM-RT files and computes Dose Volume Histograms (DVH).
 
@@ -39,6 +44,13 @@ def analyze_dvh(
     ds_struct = pydicom.dcmread(dicom_rtstruct_path)
     ds_dose = pydicom.dcmread(dicom_rtdose_path)
 
+    from openrad.tools.dose_geometry import validate_axial_dose
+    validate_axial_dose(ds_dose)
+    frames = {str(roi.ReferencedFrameOfReferenceUID) for roi in ds_struct.StructureSetROISequence}
+    if not getattr(ds_dose, "FrameOfReferenceUID", None) or frames != {str(ds_dose.FrameOfReferenceUID)}:
+        raise DICOMGeometryError("RTSTRUCT and RTDOSE frame of reference must match explicitly.")
+    if not getattr(ds_struct, "PatientID", None) or ds_struct.PatientID != getattr(ds_dose, "PatientID", None):
+        raise DICOMGeometryError("RTSTRUCT and RTDOSE patient identifiers must match.")
     # 1. Physics Validation: Geometry Check
     pixel_spacing = [float(v) for v in getattr(ds_dose, "PixelSpacing", [1.0, 1.0])]
     slice_thickness = getattr(ds_dose, "SliceThickness", None)
@@ -77,15 +89,8 @@ def analyze_dvh(
 
     voxel_volume_cc = (dx * dy * abs(dz)) / 1000.0  # mm3 to cm3 (cc)
 
-    # Map ROI Names to ROINumber
-    roi_lookup: Dict[int, str] = {}
-    roi_name_to_num: Dict[str, int] = {}
-    if hasattr(ds_struct, "StructureSetROISequence"):
-        for roi in ds_struct.StructureSetROISequence:
-            r_num = int(roi.ROINumber)
-            r_name = str(roi.ROIName).strip()
-            roi_lookup[r_num] = r_name
-            roi_name_to_num[r_name.lower()] = r_num
+    roi_index, naming_entries = build_roi_index(ds_struct.StructureSetROISequence, reviewed_name_map)
+    roi_lookup = {e['roi_number']: e['original_name'] for e in naming_entries}
 
     # Map ROI contours by ROI Number
     roi_contours: Dict[int, Any] = {}
@@ -94,32 +99,27 @@ def analyze_dvh(
             roi_contours[int(contour.ReferencedROINumber)] = contour
 
     results: Dict[str, Any] = {
-        "status": "success",
+        "status": "research_only",
+        "clinical_release": False,
+        "limitations": ["Voxel-center contour sampling; no commissioned contour topology or partial-volume model. No clinical uncertainty bound established."],
         "dose_grid_shape": list(dose_grid.shape),
         "max_dose_Gy": float(np.max(dose_grid)),
         "voxel_volume_cc": float(voxel_volume_cc),
+        "nomenclature": {"standard": "AAPM TG-263 (2018)", "vocabulary_version": "20170815", "structures": naming_entries},
         "structures": {},
     }
 
     # Analyze each requested ROI
     for target_name in roi_names:
-        target_clean = target_name.strip().lower()
-        matched_num = None
-
-        # Exact match first
-        if target_clean in roi_name_to_num:
-            matched_num = roi_name_to_num[target_clean]
-        else:
-            # Substring / partial match
-            for r_name_low, r_num in roi_name_to_num.items():
-                if target_clean in r_name_low or r_name_low in target_clean:
-                    matched_num = r_num
-                    break
-
-        if matched_num is None or matched_num not in roi_contours:
+        if not isinstance(target_name, str) or not target_name:
+            raise ValueError("Requested ROI names must be nonempty strings.")
+        entry = roi_index.get(target_name.casefold())
+        matched_num = entry['roi_number'] if entry else None
+        if entry is None or entry['canonical_name'] is None or matched_num not in roi_contours:
             results["structures"][target_name] = {
                 "found": False,
-                "error": f"Structure '{target_name}' not found in RTSTRUCT or contains no contours.",
+                "error": "ROI absent, has no contours, or requires an explicit reviewed TG-263 mapping.",
+                "nomenclature": entry,
                 "available_structures": list(roi_lookup.values()),
             }
             continue
@@ -201,6 +201,9 @@ def analyze_dvh(
             "found": True,
             "structure_name": actual_name,
             "roi_number": matched_num,
+            "canonical_structure_name": entry['canonical_name'],
+            "nomenclature": entry,
+            "tg263_metrics": tg263_dvh_metrics(d95, d50, d2, v50_percent, v50_cc),
             "voxel_count": len(doses),
             "volume_cc": round(total_vol_cc, 3),
             "mean_dose_Gy": round(d_mean, 2),

@@ -43,10 +43,17 @@ def _extract_diff_dvh(dvh_data: Dict[str, List[float]]) -> Tuple[np.ndarray, np.
     if len(doses) != len(vols) or len(doses) < 2:
         raise ValueError("Dose and volume arrays must have matching length >= 2.")
 
+    PhysicsValidationEngine.validate_dose_grid(doses, raise_on_fail=True)
+    if doses.ndim != 1 or vols.ndim != 1 or not np.isfinite(vols).all() or (vols < 0).any() or vols.sum() <= 0:
+        raise RadiobiologyBoundsError("DVH volumes must be finite, non-negative, one-dimensional and nonempty.")
+    if (np.diff(doses) <= 0).any():
+        raise RadiobiologyBoundsError("Dose bins must be strictly increasing.")
     # Check if cumulative (monotonically decreasing or non-increasing volume)
     is_cumulative = bool(vols[0] > vols[-1])
 
     if is_cumulative:
+        if (np.diff(vols) > 0).any() or vols[-1] != 0:
+            raise RadiobiologyBoundsError("Cumulative DVH must decrease monotonically to zero; incomplete tails cannot be normalized.")
         # Normalize volumes to percentages [0, 100]
         max_v = float(np.max(vols))
         if max_v > 1.0:
@@ -87,6 +94,9 @@ def calculate_tcp_ntcp(
     # Parameter lookup helper (case insensitive)
     params_norm = {k.lower().replace("_", ""): float(v) for k, v in parameters.items()}
 
+    if not all(np.isfinite(v) for v in params_norm.values()):
+        raise RadiobiologyBoundsError("Model parameters must be finite.")
+
     if "LKB" in m_type or "LYMAN" in m_type:
         # Lyman-Kutcher-Burman (LKB) NTCP Model
         # Required: TD50 (or td50), m, n
@@ -104,7 +114,7 @@ def calculate_tcp_ntcp(
 
         # Generalized EUD: EUD = (sum(v_i * D_i^(1/n)))^n
         inv_n = 1.0 / n
-        power_sum = float(np.sum(fracs * (np.maximum(mid_doses, 0.0) ** inv_n)))
+        power_sum = float(np.sum(fracs * (mid_doses ** inv_n)))
         eud = power_sum ** n
 
         # Normalized variable t = (EUD - TD50) / (m * TD50)
@@ -138,6 +148,9 @@ def calculate_tcp_ntcp(
             raise RadiobiologyBoundsError("TCP parameter 'TCD50' must be > 0 Gy.")
         if gamma50 <= 0:
             raise RadiobiologyBoundsError("TCP slope parameter 'gamma_50' must be > 0.")
+
+        if a_param >= 0:
+            raise RadiobiologyBoundsError("Tumor EUD exponent a must be negative.")
 
         # Generalized EUD for tumor
         # Cold spots dominate tumor control -> negative exponent

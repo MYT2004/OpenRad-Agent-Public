@@ -1,6 +1,7 @@
 """Streamlit Interactive Application for OpenRad Agent."""
 
 import os
+import json
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,6 +16,7 @@ from openrad.validation.physics_rules import PhysicsValidationEngine, BeamEnergy
 st.set_page_config(page_title="OpenRad Agent | Autonomous Medical Physics AI", layout="wide")
 
 st.title("🏥 OpenRad Agent")
+st.warning("Research prototype: clinical validation and uncertainty margins are not established.")
 st.markdown("**Autonomous Medical Physics & Radiotherapy Intelligence Agent**")
 
 # Sidebar Controls
@@ -88,16 +90,27 @@ elif agent_mode == "DICOM-RT & DVH Analyzer":
     with col2:
         dose_file = st.text_input("RTDOSE Path:", value=SAMPLE_DOSE)
 
-    rois = st.multiselect(
-        "Select Regions of Interest (ROIs):",
-        ["Cord", "Brainstem", "PTV 69.96 Gy", "Rt Parotid", "Lt Parotid", "GTV"],
-        default=["Cord", "Brainstem", "PTV 69.96 Gy"],
-    )
+    roi_text = st.text_area("Exact ROI names (one per line; TG-263 primary names preferred)", value="SpinalCord\nBrainstem\nPTV_High")
+    rois = [name for name in roi_text.splitlines() if name]
+    mapping_text = st.text_area("Human-reviewed legacy ROI mapping (JSON)", value="{}", help='Example after anatomical review: {"Cord": "SpinalCord"}. No automatic renaming occurs.')
 
     if st.button("Compute DVH"):
         if os.path.exists(struct_file) and os.path.exists(dose_file):
             with st.spinner("Extracting contours, sampling 3D dose grid, and calculating DVH..."):
-                dvh_res = analyze_dvh(struct_file, dose_file, rois)
+                try:
+                    if not rois:
+                        raise ValueError("Select at least one ROI.")
+                    reviewed_map = json.loads(mapping_text)
+                    if not isinstance(reviewed_map, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in reviewed_map.items()):
+                        raise ValueError("Mapping must be a JSON object of source and canonical name strings.")
+                    dvh_res = analyze_dvh(struct_file, dose_file, rois, reviewed_name_map=reviewed_map)
+                except (ValueError, AttributeError) as exc:
+                    st.error(str(exc))
+                    st.stop()
+                st.json(dvh_res["nomenclature"])
+                for name, entry in dvh_res["structures"].items():
+                    if not entry.get("found"):
+                        st.error(f"{name}: {entry['error']}")
                 st.success(f"Processed 3D dose grid {dvh_res['dose_grid_shape']} | Max Dose: {dvh_res['max_dose_Gy']:.2f} Gy")
 
                 fig, ax = plt.subplots(figsize=(8, 5))
@@ -106,10 +119,10 @@ elif agent_mode == "DICOM-RT & DVH Analyzer":
                 for idx, (r_name, s_data) in enumerate(dvh_res["structures"].items()):
                     if s_data.get("found"):
                         with cols[idx % len(cols)]:
-                            st.metric(f"{r_name} D95%", f"{s_data.get('D95_Gy')} Gy")
+                            st.metric(f"{r_name} D95%[Gy]", f"{s_data.get('D95_Gy')} Gy")
                             st.write(f"Volume: `{s_data.get('volume_cc')} cc`")
                             st.write(f"Dmean: `{s_data.get('mean_dose_Gy')} Gy`")
-                            st.write(f"V50 Gy: `{s_data.get('V50_percent')}%`")
+                            st.write(f"V50Gy[%]: `{s_data.get('V50_percent')}%`")
 
                         curve = s_data.get("dvh_curve")
                         if curve:
@@ -135,7 +148,7 @@ elif agent_mode == "Gamma Index QA (AAPM TG-218)":
     with c1:
         d_tol = st.number_input("Dose Tolerance (%)", value=3.0)
     with c2:
-        dist_tol = st.number_input("Distance Tolerance (mm)", value=3.0)
+        dist_tol = st.number_input("Distance Tolerance (mm)", value=2.0)
     with c3:
         cut_tol = st.number_input("Low-dose Cutoff (%)", value=10.0)
 

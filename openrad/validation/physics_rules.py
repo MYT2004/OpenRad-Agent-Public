@@ -72,13 +72,15 @@ class PhysicsValidationEngine:
     def validate_dose_grid(
         cls,
         dose_array: Union[np.ndarray, Sequence],
-        tolerance: float = -1e-5,
+        tolerance: float = 0.0,
         raise_on_fail: bool = False,
     ) -> ValidationResult:
         """Rule: Dose values D(r) >= 0 Gy. Negative dose values are physically invalid.
 
         Action on Violation: Reject output; prompt agent to re-check array calibration or background subtraction.
         """
+        if not np.isfinite(tolerance) or tolerance > 0:
+            raise ValueError("Dose tolerance must be finite and <= 0 Gy.")
         arr = np.asarray(dose_array, dtype=float)
         if arr.size == 0:
             res = ValidationResult(
@@ -94,13 +96,13 @@ class PhysicsValidationEngine:
 
         min_val = float(np.nanmin(arr))
         max_val = float(np.nanmax(arr))
-        has_nans = bool(np.isnan(arr).any())
+        has_nans = bool((~np.isfinite(arr)).any())
 
         if has_nans:
             res = ValidationResult(
                 passed=False,
                 rule_name="Dose Grid Integrity",
-                error_message="Dose grid contains NaN (not a number) values.",
+                error_message="Dose grid contains NaN or infinite values.",
                 remediation_suggestion="Inspect dose calculation algorithm or file corruption.",
                 diagnostics={"min": min_val, "max": max_val, "contains_nan": True},
             )
@@ -156,7 +158,7 @@ class PhysicsValidationEngine:
                 raise BeamEnergyBoundsError(res.error_message)
             return res
 
-        if energy < cls.MIN_CLINICAL_ENERGY_MEV or energy > cls.MAX_CLINICAL_ENERGY_MEV:
+        if not np.isfinite(energy) or energy < cls.MIN_CLINICAL_ENERGY_MEV or energy > cls.MAX_CLINICAL_ENERGY_MEV:
             res = ValidationResult(
                 passed=False,
                 rule_name="Beam Energy Bounds",
@@ -205,7 +207,8 @@ class PhysicsValidationEngine:
                 raise GammaEvaluationError(res.error_message)
             return res
 
-        if average_gamma is not None and (average_gamma < 0.0 or np.isnan(average_gamma)):
+        if any(v is not None and (not np.isfinite(v) or v < 0.0)
+               for v in (average_gamma, max_gamma)):
             res = ValidationResult(
                 passed=False,
                 rule_name="Gamma Index",
@@ -235,7 +238,7 @@ class PhysicsValidationEngine:
 
         Action on Violation: Flag DICOM header discrepancy.
         """
-        if len(pixel_spacing) < 2:
+        if len(pixel_spacing) != 2:
             res = ValidationResult(
                 passed=False,
                 rule_name="DICOM Geometry",
@@ -247,7 +250,7 @@ class PhysicsValidationEngine:
             return res
 
         dx, dy = float(pixel_spacing[0]), float(pixel_spacing[1])
-        if dx <= 0 or dy <= 0:
+        if not np.isfinite([dx, dy]).all() or dx <= 0 or dy <= 0:
             res = ValidationResult(
                 passed=False,
                 rule_name="DICOM Geometry",
@@ -261,7 +264,7 @@ class PhysicsValidationEngine:
 
         if slice_thickness is not None:
             dz = float(slice_thickness)
-            if dz <= 0:
+            if not np.isfinite(dz) or dz <= 0:
                 res = ValidationResult(
                     passed=False,
                     rule_name="DICOM Geometry",
@@ -291,7 +294,7 @@ class PhysicsValidationEngine:
             # Check unit vectors
             norm_r = np.linalg.norm(r)
             norm_c = np.linalg.norm(c)
-            if not (0.95 <= norm_r <= 1.05 and 0.95 <= norm_c <= 1.05):
+            if not (abs(norm_r - 1) <= 1e-4 and abs(norm_c - 1) <= 1e-4):
                 res = ValidationResult(
                     passed=False,
                     rule_name="DICOM Geometry",
@@ -305,7 +308,7 @@ class PhysicsValidationEngine:
 
             # Check orthogonality: dot product should be close to 0
             dot = float(np.dot(r, c))
-            if abs(dot) > 0.05:
+            if not np.isfinite(dot) or abs(dot) > 1e-4:
                 res = ValidationResult(
                     passed=False,
                     rule_name="DICOM Geometry",

@@ -95,7 +95,7 @@ def test_dicom_geometry_spacing_and_orthogonality():
     with pytest.raises(DICOMGeometryError) as exc_info:
         PhysicsValidationEngine.validate_dicom_geometry(
             pixel_spacing=[1.0, 1.0],
-            image_orientation=[1.0, 0.0, 0.0, 0.707, 0.707, 0.0],  # dot product = 0.707
+            image_orientation=[1.0, 0.0, 0.0, 2**-0.5, 2**-0.5, 0.0],  # dot product = 0.707
             raise_on_fail=True,
         )
     assert "not orthogonal" in str(exc_info.value)

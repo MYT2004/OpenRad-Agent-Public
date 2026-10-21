@@ -5,6 +5,7 @@ configured for radiation transport, dosimetry scoring, and Bragg peak analysis.
 Includes beam energy bounds guardrails (0.01 - 250 MeV).
 """
 
+import math
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -75,8 +76,13 @@ def generate_topas_deck(
     )
 
     # Validate geometry dimensions
-    if len(phantom_dimensions_cm) != 3 or any(d <= 0 for d in phantom_dimensions_cm):
+    if len(phantom_dimensions_cm) != 3 or any(not math.isfinite(d) or d <= 0 for d in phantom_dimensions_cm):
         raise ValueError(f"Phantom dimensions must be 3 positive floats [x, y, z] in cm. Got: {phantom_dimensions_cm}")
+
+    if isinstance(number_of_histories, bool) or not isinstance(number_of_histories, int) or number_of_histories <= 0:
+        raise ValueError("number_of_histories must be a positive integer.")
+    if geometry_type.strip().lower() in ["ct_patient", "patient", "dicom"]:
+        raise ValueError("Patient CT material mapping is not implemented; refusing water-box substitution.")
 
     hlx = phantom_dimensions_cm[0] / 2.0
     hly = phantom_dimensions_cm[1] / 2.0
