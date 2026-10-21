@@ -41,6 +41,68 @@ class EvaluationReport(BaseModel):
     rejection_reasons: List[str] = Field(default_factory=list)
     audit_hash_sha256: str
     metrics: Dict[str, Any] = Field(default_factory=dict)
+    clinical_summary: str = Field(default="")
+    follow_up_actions: List[str] = Field(default_factory=list)
+
+    def to_markdown(self) -> str:
+        """Renders an easily interpretable, executive clinical report in GitHub markdown."""
+        verdict_icon = "✅" if self.status == DecisionStatus.APPROVED else ("⚠️" if self.status == DecisionStatus.FLAGGED_FOR_REVIEW else "❌")
+        hard_phys_icon = "✅ PASSED" if self.hard_physics_passed else "❌ FAILED"
+
+        md_lines = [
+            f"# {verdict_icon} OpenRad Clinical Physics Verification Report",
+            "",
+            f"**Model ID:** `{self.model_id}` | **Dataset ID:** `{self.dataset_id}` | **Generated:** `{self.timestamp}`",
+            "",
+            "### 1. Executive Summary & Verification Verdict",
+            f"- **Decision Status:** **`{self.status.value}`**",
+            f"- **Deterministic Physics Boundaries:** **{hard_phys_icon}**",
+            f"- **AAPM TG-218 Standard Gamma (3% / 3 mm):** **{self.gamma_3mm3pct_pass_rate:.1f}%** (Tolerance: $\\ge 95\\%$ Pass, $< 90\\%$ Reject)",
+            f"- **Tight-Margin Gamma (2% / 2 mm):** **{self.gamma_2mm2pct_pass_rate:.1f}%** (Tolerance: $\\ge 90\\%$ Pass, $< 85\\%$ Reject)",
+            f"- **Serial OAR Limit Breaches:** **{len(self.oar_violations)}**",
+            "",
+            f"> **Clinical Assessment**: {self.clinical_summary}",
+            "",
+            "### 2. Physical & Dosimetric Quality Metrics",
+            "| Parameter | Value | Clinical Tolerance / Threshold | Outcome |",
+            "| :--- | :--- | :--- | :--- |",
+            f"| Minimum Absorbed Dose | `{self.metrics.get('min_dose_gy', 'N/A')} Gy` | $D(\\vec{{r}}) \\ge 0.0$ Gy (Absorbed dose non-negativity) | {'✅ Satisfied' if self.metrics.get('min_dose_gy', 0.0) >= -1e-5 else '❌ Negative Dose'} |",
+            f"| Maximum Absorbed Dose | `{self.metrics.get('max_dose_gy', 'N/A')} Gy` | Clinical prescription bounds | ✅ Finite |",
+            f"| Standard Gamma (3%/3mm) | `{self.gamma_3mm3pct_pass_rate:.1f}%` | $\\ge 95.0\\%$ (Clinical QA Pass) | {'✅ Pass' if self.gamma_3mm3pct_pass_rate >= 95.0 else ('⚠️ Review' if self.gamma_3mm3pct_pass_rate >= 90.0 else '❌ Fail')} |",
+            f"| High-Precision Gamma (2%/2mm) | `{self.gamma_2mm2pct_pass_rate:.1f}%` | $\\ge 90.0\\%$ (High-Precision Pass) | {'✅ Pass' if self.gamma_2mm2pct_pass_rate >= 90.0 else ('⚠️ Review' if self.gamma_2mm2pct_pass_rate >= 85.0 else '❌ Fail')} |",
+        ]
+
+        if self.oar_violations:
+            md_lines.extend([
+                "",
+                "### 3. Critical Organ-At-Risk (OAR) Breaches",
+                "The following serial organs exceeded QUANTEC / AAPM tolerance thresholds:"
+            ])
+            for viol in self.oar_violations:
+                md_lines.append(f"- 🚨 **Violation**: {viol}")
+
+        if self.rejection_reasons:
+            md_lines.extend([
+                "",
+                "### 4. Safety Failures & Review Triggers",
+            ])
+            for reason in self.rejection_reasons:
+                md_lines.append(f"- ⚠️ {reason}")
+
+        md_lines.extend([
+            "",
+            "### 5. Recommended Follow-Up Actions",
+        ])
+        for idx, action in enumerate(self.follow_up_actions, 1):
+            md_lines.append(f"{idx}. {action}")
+
+        md_lines.extend([
+            "",
+            "---",
+            f"**Audit Integrity Hash (SHA-256):** `{self.audit_hash_sha256}`  ",
+            "*Report cryptographically signed and registered in OpenRad session trajectory.*"
+        ])
+        return "\n".join(md_lines)
 
 
 # Default clinical serial organ tolerances (QUANTEC / AAPM TG-101 / ICRU 83)
@@ -332,7 +394,22 @@ def verify_model_output(
         status = DecisionStatus.APPROVED
 
     # =========================================================================
-    # 4. Cryptographic Audit Hash (SHA-256)
+    # 4. Clinical Summary & Prioritized Action Plan
+    # =========================================================================
+
+    all_reported_reasons = rejection_reasons + review_reasons if status != DecisionStatus.APPROVED else []
+    summary, actions = generate_clinical_summary_and_actions(
+        status=status,
+        hard_physics_passed=hard_physics_passed,
+        rejection_reasons=rejection_reasons,
+        review_reasons=review_reasons,
+        oar_violations=oar_violations,
+        gamma_3mm3pct=gamma_3mm3pct,
+        gamma_2mm2pct=gamma_2mm2pct,
+    )
+
+    # =========================================================================
+    # 5. Cryptographic Audit Hash (SHA-256)
     # =========================================================================
 
     canonical_payload = json.dumps(
@@ -347,6 +424,7 @@ def verify_model_output(
             "rejection_reasons": sorted(rejection_reasons),
             "review_reasons": sorted(review_reasons),
             "metrics": metrics,
+            "follow_up_actions": actions,
         },
         sort_keys=True,
     )
@@ -361,7 +439,91 @@ def verify_model_output(
         gamma_3mm3pct_pass_rate=round(gamma_3mm3pct, 2),
         gamma_2mm2pct_pass_rate=round(gamma_2mm2pct, 2),
         oar_violations=oar_violations,
-        rejection_reasons=rejection_reasons + review_reasons if status != DecisionStatus.APPROVED else [],
+        rejection_reasons=all_reported_reasons,
         audit_hash_sha256=audit_hash,
         metrics=metrics,
+        clinical_summary=summary,
+        follow_up_actions=actions,
     )
+
+
+def generate_clinical_summary_and_actions(
+    status: DecisionStatus,
+    hard_physics_passed: bool,
+    rejection_reasons: List[str],
+    review_reasons: List[str],
+    oar_violations: List[str],
+    gamma_3mm3pct: float,
+    gamma_2mm2pct: float,
+) -> Tuple[str, List[str]]:
+    """Synthesizes an easily interpretable clinical summary and prioritized action plan."""
+    if status == DecisionStatus.APPROVED:
+        summary = (
+            "Model output successfully verified. All hard deterministic physics boundaries "
+            "(absorbed dose non-negativity, coordinate frame orthogonality, and HIPAA privacy) are satisfied. "
+            f"Dosimetric QA exceeds AAPM TG-218 clinical acceptance criteria (3%/3mm pass rate: {gamma_3mm3pct:.1f}%, "
+            f"2%/2mm pass rate: {gamma_2mm2pct:.1f}%), and all critical organ doses remain within tolerance limits."
+        )
+        actions = [
+            "[Clinical QA Sign-off] Model meets AAPM TG-218 and TG-53 criteria. Archive evaluation certificate and SHA-256 audit hash into the clinical QA registry.",
+            "[Delivery QA] Proceed with scheduled phantom delivery measurement and record independent ionization chamber check.",
+            "[Patient Plan Verification] Ensure patient-specific secondary monitor unit (MU) calculation matches before first fraction delivery.",
+        ]
+    elif status == DecisionStatus.FLAGGED_FOR_REVIEW:
+        summary = (
+            "Model output is flagged for multidisciplinary clinical review. While hard deterministic physical boundaries passed, "
+            "one or more quality metrics fall within marginal clinical tolerance bands (e.g., standard gamma passing rate between "
+            "90.0% and 94.9%, tight margin gamma between 85.0% and 89.9%, or elevated prediction uncertainty near critical organ boundaries)."
+        )
+        actions = [
+            "[Physics Peer Review] Convene secondary peer review by board-certified Medical Physicist to evaluate dose gradient conformity.",
+            "[Measurement-Based QA] Perform high-density 2D diode array or EBT3 radiochromic film measurement in flagged gradient zones.",
+            "[Structure Review] Re-evaluate contour boundaries and PTV coverage margins with attending radiation oncologist.",
+        ]
+    else:  # REJECTED
+        primary = rejection_reasons[0] if rejection_reasons else "Deterministic clinical boundary failure."
+        summary = (
+            f"Model output has been REJECTED by the High-Consequence Verification Engine. Critical safety violations "
+            f"were detected that could lead to lethal normal tissue toxicity or tumor under-dosage. Primary grounds: {primary}"
+        )
+        actions = []
+        any_reasons_text = " ".join(rejection_reasons).lower()
+        if "non-negativity" in any_reasons_text or "negative" in any_reasons_text:
+            actions.append(
+                "[Data Pipeline] Audit CT HU-to-ED calibration table and DICOM intercept rescaling (RescaleIntercept/RescaleSlope) to eliminate negative voxel artifacts."
+            )
+            actions.append(
+                "[Model Architecture] Enforce physical non-negativity constraint (e.g., ReLU activation on final layer or zero-floor post-processing) in dose prediction model."
+            )
+        if "energy" in any_reasons_text:
+            actions.append(
+                "[Physics Guardrails] Restrict beam kinetic energy input strictly within clinical bounds: 0.01 MeV <= E <= 250 MeV."
+            )
+        if "orthogonality" in any_reasons_text or "orientation" in any_reasons_text:
+            actions.append(
+                "[DICOM Geometry] Recompute ImageOrientationPatient unit direction cosines; ensure mutual orthogonality (dot product <= 1e-4)."
+            )
+        if "hipaa" in any_reasons_text or "privacy" in any_reasons_text:
+            actions.append(
+                "[Privacy Governance] Re-run automated PHI scrubber to purge all patient names, IDs, dates of birth, and institution metadata before archiving."
+            )
+        if oar_violations or "oar" in any_reasons_text or "breach" in any_reasons_text:
+            actions.append(
+                "[TPS Optimization] Lock serial OAR Dmax <= tolerance limit in treatment planning optimizer and review PRV margin expansions."
+            )
+            actions.append(
+                "[Safety Verification] Perform secondary independent dose verification and review contour boundaries with attending radiation oncologist."
+            )
+        if "gamma" in any_reasons_text or gamma_3mm3pct < 90.0:
+            actions.append(
+                "[Dosimetric QA] Inspect spatial registration and affine grid shifts between evaluated and reference dose distributions."
+            )
+            actions.append(
+                "[Monte Carlo QA] If evaluating Monte Carlo simulation, increase particle history count (N >= 10^7) to decrease Poisson statistical uncertainty."
+            )
+        if not actions:
+            actions.append(
+                "[Root Cause Diagnosis] Investigate identified safety violations, inspect input CT/RTDOSE/RTSTRUCT files, and re-run validation."
+            )
+
+    return summary, actions

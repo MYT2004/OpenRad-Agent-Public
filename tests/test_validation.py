@@ -8,6 +8,7 @@ import numpy as np
 import pydicom
 from pydicom.dataset import Dataset, FileDataset, FileMetaDataset
 from pydicom.uid import ExplicitVRLittleEndian, RTDoseStorage, generate_uid
+from pathlib import Path
 import pytest
 
 from src.validation import (
@@ -198,3 +199,61 @@ def test_hipaa_unscrubbed_rejection():
     assert report.status == DecisionStatus.REJECTED
     assert report.hard_physics_passed is False
     assert any("hipaa" in r.lower() for r in report.rejection_reasons)
+
+
+def test_clinical_summary_and_follow_up_actions_generation():
+    """Verify that EvaluationReport provides human-interpretable clinical summary and follow-up actions."""
+    shape = (5, 10, 10)
+    cord_mask = np.zeros(shape, dtype=bool)
+    cord_mask[2:4, 2:4, 2:4] = True
+    eval_dose = np.full(shape, 40.0, dtype=float)
+    eval_dose[cord_mask] = 52.0  # Serial OAR breach
+
+    report = verify_model_output(
+        evaluated_dose=eval_dose,
+        reference_dose=np.full(shape, 40.0, dtype=float),
+        spacing_mm=(3.0, 1.0, 1.0),
+        structure_masks={"SpinalCord": cord_mask},
+    )
+
+    assert report.status == DecisionStatus.REJECTED
+    assert len(report.clinical_summary) > 20
+    assert len(report.follow_up_actions) > 0
+    # Check that actionable advice for TPS optimizer & OAR was generated
+    assert any("TPS Optimization" in a for a in report.follow_up_actions)
+
+    # Test Markdown formatting
+    md = report.to_markdown()
+    assert "# ❌ OpenRad Clinical Physics Verification Report" in md
+    assert "Recommended Follow-Up Actions" in md
+    assert "Audit Integrity Hash" in md
+
+
+def test_agent_orchestration_with_follow_up_report(tmp_path):
+    """Verify that OpenRadAgent executes model verification intent and saves report artifact."""
+    from openrad.core.agent import OpenRadAgent
+
+    shape = (5, 10, 10)
+    dose = np.full(shape, 45.0, dtype=float)
+
+    agent = OpenRadAgent(artifact_dir=str(tmp_path / "artifacts"))
+    result = agent.run(
+        task="Please verify the clinical dose model and generate a follow up actions report",
+        context={
+            "evaluation": {
+                "evaluated_dose": dose,
+                "reference_dose": dose,
+                "spacing_mm": (3.0, 1.0, 1.0),
+                "model_id": "deep_dose_net_v2",
+                "dataset_id": "clinical_hnscc_test",
+            }
+        },
+    )
+
+    assert result.success is True
+    assert "OpenRad Clinical Physics Verification Report" in result.response
+    assert "Recommended Follow-Up Actions" in result.response
+    assert len(result.artifacts) == 1
+    assert result.artifacts[0].endswith(".md")
+    assert (tmp_path / "artifacts" / Path(result.artifacts[0]).name).exists()
+

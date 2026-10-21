@@ -7,6 +7,11 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+# Ensure repository root is on sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import pydicom
 from openrad.tools.dataset import discover_dataset
 from openrad.tools.dicom_tool import analyze_dvh

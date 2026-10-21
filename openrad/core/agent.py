@@ -286,6 +286,42 @@ class OpenRadAgent:
             record = self.dispatch_tool("calculate_tcp_ntcp", args)
             return AgentExecutionResult(task=task, response=str(record.output) if record.physics_passed else record.error, tool_records=[record], success=record.physics_passed)
 
+        # 5. Model Verification & Clinical Follow-Up Actions Intent
+        elif any(w in task_lower for w in ["verify", "evaluation", "validation", "safety audit", "model verification", "clinical report", "follow up", "follow-up"]):
+            eval_args = context.get("evaluation") or context.get("validation")
+            if not eval_args:
+                return AgentExecutionResult(
+                    task=task,
+                    response="Provide model evaluation context (evaluated_dose, reference_dose, spacing_mm, structure_masks) in the evaluation workflow. The agent evaluates model safety without silent fallbacks.",
+                    success=False,
+                )
+            from src.validation import verify_model_output, DecisionStatus
+            report = verify_model_output(**eval_args)
+            report_md = report.to_markdown()
+
+            import uuid
+            report_filename = f"verification_report_{uuid.uuid4().hex[:8]}.md"
+            report_path = os.path.join(self.artifact_dir, report_filename)
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write(report_md)
+            artifacts.append(report_path)
+
+            return AgentExecutionResult(
+                task=task,
+                response=report_md,
+                tool_records=[
+                    ToolExecutionRecord(
+                        tool_name="verify_model_output",
+                        arguments={k: v for k, v in eval_args.items() if not hasattr(v, "shape")},
+                        output=report.model_dump(),
+                        physics_passed=report.hard_physics_passed,
+                        validation_detail=report.metrics,
+                    )
+                ],
+                artifacts=artifacts,
+                success=(report.status != DecisionStatus.REJECTED),
+            )
+
         return AgentExecutionResult(task=task, response="Choose an explicit analysis workflow. Natural-language text and document contents are never executed as Python.", success=False)
 
     def _run_llm_loop(self, task: str, max_retries: int) -> AgentExecutionResult:
