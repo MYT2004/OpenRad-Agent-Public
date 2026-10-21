@@ -317,7 +317,8 @@ def verify_patient_case(request: CaseVerificationRequest):
             roi_numbers={int(roi.ROINumber) for roi in rois}
             contoured=set()
             for roi_contour in getattr(struct,'ROIContourSequence',[]):
-                contoured.add(int(roi_contour.ReferencedROINumber))
+                if getattr(roi_contour,'ContourSequence',[]):
+                    contoured.add(int(roi_contour.ReferencedROINumber))
                 if int(roi_contour.ReferencedROINumber) not in roi_numbers:
                     raise ValueError('Orphan ROI contour')
                 for contour in getattr(roi_contour,'ContourSequence',[]):

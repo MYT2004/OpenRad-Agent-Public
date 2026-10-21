@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from dotenv import load_dotenv
 from openrad.core.agent import OpenRadAgent
 from openrad.tools.dataset import discover_dataset
+from openrad.validation.nomenclature import check_structure_name
 from src.tools import evaluate_dvh_tool as analyze_dvh
 from openrad.tools.gamma_tool import evaluate_gamma_index
 from openrad.tools.radiobio_tool import calculate_tcp_ntcp
@@ -82,7 +83,7 @@ def dvh_inputs(prefix):
         if not isinstance(mappings, dict) or not all(isinstance(k,str) and isinstance(v,str) for k,v in mappings.items()):
             raise ValueError('Mappings must be name-to-name JSON strings.')
         suggestions = {name: BUILTIN_ROI_ALIASES[name.casefold()] for name in options
-                       if name.casefold() in BUILTIN_ROI_ALIASES and name != BUILTIN_ROI_ALIASES[name.casefold()]}
+                       if name.casefold() in BUILTIN_ROI_ALIASES and check_structure_name(name)['canonical_name'] is None}
         effective_mappings = dict(mappings)
         if suggestions:
             st.json({'Suggested aliases for anatomical review': suggestions})

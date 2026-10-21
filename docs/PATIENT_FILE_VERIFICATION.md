@@ -33,7 +33,7 @@ Use a different new output directory with `demo-case --defect missing_slice`, `-
 | CT completeness | Detect absent image SOPs explicitly referenced by the structure set. Consistent spacing cannot detect all omitted end planes or uniformly subsampled images. An external source inventory remains necessary. |
 | RT linkage | Resolve one dose→plan→structure chain by SOP references and compare patient/issuer and available frame associations. Frame disagreements and missing referenced images block intake. No registration or UID replacement is performed. |
 | Contours | Check ROI-index ambiguity and basic contour point-count/finite-coordinate integrity. This intake step does not rasterize contours, verify topology, verify anatomy or establish adequate dose coverage. Those are separate DVH/anatomical assessment gates. |
-| Nomenclature | Check the pinned TG-263 vocabulary and supported target syntax; unknown/derived names require scoped review. Do not infer anatomical equivalence from a label. |
+| Nomenclature | Check the pinned TG-263 vocabulary and supported target syntax; unknown/derived names require scoped review. Do not infer anatomical equivalence from a label. Suggested anatomical aliases use pinned primary spellings and require confirmation. A generic PTV is never suggested as PTV_High or assigned a prescription/priority from its name. |
 | Privacy evidence | Flag when image objects do not explicitly establish absence of burned-in annotation. This is a metadata screening flag, not OCR, pixel de-identification or proof of a privacy violation. |
 
 **States:** `BLOCKED` when a definite inconsistency or unsupported association prevents controlled use; `FLAGGED_FOR_REVIEW` for incomplete evidence, unsupported scope or review requirements; `READY_FOR_RESEARCH_ANALYSIS` when the implemented intake checks found neither. Readiness does not mean the patient, plan, anatomy, calibration, dose or model is clinically approved.
@@ -44,7 +44,7 @@ The default budget is 10,000 files and 256 MiB per file; larger files require re
 
 ## Evidence and scope
 
-The full local suite passes 215 tests at this milestone. The intake-specific tests execute 34 checks/parameterized cases. Synthetic tests inject missing referenced end slices, irregular stacks, duplicate planes, wrong patient/issuer, dose/plan/structure frame mismatches, mismatched SOP metadata, missing/corrupted pixels, negative dose scaling, malformed contours and ROI ambiguity. Interface tests execute the UI, API, CLI and report downloads. Source hashes are compared before and after verification.
+The full local suite passes 217 tests at this milestone. The intake-specific tests execute 36 checks/parameterized cases. Synthetic tests inject missing referenced end slices, irregular stacks, duplicate planes, wrong patient/issuer, dose/plan/structure frame mismatches, mismatched SOP metadata, missing/corrupted pixels, negative dose scaling, malformed contours and ROI ambiguity. Interface tests execute the UI, API, CLI and report downloads. Source hashes are compared before and after verification.
 
 Local integration on three authorized folders decoded 1,301 CT/dose objects and hashed 1,318 source files without changing their contents. Two folders required naming/privacy/spacing review; the other was blocked by frame, source-image association/completeness and duplicate-plane findings. These selected folders are not representative of all international vendors, sites, modalities or practices. Detailed patient-derived results remain local and ignored by Git.
 

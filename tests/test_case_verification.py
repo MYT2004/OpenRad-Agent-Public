@@ -223,9 +223,14 @@ def test_nested_identity_disagreements_block(case_files,kind):
     assert result['status']=='BLOCKED' and kind in codes(result)
 
 
-def test_roi_without_contours_requires_review(case_files):
+@pytest.mark.parametrize('empty_item',[False,True])
+def test_roi_without_contours_requires_review(case_files,empty_item):
     root,datasets,_,_=case_files
-    datasets['struct'].ROIContourSequence=[];datasets['struct'].save_as(root/'struct.dcm')
+    if empty_item:
+        datasets['struct'].ROIContourSequence[0].ContourSequence=[]
+    else:
+        datasets['struct'].ROIContourSequence=[]
+    datasets['struct'].save_as(root/'struct.dcm')
     result=run(case_files)
     assert result['status']=='FLAGGED_FOR_REVIEW' and 'roi_contours_absent' in codes(result)
 
@@ -247,6 +252,7 @@ def test_guided_handoff_populates_dvh_without_retyping_paths(case_files,monkeypa
     assert not app.exception and not app.error
     assert app.sidebar.selectbox[0].value=='DICOM-RT & DVH Analyzer'
     assert app.multiselect[0].value==['Brainstem']
+    assert not any('suggested aliases' in field.label for field in app.checkbox)
     next(button for button in app.button if button.label=='Compute DVH').click().run()
     assert not app.exception and not app.error
     assert app.session_state['last_dvh']['structures']['Brainstem']['mean_dose_Gy']==60.
@@ -285,3 +291,12 @@ def test_frontend_explicit_demo_to_dvh(tmp_path,monkeypatch):
     next(button for button in app.button if button.label=='Continue to DVH and structure review').click().run()
     next(button for button in app.button if button.label=='Compute DVH').click().run()
     assert not app.exception and not app.error and app.session_state['last_dvh']['structures']['Brainstem']['found']
+
+
+def test_all_suggested_aliases_use_pinned_canonical_names_without_target_priority():
+    from src.tools import BUILTIN_ROI_ALIASES
+    from openrad.validation.nomenclature import check_structure_name
+    assert 'ptv' not in BUILTIN_ROI_ALIASES
+    for value in BUILTIN_ROI_ALIASES.values():
+        verdict=check_structure_name(value)
+        assert verdict['canonical_name']==value and verdict['status']=='official_primary'
