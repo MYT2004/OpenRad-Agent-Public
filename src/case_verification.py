@@ -176,6 +176,15 @@ def verify_patient_case(request: CaseVerificationRequest):
                     if not hasattr(full,'PixelData'):
                         raise ValueError('Missing pixel data')
                     if request.check_pixels:
+                        if modality=='RTDOSE':
+                            from src.resources import check_dose_shape, InputBudgetError
+                            try:
+                                check_dose_shape((int(full.NumberOfFrames),int(full.Rows),int(full.Columns)))
+                            except InputBudgetError:
+                                finding('dose_resource_budget','BLOCK',label,'Dose exceeds the configured voxel budget; pixels were not decoded.',
+                                        'Qualify the resource budget for this workload or use a separately validated bounded reader. No downsampling is performed.')
+                                record['pixel_state']='budget_refused'
+                                continue
                         pixels=full.pixel_array
                         frames=int(getattr(full,'NumberOfFrames',1))
                         expected=(frames,int(full.Rows),int(full.Columns)) if frames>1 else (int(full.Rows),int(full.Columns))
@@ -297,9 +306,16 @@ def verify_patient_case(request: CaseVerificationRequest):
                 if canonical is None or verdict['status'] not in ('official_primary',):
                     finding('roi_name_review','REVIEW',f'{scope}/ROI_{int(roi.ROINumber)}','Structure name requires scoped nomenclature/anatomical review.',
                             'Inspect the original label locally and confirm anatomy/laterality before supplying an explicit reviewed mapping.',reference='tg263')
+            from openrad.tools.dicom_integrity import validate_roi_associations
+            validate_roi_associations(struct)
             roi_numbers={int(roi.ROINumber) for roi in rois}
             contoured=set()
             for roi_contour in getattr(struct,'ROIContourSequence',[]):
+                if hasattr(roi_contour,'SourcePixelPlanesCharacteristicsSequence') or any(
+                        hasattr(c,'ContourSlabThickness') or hasattr(c,'ContourOffsetVector')
+                        for c in getattr(roi_contour,'ContourSequence',[])):
+                    finding('contour_sampling_scope','REVIEW',scope,'Explicit source pixel-plane or slab/offset geometry is outside the supported DVH sampler.',
+                            'Use a validated sampler that honors this geometry. Direct DVH calculation is refused; no metadata is silently discarded.',reference='dicom-roi-contour')
                 if getattr(roi_contour,'ContourSequence',[]):
                     contoured.add(int(roi_contour.ReferencedROINumber))
                 if int(roi_contour.ReferencedROINumber) not in roi_numbers:

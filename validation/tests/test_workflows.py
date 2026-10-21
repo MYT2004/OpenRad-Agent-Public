@@ -6,7 +6,7 @@ from openrad.core.agent import OpenRadAgent
 
 
 def contour(z, shift=0, kind='CLOSED_PLANAR'):
-    return SimpleNamespace(ContourGeometricType=kind,ContourData=[1+shift,1,z,3+shift,1,z,3+shift,3,z,1+shift,3,z])
+    return SimpleNamespace(ContourGeometricType=kind,NumberOfContourPoints=4,ContourData=[1+shift,1,z,3+shift,1,z,3+shift,3,z,1+shift,3,z])
 
 
 def test_contour_spacing_not_dose_spacing_and_no_double_count():

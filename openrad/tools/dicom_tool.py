@@ -68,6 +68,11 @@ def analyze_dvh(
 
 def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, ds_plan=None, require_plan_linkage=True, parsed_dose=None):
     """Analyze validated in-memory datasets, including scrubbed analysis copies."""
+    from openrad.tools.dicom_integrity import validate_analysis_identity, validate_roi_associations
+    from src.resources import check_dose_shape
+    validate_analysis_identity(ds_dose, ds_struct, ds_plan)
+    validate_roi_associations(ds_struct)
+    check_dose_shape((int(ds_dose.NumberOfFrames), int(ds_dose.Rows), int(ds_dose.Columns)))
     linkage_verified = False
     if getattr(ds_dose, 'ReferencedRTPlanSequence', None) and ds_plan is None and require_plan_linkage:
         raise DICOMGeometryError("Referenced RTPLAN is required to verify dose/structure course linkage.")
@@ -141,12 +146,18 @@ def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, 
         "course_linkage_verified": linkage_verified,
         "clinical_release": False,
         "limitations": ["Axial voxel-center sampling with contour-plane slab thickness and linear z dose interpolation. Unsupported/self-intersecting polygon encodings, irregular planes and partial dose coverage are blocked. Topology interpretation requires independent verification. No clinical uncertainty bound established."],
+        "dose_summation_type": str(getattr(ds_dose, 'DoseSummationType', 'UNKNOWN')),
         "dose_grid_shape": list(dose_grid.shape),
         "max_dose_Gy": float(np.max(dose_grid)),
         "voxel_volume_cc": float(voxel_volume_cc),
         "nomenclature": {"standard": "AAPM TG-263 (2018)", "vocabulary_version": "20170815", "structures": naming_entries},
         "structures": {},
     }
+
+    results['limitations'].append(
+        'Dose summation scope is ' + results['dose_summation_type'] +
+        '; reference linkage alone does not establish full treatment-course dose, prescription or fractionation. '
+        'No automatic summation or rescaling is performed.')
 
     # Analyze each requested ROI
     for target_name in roi_names:

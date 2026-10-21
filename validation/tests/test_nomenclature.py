@@ -78,16 +78,16 @@ def test_derived_organ_patterns(name):
 def test_dvh_integration_preserves_source_and_blocks_unreviewed_alias(monkeypatch):
     import numpy as np
     from openrad.tools.dicom_tool import analyze_dvh
-    dose = SimpleNamespace(Modality='RTDOSE', DoseUnits='GY', DoseType='PHYSICAL',
+    dose = SimpleNamespace(SOPClassUID='1.2.840.10008.5.1.4.1.1.481.2', SOPInstanceUID='1.2.3.4', Rows=5, Columns=5, Modality='RTDOSE', DoseUnits='GY', DoseType='PHYSICAL',
         DoseGridScaling=1., PixelSpacing=[1., 1.], ImagePositionPatient=[0.,0.,0.],
         ImageOrientationPatient=[1.,0.,0.,0.,1.,0.], GridFrameOffsetVector=[0.,1.,2.],
         NumberOfFrames=3, FrameOfReferenceUID='1.2.3', PatientID='synthetic',
         pixel_array=np.full((3, 5, 5), 60.))
     source_roi = roi(1, 'Cord')
     source_roi.ReferencedFrameOfReferenceUID = '1.2.3'
-    struct = SimpleNamespace(PatientID='synthetic', StructureSetROISequence=[source_roi],
+    struct = SimpleNamespace(Modality='RTSTRUCT', SOPClassUID='1.2.840.10008.5.1.4.1.1.481.3', SOPInstanceUID='1.2.3.5', PatientID='synthetic', StructureSetROISequence=[source_roi],
         ROIContourSequence=[SimpleNamespace(ReferencedROINumber=1,
-            ContourSequence=[SimpleNamespace(ContourGeometricType="CLOSED_PLANAR", ContourData=[0,0,z,4,0,z,4,4,z,0,4,z]) for z in (0,1)])])
+            ContourSequence=[SimpleNamespace(ContourGeometricType="CLOSED_PLANAR", NumberOfContourPoints=4, ContourData=[0,0,z,4,0,z,4,4,z,0,4,z]) for z in (0,1)])])
     monkeypatch.setattr('openrad.tools.dicom_tool.os.path.exists', lambda _: True)
     monkeypatch.setattr('openrad.tools.dicom_tool.pydicom.dcmread', lambda path: struct if path=='struct' else dose)
     blocked = analyze_dvh('struct', 'dose', ['Cord'])

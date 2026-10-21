@@ -1,0 +1,31 @@
+{
+  "assessment_date": "2026-10-22",
+  "baseline_main": "9929ff0",
+  "tested_source_tree_sha256": "c88fac598ebbd0b1145da1505391945dc11e3e404805b2b243d5955d3af20506",
+  "regressions_passed": 370,
+  "new_regressions": 29,
+  "initial_targeted_pre_fix_failures": 16,
+  "strict_workflow_scenarios_passed": 28,
+  "numerical_assertions_passed": 1450,
+  "selected_roi_export_controls": 63,
+  "all_executed_export_controls_expected": true,
+  "export_campaign_roots": 4,
+  "supported_export_baselines": 3,
+  "unsupported_export_baselines": 1,
+  "export_qualification_complete": false,
+  "export_campaign_exit": 2,
+  "export_exit_interpretation": "Coverage incomplete because one requested local source has no unambiguous supported baseline; this is not silently counted as a pass. All 63 executed controls behaved as expected.",
+  "raw_collections_audited": 48,
+  "intake_status_counts": {
+    "BLOCKED": 41,
+    "FLAGGED_FOR_REVIEW": 7
+  },
+  "intake_execution_errors": 0,
+  "new_dose_budget_findings": 58,
+  "protected_raw_entries_unchanged": 8599,
+  "raw_files_edited": false,
+  "live_gemini_tested": false,
+  "clinical_release": false,
+  "production_ready": false,
+  "scope": "Engineering verification, selected-ROI controls and read-only case intake. No standards-conformity, full-cohort model validation or zero-defect claim."
+}

@@ -1,0 +1,9 @@
+{
+  "seed": 20261021,
+  "assertions_passed": 1450,
+  "dose_integrity_cases": 1000,
+  "radiobiology_endpoint_oracles": 400,
+  "gamma_uniform_field_oracles": 50,
+  "seconds": 0.93,
+  "clinical_release": false
+}

@@ -61,6 +61,9 @@ def _load_dose_and_coords(
             preflight_dicom_dose(path)
             ds = pydicom.dcmread(path)
             from openrad.tools.dose_geometry import validate_axial_dose
+            from openrad.tools.dicom_integrity import validate_rt_object
+            from pydicom.uid import RTDoseStorage
+            validate_rt_object(ds,'RTDOSE',RTDoseStorage)
             validate_axial_dose(ds)
             dose = ds.pixel_array.astype(float) * float(ds.DoseGridScaling)
             ipp = np.asarray(ds.ImagePositionPatient, dtype=float)
@@ -128,6 +131,10 @@ def evaluate_gamma_index(
         for tag in ('PatientID','FrameOfReferenceUID'):
             if not getattr(headers[0],tag,None) or getattr(headers[0],tag,None)!=getattr(headers[1],tag,None):
                 raise GammaEvaluationError('DICOM gamma inputs require matching explicit patient and frame identifiers.')
+        if str(getattr(headers[0],'IssuerOfPatientID','')).strip()!=str(getattr(headers[1],'IssuerOfPatientID','')).strip():
+            raise GammaEvaluationError('DICOM gamma patient ID issuers must match.')
+        if str(getattr(headers[0],'DoseSummationType','UNKNOWN'))!=str(getattr(headers[1],'DoseSummationType','UNKNOWN')):
+            raise GammaEvaluationError('DICOM gamma dose summation scopes must match; no implicit fraction/course conversion is supported.')
     ref_dose, ref_coords = _load_dose_and_coords(reference_dose_path, reference_spacing_mm)
     eval_dose, eval_coords = _load_dose_and_coords(evaluated_dose_path, evaluated_spacing_mm)
 

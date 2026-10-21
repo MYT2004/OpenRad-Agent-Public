@@ -15,6 +15,8 @@ _ALLOWED = {
     'ReferencedStructureSetSequence','StructureSetROISequence','ROINumber','ROIName',
     'ReferencedFrameOfReferenceUID','ROIContourSequence','ReferencedROINumber',
     'ContourSequence','ContourGeometricType','NumberOfContourPoints','ContourData',
+    'SourcePixelPlanesCharacteristicsSequence','SpacingBetweenSlices',
+    'ContourSlabThickness','ContourOffsetVector','SpatialTransformOfDose',
     'DoseGridScaling','DoseUnits','DoseType','DoseSummationType',
     'PixelSpacing','SliceThickness','ImagePositionPatient','ImageOrientationPatient',
     'GridFrameOffsetVector','NumberOfFrames','Rows','Columns','SamplesPerPixel',
@@ -25,6 +27,9 @@ _ALLOWED = {
 
 def scrub_analysis_copies(dose, struct, plan=None, reviewed_name_map=None):
     """Check source identity/linkage before replacing identifiers consistently."""
+    from openrad.tools.dicom_integrity import validate_analysis_identity, validate_roi_associations
+    validate_analysis_identity(dose, struct, plan)
+    validate_roi_associations(struct)
     sources = [dose, struct] + ([plan] if plan is not None else [])
     ids = [str(getattr(ds, 'PatientID', '')) for ds in sources]
     if not all(ids) or len(set(ids)) != 1:

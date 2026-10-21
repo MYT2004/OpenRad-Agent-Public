@@ -68,3 +68,7 @@ Core dose tools and dynamic copilot runs now append local `operations.jsonl` sta
 ### pydicom security backport
 
 The dependency is pinned to pydicom **2.4.5**, preserving the legacy dicompyler comparison while requiring the maintainer's CVE-2026-32711 containment backport. The [maintainer advisory](https://github.com/pydicom/pydicom/security/advisories/GHSA-v856-2rf8-9f28) lists 2.4.5 and 3.0.2 as patched; the [2.4.5 release](https://github.com/pydicom/pydicom/releases/tag/v2.4.5) records the backport. A public FileSet traversal regression uses generated nonpatient files and verifies refusal without touching the outside file. The current vulnerability feed still flags 2.4.5; that narrow discrepancy is recorded with evidence, rather than treating every scanner result as either a confirmed exploitable defect or a clean bill of health.
+
+## Patient export boundaries
+
+See [patient-data QA and common export errors](PATIENT_DATA_QA.md) for the implemented refusal policy, source geometry handling, dose summation scope and a reproducible read-only fault campaign. Source association and unsupported geometry are checked before the minimal analysis projection can hide them.

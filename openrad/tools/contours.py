@@ -6,12 +6,20 @@ from openrad.validation.physics_rules import DICOMGeometryError, PhysicsValidati
 
 
 def sample_contour_doses(contour_item, dose_grid, z_coords, x0, y0, dx, dy):
+    if hasattr(contour_item, 'SourcePixelPlanesCharacteristicsSequence'):
+        raise DICOMGeometryError('Source pixel-plane sampling is outside the validated contour-spacing inference scope.')
     planes, types = {}, set()
     for contour in getattr(contour_item, 'ContourSequence', []):
         kind = str(getattr(contour, 'ContourGeometricType', ''))
         if kind not in ('CLOSED_PLANAR', 'CLOSEDPLANAR_XOR'):
             raise DICOMGeometryError('Only closed planar volume contours can be sampled; points/open contours have no DVH volume.')
-        pts = np.asarray(contour.ContourData, dtype=float).reshape(-1, 3)
+        if hasattr(contour, 'ContourSlabThickness') or hasattr(contour, 'ContourOffsetVector'):
+            raise DICOMGeometryError('Explicit contour slab/offset geometry requires a separately validated sampler.')
+        data = np.asarray(contour.ContourData, dtype=float)
+        count = int(getattr(contour, 'NumberOfContourPoints', 0))
+        if data.ndim != 1 or count < 3 or data.size != 3 * count:
+            raise DICOMGeometryError('Declared contour point count must match the coordinate triplets.')
+        pts = data.reshape(-1, 3)
         if len(pts) < 3 or not np.isfinite(pts).all() or np.ptp(pts[:, 2]) > .01:
             raise DICOMGeometryError('Malformed, nonfinite or non-axial contour.')
         poly = Polygon(pts[:, :2])
