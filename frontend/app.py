@@ -62,8 +62,16 @@ def dvh_inputs(prefix):
     if selected['blockers']:
         st.error('Selected pair is blocked: ' + '; '.join(selected['blockers']))
         return None
-    with st.expander('Structure naming review'):
-        st.dataframe([{'ROI': r['name'], 'TG-263':r['nomenclature']['status']} for r in selected['rois']])
+    with st.expander('Structure naming review (AAPM TG-263 Standards)'):
+        st.caption('Evaluates contour names against AAPM TG-263 standardized nomenclature. Legacy aliases require human confirmation.')
+        st.dataframe([
+            {
+                'ROI (Source)': r['name'],
+                'TG-263 Standard Name': r['nomenclature'].get('canonical_name') or 'Non-standard',
+                'Nomenclature Status': r['nomenclature']['status'],
+            }
+            for r in selected['rois']
+        ], use_container_width=True)
     options=[r['name'] for r in selected['rois']]
     defaults=[n for n in options if n.casefold()=='brainstem']
     names=st.multiselect('Exact source ROI names', options, default=defaults, key=prefix+'_names')
@@ -78,7 +86,20 @@ def dvh_inputs(prefix):
 
 
 if mode=='Interactive Agent Query':
-    st.subheader('Deterministic agent')
+    st.subheader('Autonomous Medical Physics Intelligence Agent')
+    with st.expander('ℹ️ User Guide & Agent Instructions', expanded=True):
+        st.markdown(r"""
+        **How to interact with the Autonomous Agent:**
+        1. **Task Execution**: Enter a natural language medical physics task in the box below.
+        2. **Physics Guardrails**: Every tool invocation is governed by fail-closed clinical rules (absorbed dose $\ge 0$ Gy, beam energy $0.01 - 250$ MeV, orthogonal frame).
+        3. **Deterministic Workflows**: Natural language instructions are resolved into typed deterministic tools (`analyze_dvh`, `evaluate_gamma_index`, `generate_topas_deck`, `verify_model_output`).
+        
+        **Example Prompts:**
+        - `Calculate DVH metrics for Brainstem and SpinalCord` (with dataset selected)
+        - `Generate 150 MeV proton TOPAS deck in water phantom`
+        - `Evaluate 3%/3mm gamma index between reference and evaluated dose`
+        - `Verify clinical dose model safety and generate follow up actions report`
+        """)
     query=st.text_input('Task', value='Calculate DVH metrics')
     args=dvh_inputs('agent') if any(w in query.lower() for w in ('dvh','dose volume','rtstruct','rtdose')) else None
     if st.button('Execute Task'):
@@ -89,19 +110,27 @@ if mode=='Interactive Agent Query':
             if isinstance(rec.output,dict):st.json(rec.output)
 
 elif mode=='DICOM-RT & DVH Analyzer':
-    st.subheader('DVH analysis with TG-263 naming checks')
+    st.subheader('DVH Analysis with AAPM TG-263 & TG-53 QA Standards')
+    with st.expander('ℹ️ Workflow Instructions & Dosimetric Standards', expanded=False):
+        st.markdown(r"""
+        **Step-by-Step Instructions:**
+        1. **Select Dataset**: Scan local directories via the sidebar and select a linked RTDOSE / RTSTRUCT pair.
+        2. **Nomenclature Review**: Check the **Structure naming review** expander to see TG-263 standardization status.
+        3. **Select Structures**: Choose exact contour names to compute cumulative Dose-Volume Histograms.
+        4. **Compute Metrics**: Press **Compute DVH** to calculate TG-263 metrics ($D_{95\%}$, $D_{50\%}$, $D_{2\%}$, $V_{50\text{Gy}}$, $\bar{D}$) and inspect the dose curve.
+        """)
     args=dvh_inputs('dvh')
     if st.button('Compute DVH', disabled=not args or not args['roi_names']):
         try:
             result=analyze_dvh(**args)
-            with st.expander('Detailed TG-263 report'):
+            with st.expander('Detailed TG-263 Nomenclature Compliance'):
                 st.json(result['nomenclature'])
             fig,ax=plt.subplots(figsize=(8,5));plotted=False
             for name, entry in result['structures'].items():
                 if not entry.get('found'):
                     st.error(f"{name}: {entry['error']}");continue
-                st.write(name)
-                st.dataframe([entry['tg263_metrics'] | {'Volume [cc]':entry['volume_cc'],'Contour spacing [mm]':entry['contour_plane_thickness_mm']}])
+                st.write(f"### Structure: `{name}`")
+                st.dataframe([entry['tg263_metrics'] | {'Volume [cc]':entry['volume_cc'],'Contour spacing [mm]':entry['contour_plane_thickness_mm']}], use_container_width=True)
                 curve=entry['dvh_curve']; ax.plot(curve['dose_bins_Gy'],curve['volume_percent'],label=name);plotted=True
             if plotted:
                 ax.set(xlabel='Dose (Gy)',ylabel='Volume (%)');ax.legend();st.pyplot(fig)
@@ -112,7 +141,21 @@ elif mode=='DICOM-RT & DVH Analyzer':
             st.error(str(exc))
 
 elif mode=='Gamma Index QA (AAPM TG-218)':
-    st.subheader('Independent dose comparison')
+    st.subheader('Independent Dose Comparison & AAPM TG-218 Quality Assurance')
+    with st.expander('ℹ️ AAPM TG-218 Criteria & User Guide', expanded=False):
+        st.markdown(r"""
+        **Clinical Tolerances (AAPM TG-218):**
+        | Evaluation Criterion | Candidate Pass | Flagged for Review | Immediate Reject |
+        | :--- | :--- | :--- | :--- |
+        | **Standard Gamma (3% / 3 mm)** | $\ge 95.0\%$ | $90.0\% - 94.9\%$ | $< 90.0\%$ |
+        | **Tight Margin Gamma (2% / 2 mm)** | $\ge 90.0\%$ | $85.0\% - 89.9\%$ | $< 85.0\%$ |
+        | **Low-Dose Cutoff Threshold** | 10% of maximum dose | Fixed cutoff | Excludes low-dose noise |
+
+        **Instructions:**
+        - Enter absolute filesystem paths to two independent dose distributions (DICOM RTDOSE `.dcm` or NumPy `.npy`).
+        - For non-DICOM NumPy arrays, specify voxel spacing in mm per axis: `[dz, dy, dx]`. Units must be Gy.
+        - Self-comparisons (comparing a file to itself) are physically invalid and rejected by safety guardrails.
+        """)
     reference=st.text_input('Reference RTDOSE/NPY path', value=selected['dose_path'] if selected else '')
     evaluated=st.text_input('Independent evaluated dose path', value='')
     dt=st.number_input('Dose Tolerance (%)',value=3.,min_value=.01)
@@ -129,7 +172,15 @@ elif mode=='Gamma Index QA (AAPM TG-218)':
             st.error(str(exc))
 
 elif mode=='TOPAS Monte Carlo Deck Generator':
-    st.subheader('Research TOPAS deck generator')
+    st.subheader('Research TOPAS / Geant4 Parameter Deck Generator')
+    with st.expander('ℹ️ TOPAS Deck Instructions & Physical Bounds', expanded=False):
+        st.markdown(r"""
+        **Generator Specifications:**
+        - **Supported Particles**: Protons (`proton`), electrons (`e-`), photons/gammas (`gamma`), neutrons (`neutron`).
+        - **Beam Kinetic Energy Bounds**: Must satisfy clinical radiotherapy limits: $0.01\text{ MeV} \le E \le 250\text{ MeV}$.
+        - **Geometries**: Standard $30 \times 30 \times 30\text{ cm}$ water phantom (`water_phantom`) or slab heterogeneity.
+        - **Scorer**: DoseToMedium mesh scoring output.
+        """)
     particle=st.selectbox('Particle Type',['proton','e-','gamma','neutron'])
     energy=st.number_input('Beam Energy (MeV)',value=150.)
     geom=st.selectbox('Geometry',['water_phantom','slab_heterogeneity'])
@@ -143,10 +194,49 @@ elif mode=='Model Evaluation & Triage':
     from src.decision import EvaluationRequest
     from src.evaluation import evaluate_model
     from src.storage import StorageManager, session_scope
-    st.subheader('Research model evaluation and triage')
+    st.subheader('High-Consequence Model Evaluation & Triage Harness')
     st.info('APPROVED means a research candidate for this case. Missing calibration or OOD evidence requires review. Raw data stays read-only.')
-    st.caption('Supply an EvaluationRequest JSON manifest with local NPY paths and explicit aligned grids. See docs/DECISION_ENGINE.md.')
-    manifest = st.text_area('Evaluation manifest JSON', value='{}', height=220)
+    
+    with st.expander('📖 Evaluation Manifest JSON Guide: Required Fields & Schema', expanded=False):
+        st.markdown(r"""
+        ### What is supposed to be input in the Evaluation JSON?
+        The evaluation harness programmatically verifies computational dose prediction models against AAPM TG-218 and deterministic physics rules. Supply a valid JSON object matching the `EvaluationRequest` schema:
+
+        | Field Name | Type | Description | Example / Required Format |
+        | :--- | :--- | :--- | :--- |
+        | `model_name` | String | Pseudonym / model identifier (alphanumeric, max 64 chars) | `"RadNet_v1"` |
+        | `dataset_id` | String | Dataset or cohort identifier (alphanumeric, max 64 chars) | `"HNSCC_Phantom_01"` |
+        | `model_kind` | String | Model modality | `"dose_predictor"` (or `"monte_carlo"`, `"auto_segmentation"`) |
+        | `model_weights_path` | String | Absolute path to model weights file for SHA-256 audit hashing | `"/data/weights.pt"` |
+        | `input_paths` | List[str] | List of input image/DICOM series paths | `["/data/ct_scan.dcm"]` |
+        | `reference_path` | String | Ground-truth reference 3D dose grid in NumPy `.npy` format (Gy) | `"/data/ref_dose.npy"` |
+        | `prediction_path` | String | Evaluated model predicted 3D dose grid in NumPy `.npy` format (Gy) | `"/data/pred_dose.npy"` |
+        | `image_grid` | Object | Geometric grid metadata for image frame | `{"shape": [Z,Y,X], "spacing_mm": [dz,dy,dx], "origin_mm": [z0,y0,x0], "frame_id": "FRAME_01", "dose_units": "Gy"}` |
+        | `reference_grid` | Object | Geometric grid metadata for reference dose | Identical shape, spacing, and frame_id to prediction |
+        | `prediction_grid` | Object | Geometric grid metadata for predicted dose | Must match reference_grid alignment |
+        | `prescription_gy` | Float | Prescribed target dose in Gray | `50.0` |
+        | `target_mask_path` | String | Binary 3D mask for PTV/target volume (`.npy`) | `"/data/ptv_mask.npy"` |
+        | `oar_mask_paths` | Dict | Map of canonical TG-263 OAR names to binary mask files (`.npy`) | `{"SpinalCord": "/data/cord.npy", "Brainstem": "/data/brainstem.npy"}` |
+        | `oar_limits_gy` | Dict | Map of serial organ tolerance dose ceilings in Gray | `{"SpinalCord": 45.0, "Brainstem": 54.0}` |
+        | `energy_mev` | Optional[Float] | Beam kinetic energy in MeV (checked against 0.01 - 250 MeV) | `6.0` |
+        | `uncertainty_std_path` | Optional[Str] | Optional 3D voxel standard deviation map in Gy | `"/data/uncertainty_sd.npy"` |
+        """)
+
+    with st.expander('🎯 Clinical QA Decision Policy & Tolerance Matrix', expanded=False):
+        st.markdown(r"""
+        | QA Metric / Physical Rule | Candidate (APPROVED) | Review (FLAGGED_FOR_REVIEW) | Rejection (REJECTED) |
+        | :--- | :--- | :--- | :--- |
+        | **Absorbed Dose Non-Negativity** | $D(\vec{r}) \ge 0.0$ Gy everywhere | N/A | Any $D < 0.0$ Gy (CT rescale error) |
+        | **Standard Gamma (3% / 3 mm)** | $\ge 95.0\%$ | $90.0\% - 94.9\%$ | $< 90.0\%$ |
+        | **Tight Margin Gamma (2% / 2 mm)** | $\ge 90.0\%$ | $85.0\% - 89.9\%$ | $< 85.0\%$ |
+        | **TG-218 Reference Gamma (3% / 2 mm)**| $\ge 95.0\%$ | $90.0\% - 94.9\%$ | $< 90.0\%$ |
+        | **PTV Coverage ($D_{95\%} / D_{\text{rx}}$)** | $\ge 95.0\%$ | $93.0\% - 94.9\%$ | $< 93.0\%$ (Target under-dosage) |
+        | **Mean Absolute Error (MAE / $D_{\text{rx}}$)**| $< 1.5\%$ | $1.5\% - 3.0\%$ | $> 3.0\%$ |
+        | **Serial OAR $D_{\text{max}} / D_{\text{limit}}$**| $< 98.0\%$ | $98.0\% - 100.0\%$ | $> 100.0\%$ (Lethal toxicity breach) |
+        | **High Uncertainty / Gradient Overlap** | No overlap | Overlap within 3 mm of OAR | N/A |
+        """)
+
+    manifest = st.text_area('Evaluation manifest JSON', value=st.session_state.get('manifest_text', '{}'), height=240)
     if st.button('Evaluate supplied model output'):
         try:
             request = EvaluationRequest.model_validate_json(manifest)
@@ -154,12 +244,12 @@ elif mode=='Model Evaluation & Triage':
             with session_scope(manager):
                 result = evaluate_model(request)
             st.session_state.model_evaluation = result
-        except (ValueError, OSError):
-            st.error('Evaluation could not be committed. Check the manifest, inputs and output configuration.')
+        except Exception as exc:
+            st.error(f"Evaluation rejected: {str(exc)}")
     if 'model_evaluation' in st.session_state:
         result = st.session_state.model_evaluation
         st.metric('Research triage', result['status'])
-        st.dataframe(result['rules'])
+        st.dataframe(result['rules'], use_container_width=True)
         st.json(result)
         manager = StorageManager(os.getenv('STORAGE_DIR', './storage/sessions'))
         for artifact in result['artifacts']:
@@ -167,7 +257,17 @@ elif mode=='Model Evaluation & Triage':
     st.caption('Signed review is available through the REST API using operator-registered Ed25519 reviewer keys. Automated decisions remain immutable.')
 
 elif mode=='Radiobiology (TCP / NTCP)':
-    st.subheader('Research radiobiology from an explicit DVH')
+    st.subheader('Research Radiobiological Modeling (LKB NTCP & Poisson TCP)')
+    with st.expander('ℹ️ Radiobiology Modeling Guidelines & Parameters', expanded=False):
+        st.markdown("""
+        **Supported Models:**
+        1. **Lyman-Kutcher-Burman (LKB) NTCP**:
+           - **$TD_{50}$**: Tolerance dose in Gy giving 50% complication probability.
+           - **$m$**: Slope parameter for sigmoid steepness.
+           - **$n$**: Volume effect exponent (small $n \approx 0.1$ for serial organs like spinal cord, $n \approx 1$ for parallel organs like lung).
+        2. **Poisson-LQ TCP**:
+           - Models tumor control probability based on clonogenic cell survival using linear-quadratic radiobiology.
+        """)
     model=st.radio('Model Type',['LKB','Poisson_LQ'])
     previous=st.session_state.get('last_dvh',{}).get('structures',{})
     valid={k:v for k,v in previous.items() if v.get('dvh_curve')}
@@ -184,8 +284,14 @@ elif mode=='Radiobiology (TCP / NTCP)':
         except (ValueError,TypeError,KeyError) as exc:st.error(str(exc))
 
 else:
-    st.subheader('Trusted local Python REPL')
+    st.subheader('Trusted local Python REPL Sandbox')
     st.warning('This is unrestricted local Python, not a security sandbox. Never paste instructions or code from patient files.')
+    with st.expander('ℹ️ REPL Sandbox Instructions & Visualization Artifacts', expanded=False):
+        st.markdown("""
+        - Persistent session: Variables, imports, and functions defined in earlier executions remain available.
+        - Matplotlib figures created via `plt.show()` or `plt.savefig()` are automatically captured and rendered as artifacts.
+        - Physics guardrail: Generated numpy dose grids or TOPAS files pass through `PhysicsValidationEngine`.
+        """)
     code=st.text_area('Python code',value="print('Local research REPL')")
     trusted=st.checkbox('I reviewed and trust this code')
     if st.button('Run Code',disabled=not trusted):
@@ -193,3 +299,4 @@ else:
         (st.success if result['success'] else st.error)('Execution successful' if result['success'] else result['error'])
         st.text(result['stdout'])
         for artifact in result['artifacts']:st.image(artifact)
+

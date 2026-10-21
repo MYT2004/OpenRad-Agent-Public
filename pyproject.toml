@@ -18,6 +18,7 @@ dependencies = [
     "shapely>=2.0",
     "pymedphys>=0.40.0",
     "cryptography>=42.0",
+    "dicompyler-core>=0.5.6",
 ]
 
 [tool.setuptools.packages.find]
