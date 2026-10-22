@@ -1,0 +1,41 @@
+{
+  "method": "Streamlit AppTest against actual frontend source",
+  "checks": [
+    {
+      "step": "load app",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    },
+    {
+      "step": "verify prepared clean case",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    },
+    {
+      "step": "verified intake to DVH handoff",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    },
+    {
+      "step": "compute both ROI curves",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    },
+    {
+      "step": "missing-image example produces review actions",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    },
+    {
+      "step": "built-in synthetic demo button",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    },
+    {
+      "step": "built-in generated demo verifies successfully",
+      "unhandled_exceptions": 0,
+      "ui_errors": 0
+    }
+  ],
+  "all_expected": true
+}
