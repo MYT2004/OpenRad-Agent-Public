@@ -15,6 +15,8 @@
 
 ## OSI Hackathon 2026: start here
 
+[Sponsor track evidence](docs/osi-hackathon-2026/SPONSOR_TRACKS.md): Valency literature discovery is supported; marimo and Adaption use is not evidenced. See the [privacy review and remaining historical exposure](validation/evidence/privacy/2026-10-23/README.md).
+
 New evaluators should use the [complete judge's guide](docs/osi-hackathon-2026/JUDGES_GUIDE.md): a five-minute synthetic tour, all nine menus, exact input examples, expected refusals, status meanings and troubleshooting. It was checked against code revision `7f09598`.
 
 After installing the project from this repository root, launch the bundled teaching case:

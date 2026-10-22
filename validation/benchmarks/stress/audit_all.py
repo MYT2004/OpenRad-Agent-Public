@@ -1,6 +1,7 @@
 """Read-only full-corpus intake. Per-case faults are evidence, never source repairs."""
 import hashlib
 import json
+import os
 import time
 from collections import Counter
 from pathlib import Path
@@ -26,8 +27,14 @@ def main():
     manifest=json.loads(MANIFEST.read_text());root=Path('data/raw/slicerrt-full')/manifest['commit']
     out=new_run_directory('full-corpus');out.mkdir(parents=True);manager=StorageManager(str(out/'sessions'))
     sources=[('public-'+str(i+1),root/name) for i,name in enumerate(manifest['datasets'])]
-    base=Path('/Users/REDACTED_USER/Documents/OpenRad-Agent_OSI_2026/data/raw')
+    base=Path(os.environ.get('OPENRAD_LOCAL_DATA_ROOT', 'data/raw')).expanduser()
     sources += [('local-'+str(i+1),base/name) for i,name in enumerate(['HNSCC-01-0019','HNSCC-01-0176','HNSCC-01-0199'])]
+    # Missing inputs must not appear as a successfully checked empty collection.
+    missing=[label for label,source in sources if not source.is_dir()]
+    if missing:
+        raise FileNotFoundError('Missing benchmark collections: '+', '.join(missing)+
+            '. Set OPENRAD_LOCAL_DATA_ROOT to the parent of the local case folders; '
+            'download the pinned public corpus separately.')
     # Verify every downloaded byte against the Git source before processing.
     for item in manifest['files']:
         with (root/item['path']).open('rb') as stream:count,git,sha=hashes(stream,item['size'])

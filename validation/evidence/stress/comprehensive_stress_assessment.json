@@ -354,7 +354,7 @@
       "details": {
         "Execution Success": true,
         "Captured Output": "Mean profile value: 0.2017",
-        "Figure Artifact Captured": "/Users/REDACTED_USER/Documents/OpenRad-Agent_OSI_2026/storage/sessions/repl_stress/artifacts/plot_95dda8564cb740258831ac1f5553b060.png",
+        "Figure Artifact Captured": "storage/sessions/repl_stress/artifacts/plot_95dda8564cb740258831ac1f5553b060.png",
         "Artifact File Size": "28318 bytes",
         "State Persistence Verified": "VERIFIED (result_value preserved across invocations)",
         "Artifact Directory": "./storage/sessions/repl_stress/artifacts",
