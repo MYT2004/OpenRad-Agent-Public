@@ -13,6 +13,26 @@
 
 ---
 
+## OSI Hackathon 2026: start here
+
+New evaluators should use the [complete judge's guide](docs/osi-hackathon-2026/JUDGES_GUIDE.md): a five-minute synthetic tour, all nine menus, exact input examples, expected refusals, status meanings and troubleshooting. It was checked against code revision `7f09598`; it corrects outdated claims in the supplied Antigravity draft.
+
+After installing the project from this repository root, launch the bundled teaching case:
+
+```bash
+OPENRAD_DATA_ROOTS='["data/demo/01_clean_case"]' \
+STORAGE_DIR='./storage/sessions' \
+python -m streamlit run frontend/app.py --server.address 127.0.0.1 --server.port 8501
+```
+
+Open `http://127.0.0.1:8501/`, verify the clean case, then use its **Continue to DVH and structure review** handoff. The guide also shows deliberately blocked cases and 100%/0% synthetic gamma controls. No Gemini key or patient-data download is needed for this tour. `READY_FOR_RESEARCH_ANALYSIS` means intake readiness; `APPROVED` in model triage means a supplied-case research candidate. Neither approves treatment.
+
+The latest [efficiency audit](validation/evidence/efficiency/2026-10-23/README.md) records 377 passing regressions, 28 complete workflow scenarios and 1,450 numerical checks. Its 26.2% reduction in peak traced gamma allocation retained identical tested results; it is not an accuracy gain or a general speedup.
+
+**Data acknowledgements:** local HNSCC testing uses the [Zenodo distribution](https://zenodo.org/records/5276878) of the original [TCIA HNSCC dataset](https://doi.org/10.7937/k9/tcia.2020.a8sh-7363); external test collections come from [SlicerRtData](https://github.com/SlicerRt/SlicerRtData). See [data sources, required references and access notes](docs/DATA_SOURCES.md). Packaged `data/demo/` files are separate OpenRad-generated synthetic fixtures.
+
+---
+
 ## 1. System Architecture
 
 ```mermaid
@@ -133,7 +153,7 @@ src/
   hooks.py                   Enforced post-tool-call physics guardrails
 openrad/                     Core medical physics and AAPM TG-263 nomenclature engine
 frontend/app.py              Streamlit interactive clinical QA & copilot dashboard
-validation/                  285 automated tests, benchmarks, physics audits, and evidence
+validation/                  Regression tests, benchmarks, physics audits, and evidence
 skills/radiation_physics/    Medical physics mathematical formulations and workflow rules
 ```
 
@@ -158,20 +178,28 @@ pytest validation/tests/ -v
 streamlit run app.py --server.port 8501
 ```
 Port **8501** is the standard local dashboard port and is also configured in `.streamlit/config.toml`. Run from the repository root and stop any previous OpenRad instance using this port before starting another. Open `http://localhost:8501` to access:
-1. **🤖 Dynamic Agent Copilot:** Interactive Gemini function calling with tool-action log expander.
-2. **Patient-file Verification:** DICOM header and voxel integrity checking.
+
+1. **Patient-file Verification:** Supported DICOM identity, geometry, reference and pixel checks.
+2. **🤖 Dynamic Agent Copilot:** Optional Gemini function calling; offline mode performs intake only.
 3. **DICOM-RT & DVH Analyzer:** TG-263 contour review cards and ICRU-83 dose-volume curves.
 4. **Gamma Index QA:** AAPM TG-218 independent dose comparison (3% / 2 mm).
-5. **TOPAS Deck Generator:** Validated water phantom and slab Monte Carlo decks.
-6. **Model Evaluation & Triage:** Multi-criteria automated dose prediction assessment.
+5. **TOPAS Monte Carlo Deck Generator:** Water-phantom and slab input templates; simulation is not run.
+6. **Radiobiology (TCP / NTCP):** Conditional estimates from supplied DVHs and model parameters.
+7. **Model Evaluation & Triage:** Supplied-array research assessment; does not run model inference.
+8. **Interactive Agent Query:** Deterministic routing of supported explicit DVH/TOPAS requests.
+9. **Stateful Python REPL Sandbox:** Trusted local Python; not a security sandbox.
 
 ### 4. CLI Execution
 ```bash
 # Verify case intake
-python agent_main.py verify-case --root data/raw/HNSCC-01-0199 --case-id HNSCC-0199
+python agent_main.py verify-case --root data/demo/01_clean_case --case-id judge-demo-001
 
 # Compute DVH metrics with TG-263 naming
-python agent_main.py dvh --rtdose /path/to/dose.dcm --rtstruct /path/to/struct.dcm --roi SpinalCord
+python agent_main.py dvh \
+  --rtdose data/demo/01_clean_case/synthetic_dose.dcm \
+  --rtstruct data/demo/01_clean_case/synthetic_struct.dcm \
+  --rtplan data/demo/01_clean_case/synthetic_plan.dcm \
+  --roi Brainstem --roi PTV
 
 # Generate 150 MeV proton TOPAS deck
 python agent_main.py topas --particle proton --energy-mev 150 --histories 100000
@@ -195,11 +223,11 @@ print("Research Assessment:\n", result.response)
 
 ## 6. Data Safety & Physics Guardrails
 
-1. **Read-Only Data Immutability:** `data/raw/` is strictly read-only. All runtime artifacts, processed arrays, and plots are directed to `data/processed/{patient_id}/` or `storage/sessions/{session_id}/`. Attempting to write into `data/raw/` raises a hard `PermissionError`.
+1. **Source preservation:** Application output-path checks protect raw inputs and separate artifacts from source cases. Use read-only filesystem/container mounts for enforcement when running trusted Python; application checks are not an operating-system sandbox. Runtime outputs belong in separate processed/session storage.
 2. **Absorbed Dose Non-Negativity:** Absorbed dose must satisfy $D(\vec{r}) \ge 0.0\text{ Gy}$ everywhere. Negative values immediately abort evaluation.
-3. **Beam Kinetic Energy Bounds:** Monte Carlo simulations require $0.01\text{ MeV} \le E \le 250\text{ MeV}$.
+3. **Beam Kinetic Energy Bounds:** The template generator's supported application range is $0.01\text{ MeV} \le E \le 250\text{ MeV}$; this is not a universal bound for all radiation beams.
 4. **Organ constraints:** Supply an institutionally reviewed protocol with prescription, fractionation and endpoint definitions. Copilot results remain research observations requiring review.
-5. **Patient Privacy:** In-memory scrubbing strips 128-bit UIDs, patient names, institutions, and dates before analysis.
+5. **Analysis privacy:** The canonical DVH boundary validates identity before building minimal in-memory analysis copies with substituted identifiers. It is not a general DICOM de-identification exporter; original files remain local and unchanged.
 
 ### Copilot execution contract
 
