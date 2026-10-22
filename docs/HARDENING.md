@@ -15,7 +15,7 @@ python -m pip check
 python -m pytest validation/tests -q
 export OPENRAD_DATA_ROOTS='["/authorized/raw-case-or-parent", "/authorized/public-cache"]'
 export STORAGE_DIR="$PWD/storage/sessions"
-python -m streamlit run frontend/app.py --server.address 127.0.0.1 --server.port 8502
+python -m streamlit run frontend/app.py --server.address 127.0.0.1 --server.port 8501
 ```
 
 Replace input placeholders with existing authorized directories. Originals must remain read-only; use OS/container read-only mounts for enforcement. Application checks do not constrain arbitrary trusted Python. Keep derivatives outside input roots and never change source values, geometry or contour labels to obtain a pass. Credentials belong in process memory or secret storage, never source, logs or Git.

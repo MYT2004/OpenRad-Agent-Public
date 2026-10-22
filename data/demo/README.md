@@ -19,7 +19,7 @@ From the repository root, after installing `.[app,api,test]`:
 ```bash
 OPENRAD_DATA_ROOTS="[\"$PWD/data/demo/01_clean_case\"]" \
 STORAGE_DIR="$PWD/storage/sessions" \
-python -m streamlit run frontend/app.py --server.address 127.0.0.1 --server.port 8502
+python -m streamlit run frontend/app.py --server.address 127.0.0.1 --server.port 8501
 ```
 
 1. Open **Patient-file Verification**. The clean folder is prefilled by the environment setting. Keep pixel decoding enabled and click **Verify patient files**.
@@ -28,6 +28,6 @@ python -m streamlit run frontend/app.py --server.address 127.0.0.1 --server.port
 4. Return to verification and select the absolute path to `data/demo/02_missing_image`. Show the BLOCKED state and required follow-up action. The original clean case remains unchanged.
 5. Optionally use **Gamma Index QA**: reference `data/demo/01_clean_case/synthetic_dose.dcm`, evaluation `data/demo/05_gamma_controls/small_controlled_difference.dcm` or `large_controlled_difference.dcm`. At 3%/2 mm and 10% cutoff the supplied controls yield 100% and 0% passing. They are constructed numerical demonstrations, not measured dose or model inference.
 
-If port 8502 is occupied, choose another available local port. The app also offers **Create an explicitly synthetic demo case**, which regenerates a clean case in fresh runtime storage. No Gemini key is needed for intake, DVH or gamma.
+Port 8501 is the standard local app port. Stop any previous OpenRad instance using it before starting this checkout. The app also offers **Create an explicitly synthetic demo case**, which regenerates a clean case in fresh runtime storage. No Gemini key is needed for intake, DVH or gamma.
 
 [Verified outputs and previews](../../validation/evidence/showcase/README.md) · [Patient-file review policy](../../docs/PATIENT_DATA_QA.md)

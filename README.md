@@ -155,9 +155,9 @@ pytest validation/tests/ -v
 
 ### 3. Launch the Interactive Streamlit Dashboard
 ```bash
-streamlit run app.py
+streamlit run app.py --server.port 8501
 ```
-Open `http://localhost:8501` to access:
+Port **8501** is the standard local dashboard port and is also configured in `.streamlit/config.toml`. Run from the repository root and stop any previous OpenRad instance using this port before starting another. Open `http://localhost:8501` to access:
 1. **🤖 Dynamic Agent Copilot:** Interactive Gemini function calling with tool-action log expander.
 2. **Patient-file Verification:** DICOM header and voxel integrity checking.
 3. **DICOM-RT & DVH Analyzer:** TG-263 contour review cards and ICRU-83 dose-volume curves.
