@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-23",
+  "baseline_revision": "df370da",
+  "candidate": "local working tree; see git diff",
+  "python": "3.13.13",
+  "clinical_release": false,
+  "baseline_tests_passed": 370,
+  "candidate_tests_passed": 377,
+  "numerical_assertions_passed": 1450,
+  "menu_count": 9,
+  "menu_controls_identical": true,
+  "menu_exceptions": 0,
+  "demo_dvh_identical": true,
+  "gamma_results_identical": true,
+  "before_median_peak_traced_bytes": 17598728,
+  "after_median_peak_traced_bytes": 12989207,
+  "peak_traced_reduction_percent": 26.192353220073628,
+  "before_median_seconds": 0.09236529102781788,
+  "after_median_seconds": 0.09281820798059925,
+  "pip_check": "No broken requirements found",
+  "measurement_limits": [
+    "Three repeats of one seeded 64,000-voxel synthetic case, single local environment",
+    "tracemalloc peak is not total process RSS",
+    "No general speedup or clinical qualification inferred"
+  ],
+  "workflow_stress": {
+    "before": {
+      "total": 28,
+      "executed": 28,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "gate_passed": true
+    },
+    "after": {
+      "total": 28,
+      "executed": 28,
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "gate_passed": true
+    }
+  },
+  "workflow_statuses_identical": true,
+  "candidate_source_sha256": {
+    "frontend/app.py": "42b36bdb7a82c1670de6aceeaf9124d7082b1b0fa0e73221615760903dd31b6c",
+    "openrad/tools/dicom_tool.py": "12229a86a5cd046eb6208dafd96ceec2b8972024ed250b9bb6767277b1caa094",
+    "openrad/tools/gamma_tool.py": "868b3dc3640d5622fa6da07d38a23b07fcefe7573ef7bcd3045b51400f0f6653",
+    "src/evaluation.py": "0952691c8be66b304bc7ce082513b399bfc0240bdab114448a838eaa828e51b4",
+    "validation/tests/test_efficiency_regression.py": "42146543438f8a2bd068910dc49f124e31fb5c7b2ba91e8c2c4e44598b550848",
+    "validation/benchmarks/efficiency.py": "00f33227d3366a9067f7c78abfbd160d1e5f3c4ac18d6472df9c6b028f19c558"
+  }
+}

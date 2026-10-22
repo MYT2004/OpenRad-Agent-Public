@@ -4,7 +4,6 @@ No model deserialization, inference, registration, DICOM mutation or silent repa
 """
 import hashlib
 import io
-import json
 import uuid
 from pathlib import Path
 from importlib.metadata import version, PackageNotFoundError
@@ -13,7 +12,7 @@ import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from src.decision import EvaluationRequest, ModelEvaluationResult, Rule, decide, threshold_rule
-from src.governance import canonical, digest, append_record
+from src.governance import digest, append_record
 from src.storage import current_session
 from openrad.tools.gamma_tool import evaluate_gamma_index
 

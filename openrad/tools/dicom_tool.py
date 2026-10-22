@@ -109,8 +109,10 @@ def analyze_dvh_datasets(ds_struct, ds_dose, roi_names, reviewed_name_map=None, 
     raw_array = ds_dose.pixel_array.astype(float)
     if raw_array.ndim != 3 or raw_array.shape[0] != len(ds_dose.GridFrameOffsetVector):
         raise DICOMGeometryError("Dose pixel shape does not match frame geometry.")
-    dose_grid = raw_array * scaling if parsed_dose is None else np.asarray(parsed_dose, dtype=float)
-    if dose_grid.shape != raw_array.shape or not np.allclose(dose_grid, raw_array * scaling, rtol=0, atol=1e-10):
+    # Scale once; the supplied independently decoded grid must still agree.
+    source_grid = raw_array * scaling
+    dose_grid = source_grid if parsed_dose is None else np.asarray(parsed_dose, dtype=float)
+    if parsed_dose is not None and (dose_grid.shape != raw_array.shape or not np.allclose(dose_grid, source_grid, rtol=0, atol=1e-10)):
         raise DICOMGeometryError("Parsed dose grid disagrees with source scaling/shape.")
 
     PhysicsValidationEngine.validate_dose_grid(dose_grid, raise_on_fail=True)

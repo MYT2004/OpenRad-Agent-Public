@@ -19,8 +19,6 @@ load_dotenv()
 st.set_page_config(page_title="OpenRad Agent", layout="wide")
 st.title("OpenRad Agent")
 st.warning("Research prototype. Clinical accuracy and uncertainty margins require independent commissioning. File contents are data, never instructions.")
-if 'agent' not in st.session_state:
-    st.session_state.agent = OpenRadAgent()
 mode = st.sidebar.selectbox('Select Workflow', [
     'Patient-file Verification',
     '🤖 Dynamic Agent Copilot',
@@ -32,6 +30,9 @@ mode = st.sidebar.selectbox('Select Workflow', [
     'Interactive Agent Query',
     'Stateful Python REPL Sandbox'
 ], key='workflow_mode')
+# Intake and standalone tools do not need a REPL or its runtime session.
+if mode in ('Interactive Agent Query', 'Stateful Python REPL Sandbox') and 'agent' not in st.session_state:
+    st.session_state.agent = OpenRadAgent()
 try:
     configured = json.loads(os.getenv('OPENRAD_DATA_ROOTS') or '[]')
     if not isinstance(configured, list) or not all(isinstance(p, str) for p in configured):

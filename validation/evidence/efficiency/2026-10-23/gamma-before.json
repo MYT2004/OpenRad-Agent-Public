@@ -1,0 +1,83 @@
+{
+  "case": "seed263_synthetic_40x40x40",
+  "runs": [
+    {
+      "seconds": 0.09148737497162074,
+      "peak_traced_bytes": 17610718,
+      "result": {
+        "clinical_release": false,
+        "method": "discrete_global_gamma",
+        "criteria": {
+          "dose_percent": 3,
+          "distance_mm": 2,
+          "cutoff_percent": 10
+        },
+        "limitations": [
+          "No interpolation or measurement uncertainty model; not commissioned for clinical QA.",
+          "Array/NPY/CSV inputs require explicit mm spacing and assume Gy with zero origin; DICOM supports canonical axial geometry only."
+        ],
+        "threshold_policy": "direct_difference_float64_le_1",
+        "numerical_tolerance": 0.0,
+        "average_gamma_unrounded": 0.266993515928247,
+        "max_gamma_unrounded": 1.4927191964766253,
+        "passing_rate": 99.69317177180301,
+        "average_gamma": 0.267,
+        "max_gamma": 1.493,
+        "evaluated_voxels": 57687,
+        "total_voxels": 64000
+      }
+    },
+    {
+      "seconds": 0.09236529102781788,
+      "peak_traced_bytes": 17598728,
+      "result": {
+        "clinical_release": false,
+        "method": "discrete_global_gamma",
+        "criteria": {
+          "dose_percent": 3,
+          "distance_mm": 2,
+          "cutoff_percent": 10
+        },
+        "limitations": [
+          "No interpolation or measurement uncertainty model; not commissioned for clinical QA.",
+          "Array/NPY/CSV inputs require explicit mm spacing and assume Gy with zero origin; DICOM supports canonical axial geometry only."
+        ],
+        "threshold_policy": "direct_difference_float64_le_1",
+        "numerical_tolerance": 0.0,
+        "average_gamma_unrounded": 0.266993515928247,
+        "max_gamma_unrounded": 1.4927191964766253,
+        "passing_rate": 99.69317177180301,
+        "average_gamma": 0.267,
+        "max_gamma": 1.493,
+        "evaluated_voxels": 57687,
+        "total_voxels": 64000
+      }
+    },
+    {
+      "seconds": 0.09367712499806657,
+      "peak_traced_bytes": 17598728,
+      "result": {
+        "clinical_release": false,
+        "method": "discrete_global_gamma",
+        "criteria": {
+          "dose_percent": 3,
+          "distance_mm": 2,
+          "cutoff_percent": 10
+        },
+        "limitations": [
+          "No interpolation or measurement uncertainty model; not commissioned for clinical QA.",
+          "Array/NPY/CSV inputs require explicit mm spacing and assume Gy with zero origin; DICOM supports canonical axial geometry only."
+        ],
+        "threshold_policy": "direct_difference_float64_le_1",
+        "numerical_tolerance": 0.0,
+        "average_gamma_unrounded": 0.266993515928247,
+        "max_gamma_unrounded": 1.4927191964766253,
+        "passing_rate": 99.69317177180301,
+        "average_gamma": 0.267,
+        "max_gamma": 1.493,
+        "evaluated_voxels": 57687,
+        "total_voxels": 64000
+      }
+    }
+  ]
+}

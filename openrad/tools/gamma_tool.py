@@ -8,7 +8,7 @@ from src.operations import audited_operation
 
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import pydicom
 from pydantic import BaseModel, Field
@@ -36,6 +36,23 @@ def _array_coords(arr, spacing):
     if spacing is None or len(spacing)!=arr.ndim or not np.isfinite(spacing).all() or any(v<=0 for v in spacing):
         raise GammaEvaluationError('Non-DICOM dose requires explicit positive spacing_mm per array axis; units must be Gy.')
     return tuple(np.arange(size,dtype=float)*step for size,step in zip(arr.shape,spacing))
+
+
+def _grid_points(coords, mask=None):
+    """Build C-order physical points without retaining dense meshgrid copies."""
+    if mask is not None:
+        indices = np.nonzero(mask)
+        points = np.empty((len(indices[0]), len(coords)), dtype=float)
+        for axis, (values, index) in enumerate(zip(coords, indices)):
+            points[:, axis] = values[index]
+        return points
+    shape = tuple(len(values) for values in coords)
+    points = np.empty((*shape, len(coords)), dtype=float)
+    for axis, values in enumerate(coords):
+        broadcast_shape = [1] * len(coords)
+        broadcast_shape[axis] = len(values)
+        points[..., axis] = np.asarray(values).reshape(broadcast_shape)
+    return points.reshape(-1, len(coords))
 
 
 def _load_dose_and_coords(
@@ -153,24 +170,21 @@ def evaluate_gamma_index(
     delta_dose = max_ref_dose * dose_tolerance_percent / 100.0
     delta_dist = float(distance_tolerance_mm)
 
-    # Construct spatial meshgrid points
-    ref_grids = np.meshgrid(*ref_coords, indexing="ij")
-    ref_pts = np.vstack([g.ravel() for g in ref_grids]).T
     ref_d = ref_dose.ravel()
-
-    eval_grids = np.meshgrid(*eval_coords, indexing="ij")
-    eval_pts = np.vstack([g.ravel() for g in eval_grids]).T
     eval_d = eval_dose.ravel()
 
     # Filter by low-dose cutoff
-    mask_eval = ref_d >= dose_cutoff_val
-    eval_count = int(np.sum(mask_eval))
+    reference_mask = ref_dose >= dose_cutoff_val
+    eval_count = int(np.count_nonzero(reference_mask))
 
     if eval_count == 0:
         raise GammaEvaluationError("No voxels above cutoff; no QA verdict can be computed.")
 
-    sub_ref_pts = ref_pts[mask_eval]
-    sub_ref_d = ref_d[mask_eval]
+    # Only reference voxels above cutoff need physical query points. Evaluation
+    # candidates retain every voxel, including those below the reference cutoff.
+    sub_ref_pts = _grid_points(ref_coords, reference_mask)
+    sub_ref_d = ref_dose[reference_mask]
+    eval_pts = _grid_points(eval_coords)
 
     # Exact nearest-neighbor search in normalized joint space/dose coordinates.
     # This is discrete gamma: interpolation and commissioning remain required.
