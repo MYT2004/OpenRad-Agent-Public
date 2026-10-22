@@ -15,7 +15,7 @@
 
 ## OSI Hackathon 2026: start here
 
-New evaluators should use the [complete judge's guide](docs/osi-hackathon-2026/JUDGES_GUIDE.md): a five-minute synthetic tour, all nine menus, exact input examples, expected refusals, status meanings and troubleshooting. It was checked against code revision `7f09598`; it corrects outdated claims in the supplied Antigravity draft.
+New evaluators should use the [complete judge's guide](docs/osi-hackathon-2026/JUDGES_GUIDE.md): a five-minute synthetic tour, all nine menus, exact input examples, expected refusals, status meanings and troubleshooting. It was checked against code revision `7f09598`.
 
 After installing the project from this repository root, launch the bundled teaching case:
 
