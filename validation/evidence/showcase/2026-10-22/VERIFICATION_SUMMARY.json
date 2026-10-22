@@ -1,0 +1,58 @@
+{
+  "synthetic": true,
+  "clinical_release": false,
+  "existing_patient_data_used": false,
+  "cases": [
+    {
+      "case": "01_clean_case",
+      "expected_state": "READY_FOR_RESEARCH_ANALYSIS",
+      "observed_state": "READY_FOR_RESEARCH_ANALYSIS",
+      "source_unchanged": true,
+      "synthetic": true,
+      "finding_codes": [
+        "completeness_scope"
+      ]
+    },
+    {
+      "case": "02_missing_image",
+      "expected_state": "BLOCKED",
+      "observed_state": "BLOCKED",
+      "source_unchanged": true,
+      "synthetic": true,
+      "finding_codes": [
+        "completeness_scope",
+        "declared_spacing",
+        "irregular_stack",
+        "referenced_images_missing"
+      ]
+    },
+    {
+      "case": "03_frame_mismatch",
+      "expected_state": "BLOCKED",
+      "observed_state": "BLOCKED",
+      "source_unchanged": true,
+      "synthetic": true,
+      "finding_codes": [
+        "completeness_scope",
+        "frame_linkage"
+      ]
+    },
+    {
+      "case": "04_invalid_scaling",
+      "expected_state": "BLOCKED",
+      "observed_state": "BLOCKED",
+      "source_unchanged": true,
+      "synthetic": true,
+      "finding_codes": [
+        "completeness_scope",
+        "dose_geometry",
+        "pixel_integrity"
+      ]
+    }
+  ],
+  "gamma_control_rates": [
+    100.0,
+    0.0
+  ],
+  "source_revision": "11ca40fa845d34fcc720efa70fc45be8e2afca7f"
+}

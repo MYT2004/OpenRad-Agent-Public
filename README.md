@@ -212,3 +212,7 @@ Latest stress evidence: [full-corpus and copilot assessment](validation/evidence
 ## Safe research operation
 
 See [hardening and operating instructions](docs/HARDENING.md) for input budgets, deterministic REST/provider distinctions, strict benchmark completeness, numerical threshold policy and deployment release gates. Only a single trusted operator research profile is implemented. Production and clinical readiness remain false.
+
+## Ready-to-use synthetic demonstration
+
+Use the [bundled synthetic DICOM-RT showcase](data/demo/README.md) for clean intake, DVH curves and deliberately faulty exports. It is artificial teaching data; verification outputs and previews are kept in the [separate showcase evidence folder](validation/evidence/showcase/README.md).
